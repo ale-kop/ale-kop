@@ -154,3 +154,21 @@ Botão estilizado que oferece o atributo `state` para futuras ações assíncron
 ```blade
 <x-forms.file id="avatar" name="avatar" />
 ```
+
+### Índice de posts (unificado)
+
+Foi consolidado em um único componente o índice lateral de posts, tanto para posts que pertencem a um curso (seções e posts) quanto para posts avulsos (lista de últimos posts):
+
+```blade
+<x-post-index :post="$post" :recentPosts="$recentPosts ?? collect()" />
+```
+
+- Quando `post->course` existir, o componente renderiza o índice do curso (seções + posts) com badges “Lido/Não lido”.
+- Quando não houver curso, renderiza o índice de “Últimos posts” (avulso).
+- No mobile, inclui botão flutuante “Abrir índice”, overlay com blur e drawer animado (side‑panel genérico).
+
+Componentes obsoletos removidos:
+- `x-post-course-index`
+- `x-post-recent-index`
+
+Use sempre `x-post-index` daqui para frente.

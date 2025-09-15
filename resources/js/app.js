@@ -4,7 +4,10 @@ import * as toast from './modules/toast'
 import * as ajaxPost from './modules/ajax-post.js'
 import * as richEditor from './modules/rich-text-editor.js'
 import * as themeSwitch from './modules/theme-switch.js'
-import * as menuPanel from './modules/menu-panel.js'
+import * as formSubmit from './modules/form-submit.js'
+import * as codeCopy from './modules/code-copy.js'
+import * as postIndex from './modules/post-index.js'
+import * as sidePanel from './modules/side-panel.js'
 
 import.meta.glob([
     '../img/**',
@@ -15,7 +18,10 @@ window.globalModules = {
     "toggle"    : toggle,
     "richEditor": richEditor,
     "themeSwitch": themeSwitch,
-    "menuPanel": menuPanel,
+    "formSubmit": formSubmit,
+    "codeCopy": codeCopy,
+    "postIndex": postIndex,
+    "sidePanel": sidePanel,
 }
 
 /*------------------------------------------------

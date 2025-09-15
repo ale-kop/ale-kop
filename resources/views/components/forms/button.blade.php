@@ -1,5 +1,12 @@
 @props(['state' => 'idle'])
-<button {{ $attributes->class('rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600') }} data-state="{{ $state }}">
-    <span @class(['hidden' => ($state !== 'idle')])>{{$slot}}</span>
-    <div class="animate-spin h-4 w-4 border-4 border-blue-500 rounded-full border-t-transparent"></div>
+
+@php
+    $buttonClasses = 'duration-300 ease-in-out transition-all rounded bg-blue-600 hover:shadow-md/20 active:shadow-sm/20 px-3 py-2 text-sm text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:gray-gray-600 flex items-center gap-2';
+    $spinnerClasses = 'animate-spin h-4 w-0 mr-0 absolute overflow-hidden border-2 border-white/25 rounded-full border-t-white transition-all duration-300';
+    $isLoading = $state === 'loading';
+@endphp
+
+<button {{ $attributes->merge(['class' => $buttonClasses]) }} data-state="{{ $state }}" class="">
+    <div data-spinner class="{{ $spinnerClasses }} {{ $isLoading ? '' : 'opacity-0' }}" aria-hidden="true"></div>
+    <span data-label>{{ $isLoading ? 'Carregando...' : $slot }}</span>
 </button>

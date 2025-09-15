@@ -19,6 +19,15 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->string('api_token', 80)->nullable()->unique();
+
+            $table->string('cpf', 11)->unique()->nullable();
+            $table->string('rg')->unique()->nullable();
+            $table->string('phone')->unique()->nullable();
+            $table->json('contacts')->nullable()->comment('{"emailSecondary":"second@email.com","mainPhoneIsWhatsApp":true}');
+            $table->json('links')->nullable()->comment('{"website":"https://...","twitter":"..."}');
+            $table->json('info')->nullable()->comment('{"externalInstitution":"UNICAMP","whatever":"info","status":"inactive"}');
+            $table->text('about')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });

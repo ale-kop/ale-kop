@@ -28,7 +28,9 @@ export function init() {
         if (container.editor) return
         const targetId = container.id
         const hidden = document.querySelector(`[data-editor-target="${targetId}"]`)
-        const value = hidden ? hidden.value : ''
+        const initialEl = document.querySelector(`[data-editor-initial="${targetId}"]`)
+        const initial = initialEl ? (initialEl.value || initialEl.innerHTML || initialEl.textContent) : ''
+        const value = initial || (hidden ? hidden.value : '')
 
         const nodeSpecs = addListNodes(basicSchema.spec.nodes, 'paragraph block*', 'block')
             .update('paragraph', {

@@ -7,8 +7,6 @@
     <form method="POST" action="{{ url('/login') }}" class="mt-6 space-y-6">
         @csrf
 
-        <x-forms.rich-text-editor name="ola"></x-forms.rich-text-editor>
-
         <div>
             <x-forms.label for="email">Email</x-forms.label>
             <x-forms.input icon-left="heroicon-c-envelope" id="email" name="email" type="email" value="{{ old('email') }}" />
@@ -24,7 +22,6 @@
         <div class="flex items-center justify-between">
             <a href="{{ url('/forgot-password') }}" class="text-sm font-semibold text-gray-900">Forgot your password?</a>
             <x-forms.button type="submit">Login</x-forms.button>
-            <x-forms.input-with-button type="password"></x-forms.input-with-button>
         </div>
     </form>
 </x-layouts.form>
