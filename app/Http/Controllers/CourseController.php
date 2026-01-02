@@ -82,7 +82,13 @@ class CourseController extends Controller
             ->whereSlug($request->post)
             ->firstOrFail();
 
-        return view('courses.show-post', compact('post'));
+        $isRead = null;
+
+        if (\Auth::check()){
+            $isRead = $post->is_read ?? $post->isReadBy(auth()->user());
+        }
+
+        return view('courses.show-post', compact('post','isRead'));
     }
 
     /**

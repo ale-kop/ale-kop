@@ -1,13 +1,36 @@
 <x-layout>
 
-    <div class="w-full z-10 pt-28 pb-32 bg-sky-800 flex flex-col space-y-3 px-4 items-center">
-        <h1 class="text-gray-50 text-4xl font-medium tracking-wide text-center">Programe para a Web</h1>
-        <p class="text-gray-50 max-w-3xl text-center pt-1">
-            Conteúdo educativo sobre desenvolvimento web, carreira, empreendedorismo, freelancing, e mais!
-        </p>
-    </div>
+    <div class="w-full bg-gradient-to-b from-white to-teal-50 absolute top-0 h-[300px] z-[-1]"></div>
+    <div class="w-full bg-gradient-to-t from-white to-teal-50 absolute top-[300px] h-[300px] -z-1"></div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 px-6 lg:px-0 max-w-6xl place-content-around mx-auto gap-6 lg:gap-10 -mt-20">
+    <section class="mt-30 w-full flex flex-col gap-8 items-center z-10 mb-20 px-10 lg:px-0">
+        <h1 class="text-6xl font-bold text-gray-700 text-shadow">
+            <div class="flex gap-2 items-center justify-center">
+                <img src="{{ asset('img/akop-logo-sm.webp') }}" class="w-1/5"> <span class="w-full">Ale Kop</span>
+            </div>
+        </h1>
+        <p class="text-3xl text-center">Aprenda a <span class="bg-gradient-to-r from-yellow-200 via-yellow-200 to-white/50 bg-no-repeat [background-position:0_90%] [background-size:100%_0.3em]">comunicação eficaz</span>!</p>
+        <p class="text-xl text-center">Uma vez por semana <span class="bg-gradient-to-r from-purple-200 via-purple-200 to-white/50 bg-no-repeat [background-position:0_90%] [background-size:100%_0.3em]">3.000+</span> leitores já recebem<br> dicas para se comunicar melhor com colegas, clientes e família.</p>
+        <!--
+        <div class="text-sm md:text-lg flex gap-2 items-center">
+            <div class="bg-gradient-to-r from-sky-200 to-white/50 bg-no-repeat [background-position:0_90%] [background-size:100%_0.3em] animate-slide-right-left-slow">Oportunidades profissionais</div>
+            <div class="text-gray-400 animate-slide-right-left-slow">←</div>
+            <div class="font-semibold">Comunicação Eficaz</div>
+            <div class="text-gray-400 animate-slide-left-right-slow">→</div>
+            <div class="bg-gradient-to-r from-emerald-200 to-white/50 bg-no-repeat [background-position:0_90%] [background-size:100%_0.3em] animate-slide-left-right-slow">Confiança do Cliente</div>
+        </div>
+        -->
+
+        <form action="." method="post" class="space-y-6 w-full justify-center flex">
+        <x-forms.input-with-button name="email" class="w-full lg:w-1/2 text-2xl" placeholder="Cadastre seu e-mail aqui...">
+            <x-slot name="button">
+                Enviar
+            </x-slot>
+        </x-forms.input-with-button>
+        </form>
+    </section>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 px-6 lg:px-0 max-w-6xl place-content-around mx-auto gap-6 lg:gap-10">
         @forelse($coursesWithContent as $course)
             @if (data_get($course->extra, 'featured'))
                 <a href="{{ data_get($course->extra, 'custom_url') ?: route('courses.show', $course->slug) }}"

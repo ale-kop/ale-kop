@@ -8,6 +8,7 @@ import * as formSubmit from './modules/form-submit.js'
 import * as codeCopy from './modules/code-copy.js'
 import * as postIndex from './modules/post-index.js'
 import * as sidePanel from './modules/side-panel.js'
+import * as topNav from './modules/top-nav.js'
 
 import.meta.glob([
     '../img/**',
@@ -22,6 +23,7 @@ window.globalModules = {
     "codeCopy": codeCopy,
     "postIndex": postIndex,
     "sidePanel": sidePanel,
+    "topNav": topNav,
 }
 
 /*------------------------------------------------

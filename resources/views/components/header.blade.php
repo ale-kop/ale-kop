@@ -1,85 +1,98 @@
-<header class="bg-white/80 dark:bg-gray-800/80 border-b border-gray-200 dark:border-gray-700 backdrop-blur">
-    <nav class="container mx-auto flex items-center justify-between p-4">
+<header ak-top-nav class="bg-white/80 dark:bg-gray-800/80 justify-between backdrop-blur-lg fixed w-full z-50 p-4 py-6">
+    <nav class="max-w-7xl mx-auto flex items-center justify-between">
+
         <a href="/" class="text-xl font-bold">{{ config('app.name', 'App') }}</a>
 
-        <ul class="hidden md:flex items-center gap-6">
-            <li><a href="/" class="hover:text-blue-600">Home</a></li>
-            <li><a href="/cursos" class="hover:text-blue-600">Cursos</a></li>
-            <li><a href="/tags" class="hover:text-blue-600">Tags</a></li>
+        <div class="flex space-x-10">
+            <ul class="hidden md:flex items-center gap-6 font-semibold text-gray-600 dark:text-gray-300">
+                <li><a href="/" class="hover:text-blue-600 dark:hover:text-blue-400">Home</a></li>
+                <li><a href="/cursos" class="hover:text-blue-600">Cursos</a></li>
+                <li><a href="/tags" class="hover:text-blue-600">Tags</a></li>
 
-            <li class="relative">
-                <button
-                    ak-toggle="admin-dropdown"
-                    ak-toggle-classes="hidden"
-                    ak-toggle-close-on-blur="true"
-                    class="flex items-center gap-1 hover:text-blue-600 focus:outline-none"
-                >
-                    Admin
-                    <x-heroicon-o-chevron-down class="w-4 h-4"/>
-                </button>
-                <ul id="admin-dropdown"
-                    class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg hidden">
-                    <li><a href="{{ route('posts.manage') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Gerenciar posts</a></li>
-                    <li><a href="{{ route('posts.create') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Criar post</a></li>
-                    <li><a href="{{ route('sections.index') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Gerenciar seções</a></li>
-                    <li><a href="{{ route('tags.index') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Gerenciar tags</a></li>
-                    <li><a href="{{ route('courses.index') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Gerenciar cursos</a></li>
-                </ul>
-            </li>
-
-            <li class="relative">
-                <button
-                    ak-toggle="topics-dropdown"
-                    ak-toggle-classes="hidden"
-                    ak-toggle-close-on-blur="true"
-                    class="flex items-center gap-1 hover:text-blue-600 focus:outline-none"
-                >
-                    Assuntos
-                    <x-heroicon-o-chevron-down class="w-4 h-4"/>
-                </button>
-                <ul id="topics-dropdown"
-                    class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg hidden">
-                    @forelse(($tagsWithContent ?? []) as $tag)
-                        <li>
-                            <a href="{{ route('posts.index', $tag->slug) }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $tag->name }}</a>
+                <li class="relative">
+                    <button
+                        ak-toggle="admin-dropdown"
+                        ak-toggle-classes="hidden"
+                        ak-toggle-close-on-blur="true"
+                        class="flex items-center gap-1 hover:text-blue-600 focus:outline-none"
+                    >
+                        Admin
+                        <x-heroicon-o-chevron-down class="w-4 h-4"/>
+                    </button>
+                    <ul id="admin-dropdown"
+                        class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg hidden">
+                        <li><a href="{{ route('posts.manage') }}"
+                               class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Gerenciar posts</a></li>
+                        <li><a href="{{ route('posts.create') }}"
+                               class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Criar post</a></li>
+                        <li><a href="{{ route('sections.index') }}"
+                               class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Gerenciar seções</a>
                         </li>
-                    @empty
-                        <li class="px-4 py-2 text-sm text-gray-500">Nenhuma tag</li>
-                    @endforelse
-                </ul>
-            </li>
-
-            <li class="relative">
-                <button
-                    ak-toggle="courses-dropdown"
-                    ak-toggle-classes="hidden"
-                    ak-toggle-close-on-blur="true"
-                    class="flex items-center gap-1 hover:text-blue-600 focus:outline-none"
-                >
-                    Cursos
-                    <x-heroicon-o-chevron-down class="w-4 h-4"/>
-                </button>
-                <ul id="courses-dropdown"
-                    class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg hidden">
-                    @forelse(($coursesWithContent ?? []) as $course)
-                        <li>
-                            <a href="{{ route('courses.show', $course->slug) }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $course->name }}</a>
+                        <li><a href="{{ route('tags.index') }}"
+                               class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Gerenciar tags</a></li>
+                        <li><a href="{{ route('courses.index') }}"
+                               class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Gerenciar cursos</a>
                         </li>
-                    @empty
-                        <li class="px-4 py-2 text-sm text-gray-500">Nenhum curso</li>
-                    @endforelse
-                </ul>
-            </li>
-        </ul>
+                    </ul>
+                </li>
 
-        <div class="flex items-center gap-4">
-            <button data-side-panel-open="#menu-panel" data-side-panel-overlay="#menu-overlay" class="md:hidden text-gray-600 dark:text-gray-300 focus:outline-none">
-                <x-heroicon-o-bars-3 class="w-6 h-6"/>
-            </button>
-            <button id="theme-switch" class="flex items-center text-gray-600 dark:text-gray-300 focus:outline-none">
-                <x-heroicon-o-moon class="w-6 h-6 dark:hidden"/>
-                <x-heroicon-o-sun class="w-6 h-6 hidden dark:inline"/>
-            </button>
+                <li class="relative">
+                    <button
+                        ak-toggle="topics-dropdown"
+                        ak-toggle-classes="hidden"
+                        ak-toggle-close-on-blur="true"
+                        class="flex items-center gap-1 hover:text-blue-600 focus:outline-none"
+                    >
+                        Assuntos
+                        <x-heroicon-o-chevron-down class="w-4 h-4"/>
+                    </button>
+                    <ul id="topics-dropdown"
+                        class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg hidden">
+                        @forelse(($tagsWithContent ?? []) as $tag)
+                            <li>
+                                <a href="{{ route('posts.index', $tag->slug) }}"
+                                   class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $tag->name }}</a>
+                            </li>
+                        @empty
+                            <li class="px-4 py-2 text-sm text-gray-500">Nenhuma tag</li>
+                        @endforelse
+                    </ul>
+                </li>
+
+                <li class="relative">
+                    <button
+                        ak-toggle="courses-dropdown"
+                        ak-toggle-classes="hidden"
+                        ak-toggle-close-on-blur="true"
+                        class="flex items-center gap-1 hover:text-blue-600 focus:outline-none"
+                    >
+                        Cursos
+                        <x-heroicon-o-chevron-down class="w-4 h-4"/>
+                    </button>
+                    <ul id="courses-dropdown"
+                        class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg hidden">
+                        @forelse(($coursesWithContent ?? []) as $course)
+                            <li>
+                                <a href="{{ route('courses.show', $course->slug) }}"
+                                   class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $course->name }}</a>
+                            </li>
+                        @empty
+                            <li class="px-4 py-2 text-sm text-gray-500">Nenhum curso</li>
+                        @endforelse
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="flex items-center gap-4">
+                <button data-side-panel-open="#menu-panel" data-side-panel-overlay="#menu-overlay"
+                        class="md:hidden text-gray-600 dark:text-gray-300 focus:outline-none">
+                    <x-heroicon-o-bars-3 class="w-6 h-6"/>
+                </button>
+                <button id="theme-switch" class="flex items-center text-gray-600 dark:text-gray-300 focus:outline-none">
+                    <x-heroicon-o-moon class="w-6 h-6 dark:hidden"/>
+                    <x-heroicon-o-sun class="w-6 h-6 hidden dark:inline"/>
+                </button>
+            </div>
         </div>
     </nav>
 </header>

@@ -3,7 +3,7 @@
     'iconLeft' => null,
     'iconRight' => null,
 ])
-<div class="flex items-center rounded-md bg-white pl-3 outline outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+<div class="flex items-center rounded-sm bg-white pl-3 outline-none ring ring-gray-200 transition duration-150 focus-within:shadow-[0_0_7px_1px_rgba(100,175,255,0.45)]">
     @if($iconLeft)
         <x-dynamic-component :component="$iconLeft" class="size-5 text-gray-400" />
     @endif

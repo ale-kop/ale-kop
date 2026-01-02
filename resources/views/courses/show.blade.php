@@ -1,5 +1,5 @@
 <x-layout :title="$course->name">
-    <x-container class="pt-16">
+    <x-container class="mt-24">
         <h1 class="text-4xl font-bold mb-6">{{ $course->name }}</h1>
     </x-container>
 

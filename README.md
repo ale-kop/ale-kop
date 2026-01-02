@@ -108,7 +108,7 @@ Campo de texto com suporte a ícones à esquerda ou à direita:
 ```blade
 <x-forms.input-with-button name="email">
     <x-slot name="button">
-        <x-forms.button>Enviar</x-forms.button>
+        Enviar
     </x-slot>
 </x-forms.input-with-button>
 ```

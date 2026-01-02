@@ -10,8 +10,8 @@ export function init() {
             const label = submitButton.querySelector('[data-label]')
             submitButton.setAttribute('disabled', 'disabled')
             submitButton.dataset.state = 'loading'
-            if (spinner) spinner.classList.remove('absolute', 'opacity-0', 'w-0')
-            if (spinner) spinner.classList.add('w-4')
+            if (spinner) spinner.classList.remove('absolute', 'opacity-0')
+            if (label) label.classList.add('hidden')
 
         }
     }, { capture: true })

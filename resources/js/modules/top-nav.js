@@ -1,41 +1,25 @@
-// Navigation scroll verification (nav menu opacity)
+// top-nav.js
+// Toggle "shadow-xl" em elementos com o atributo [ak-top-nav] quando houver scroll
 export function init() {
-    let jsNavScrollCheck = document.querySelectorAll('.js-nav-scroll-check')
-    if (jsNavScrollCheck[0]) {
-        jsNavScrollCheck.forEach((target) => {
-            toggleTopNavOpacity(target)
-            document.addEventListener('scroll', () => {
-                toggleTopNavOpacity(target)
-            })
-        })
-    }
+    const targets = document.querySelectorAll('[ak-top-nav]');
+    if (!targets[0]) return;
 
-    let jsModuleTitleScroll = document.querySelectorAll('.js-title-scroll')
-    if (jsModuleTitleScroll[0]) {
-        jsModuleTitleScroll.forEach((target) => {
-            document.addEventListener('scroll', () => {
-                if (hasReachedTop(target)) {
-                    target.classList.add('z-10', 'w-full', 'bg-white')
-                } else {
-                    target.classList.remove('z-10', 'w-full', 'bg-white')
-                }
-            })
-        })
-    }
+    const toggleShadow = () => {
+        const scrolled = window.scrollY > 0;
+        targets.forEach((el) => {
+            // smooth animation
+            el.classList.add('transition-all', 'duration-300');
+
+            if (scrolled) {
+                el.classList.add('shadow-sm/10');
+                el.classList.remove('py-6');
+            } else {
+                el.classList.add('py-6');
+                el.classList.remove('shadow-sm/10');
+            }
+        });
+    };
+
+    toggleShadow();
+    document.addEventListener('scroll', toggleShadow, { passive: true });
 }
-
-export function hasReachedTop(target){
-    return window.pageYOffset > target.offsetHeight;
-}
-
-export function toggleTopNavOpacity(target) {
-    let currentYPosition = window.pageYOffset
-    if (currentYPosition >= 50 && !target.classList.contains('bg-slate-700')) {
-        target.classList.add('bg-slate-700')
-        target.setAttribute('style', 'transition: background-color 0.3s ease;')
-    } else if (currentYPosition < 50 && target.classList.contains('bg-slate-700')) {
-        target.classList.remove('bg-slate-700')
-        target.setAttribute('style', 'background-color:rgba(0,0,0,0.25);transition: background-color 0.5s ease;')
-    }
-}
-

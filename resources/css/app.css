@@ -26,9 +26,39 @@
     font-display: swap;
 }
 
+/* Carrega Instrument Sans (Variable) */
+@font-face {
+    font-family: 'Instrument Sans';
+    src: url('/fonts/InstrumentSans-VariableFont_wdth,wght.woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Carrega Instrument Sans Italic (Variable) */
+@font-face {
+    font-family: 'Instrument Sans';
+    src: url('/fonts/InstrumentSans-Italic-VariableFont_wdth,wght.woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* Carrega Geist Mono (Variable) */
+@font-face {
+    font-family: 'Geist Mono';
+    src: url('/fonts/GeistMono-VariableFont_wght.woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
 @theme {
 
-    --font-sans: InterVariable;
+    /*--font-sans: InterVariable;*/
+
+    --font-sans: 'Instrument Sans', InterVariable;
+    --font-mono: 'Geist Mono';
 
     --animate-none: none;
     --animate-spin: spin 1s linear infinite;
@@ -54,11 +84,17 @@
 
     --animate-slide-left-right: slide-left-right 1s ease-out;
     --animate-slide-left-right-fast: slide-left-right 0.5s ease-out;
-    --animate-slide-left-right-slow: slide-left-right 1.5s ease-out;
+    --animate-slide-left-right-slow: slide-left-right 3s ease-out;
+    --animate-slide-left-right-loop: slide-left-right-loop 1s ease-out infinite;
+    --animate-slide-left-right-fast-loop: slide-left-right-loop 0.5s ease-out infinite;
+    --animate-slide-left-right-slow-loop: slide-left-right-loop 5s ease-out infinite;
 
     --animate-slide-right-left: slide-right-left 1s ease-out;
     --animate-slide-right-left-fast: slide-right-left 0.5s ease-out;
-    --animate-slide-right-left-slow: slide-right-left 1.5s ease-out;
+    --animate-slide-right-left-slow: slide-right-left 3s ease-out;
+    --animate-slide-right-left-loop: slide-right-left-loop 1s ease-out infinite;
+    --animate-slide-right-left-fast-loop: slide-right-left-loop 0.5s ease-out infinite;
+    --animate-slide-right-left-slow-loop: slide-right-left-loop 5s ease-out infinite;
 
     --animate-slide-out-left: slide-out-left 1s ease-out;
     --animate-slide-out-right: slide-out-right 1s ease-out;
@@ -70,6 +106,14 @@
     --animate-fade-out: fade-out 1s ease-out;
     --animate-fade-out-fast: fade-out 0.5s ease-out;
     --animate-fade-out-slow: fade-out 1.5s ease-out;
+
+    /* Swap animations (one-shot) */
+    --animate-slide-down-fade-out: slide-down-fade-out 0.9s ease-in-out forwards;
+    --animate-slide-up-fade-in: slide-up-fade-in 0.9s ease-in-out forwards;
+
+    /* Swap animations (looping) */
+    --animate-slide-down-fade-out-loop: slide-down-fade-out-loop 8s ease-in-out infinite;
+    --animate-slide-up-fade-in-loop: slide-up-fade-in-loop 8s ease-in-out infinite;
 
     --animate-wiggle: wiggle 1s linear infinite;
     --animate-wiggle-once: wiggle 1s linear;
@@ -132,13 +176,27 @@
     }
 
     @keyframes slide-left-right {
-        0%          { transform: translateX(-200%); }
-        50%,100%    { transform: translateX(0); }
+        0%          { transform: translateX(-200%); opacity: 0 }
+        50%    { transform: translateX(0); }
+        100%    { transform: translateX(0); opacity: 1 }
     }
 
     @keyframes slide-right-left {
-        0%          { transform: translateX(200%); }
-        50%,100%    { transform: translateX(0); }
+        0%          { transform: translateX(200%); opacity: 0 }
+        50%    { transform: translateX(0); }
+        100%    { transform: translateX(0); opacity: 1 }
+    }
+
+    @keyframes slide-left-right-loop {
+        0%          { transform: translateX(-200%); opacity: 0 }
+        50%,75%    { transform: translateX(0); opacity: 1 }
+        100%    { transform: translateX(0); opacity: 0 }
+    }
+
+    @keyframes slide-right-left-loop {
+        0%          { transform: translateX(200%); opacity: 0 }
+        50%,75%    { transform: translateX(0); opacity: 1 }
+        100%    { transform: translateX(0); opacity: 0 }
     }
 
     @keyframes slide-out-left {

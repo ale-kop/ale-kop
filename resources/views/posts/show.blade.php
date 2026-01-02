@@ -1,9 +1,8 @@
 <x-layout :title="$post->name">
     <x-container class="pt-16">
         <div class="flex gap-6">
-            <x-post-index :post="$post" :recentPosts="$recentPosts ?? collect()" />
-            <article class="space-y-6 flex-1 max-w-3xl mx-auto">
-                <h1 class="text-4xl font-bold flex items-center gap-2 text-gray-700 dark:text-gray-200">
+            <article class="space-y-6 flex-1 mx-auto">
+                <h1 class="text-3xl font-semibold flex items-center gap-2 text-gray-700 dark:text-gray-200">
                     {{ $post->name }}
                     @unless($post->course)
                         <span class="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300">Post avulso</span>
@@ -18,6 +17,7 @@
                 @endif
                 <p><a href="{{ url()->previous() }}" class="text-blue-600 hover:underline">Voltar</a></p>
             </article>
+            <x-post-index :post="$post" :recentPosts="$recentPosts ?? collect()" />
         </div>
     </x-container>
 </x-layout>

@@ -6,7 +6,7 @@
 @endphp
 
 @if($hasCourse)
-    <aside class="hidden lg:block w-72 pr-6 sticky top-20 h-[calc(100vh-6rem)] overflow-y-auto">
+    <aside class="hidden lg:block w-72 pr-6 sticky top-20 h-[calc(100vh-6rem)] overflow-y-auto border bg-white shadow-sm border-neutral-100 p-4 rounded-xl">
         <nav class="space-y-4">
             @foreach($post->course->sections as $section)
                 <div>
@@ -22,7 +22,7 @@
                                 </a>
                                 @php $isRead = $sectionPost->is_read ?? $sectionPost->isReadBy(auth()->user()); @endphp
                                 <span class="inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded {{ $isRead ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600' }}">
-                                    {{ $isRead ? 'Lido' : 'Não lido' }}
+                                    {{ $isRead ? 'Lido' : 'Não Lido' }}
                                 </span>
                             </li>
                         @endforeach
@@ -36,7 +36,7 @@
     <button
         type="button"
         data-side-panel-open="#{{ $panelId }}" data-side-panel-overlay="#{{ $overlayId }}"
-        class="lg:hidden fixed left-4 top-20 z-40 inline-flex items-center gap-2 px-3 py-2 rounded border bg-white/90 dark:bg-gray-800/90 shadow-md"
+        class="lg:hidden fixed right-4 top-20 z-40 inline-flex items-center gap-2 px-3 py-2 rounded border bg-white/90 dark:bg-gray-800/90 shadow-md"
     >
         Abrir índice
     </button>
