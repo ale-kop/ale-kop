@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Image\Enums\Fit;
 
 class Tag extends Model implements HasMedia
 {
@@ -31,12 +32,19 @@ class Tag extends Model implements HasMedia
     public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumb')
-            ->width(250)
-            ->sharpen(10);
+            ->fit(Fit::Max, 180, 180)
+            ->quality(80)
+            ->optimize();
+
+        $this->addMediaConversion('medium')
+            ->fit(Fit::Max, 497, 290)
+            ->quality(80)
+            ->optimize();
 
         $this->addMediaConversion('large')
-            ->width(700)
-            ->sharpen(10);
+            ->fit(Fit::Max, 1100, 500)
+            ->quality(80)
+            ->optimize();
     }
 
     public function image(string $size = 'thumb'): string

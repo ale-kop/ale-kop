@@ -6,6 +6,7 @@ use App\Http\Requests\CourseRequest;
 use App\Models\Course;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -16,7 +17,7 @@ class CourseController extends Controller
      */
     public function index(Request $request)
     {
-        $courses = Course::with('posts', 'sections')->get();
+        $courses = Course::with('posts', 'sections', 'media')->get();
 
         if ($request->wantsJson()) {
             return response()->json(['courses' => $courses]);
@@ -45,7 +46,7 @@ class CourseController extends Controller
             'meta->description' => data_get($request->meta, 'description'),
         ]);
 
-        if ($request->featured_image) {
+        if ($request->hasFile('featured_image')) {
             $course->addMediaFromRequest('featured_image')->toMediaCollection('course-image');
         }
 
@@ -57,38 +58,25 @@ class CourseController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified resource
      */
     public function show(Request $request): View
     {
         $courseSlug = $request->courseSlug ?? null;
-        $userId = auth()->id();
+        $userId = Auth::id();
         $course = Course::where('slug', $courseSlug)
             ->with([
-                'posts' => fn ($q) => $q->withReadFlag($userId, [
-                    'posts.id', 'posts.slug', 'posts.name', 'posts.course_id', 'posts.tag_id', 'posts.meta',
-                ]),
+                'posts' => fn ($q) => $q
+                    ->select(['posts.id', 'posts.slug', 'posts.name', 'posts.course_id', 'posts.tag_id', 'posts.meta'])
+                    ->withReadFlag($userId),
                 'posts.course:id,slug,name',
                 'posts.tag:id,name,slug',
+                'posts.media',
             ])
+            ->with('media')
             ->firstOrFail();
 
         return view('courses.show', compact('course'));
-    }
-
-    public function showPost(Request $request): View
-    {
-        $post = Post::with('tag', 'course', 'course.sections', 'course.sections.posts')
-            ->whereSlug($request->post)
-            ->firstOrFail();
-
-        $isRead = null;
-
-        if (\Auth::check()){
-            $isRead = $post->is_read ?? $post->isReadBy(auth()->user());
-        }
-
-        return view('courses.show-post', compact('post','isRead'));
     }
 
     /**
@@ -112,9 +100,11 @@ class CourseController extends Controller
             'meta->description' => data_get($request->meta, 'description'),
         ]);
 
-        if ($request->featured_image) {
+        if ($request->hasFile('featured_image')) {
             $course->clearMediaCollection('course-image');
             $course->addMediaFromRequest('featured_image')->toMediaCollection('course-image');
+        } elseif ($request->boolean('featured_image_remove')) {
+            $course->clearMediaCollection('course-image');
         }
 
         if ($request->wantsJson()) {

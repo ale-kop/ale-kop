@@ -11,7 +11,7 @@
     <div class="flex flex-col space-y-4">
         <div class="flex justify-center">
             <div data-icon-success>
-                <x-heroicon-s-circle class="text-emerald-500 w-14 h-14 animate-pulse-once" />
+                <x-heroicon-s-check-circle class="text-emerald-500 w-14 h-14 animate-pulse-once" />
             </div>
             <div data-icon-warning>
                 <x-heroicon-s-exclamation-circle class="text-amber-400 w-14 h-14 animate-pulse-once" />

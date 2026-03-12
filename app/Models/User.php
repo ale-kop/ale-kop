@@ -39,6 +39,6 @@ class User extends Authenticatable
 
     public function readPosts()
     {
-        return $this->belongsToMany(Post::class, 'post_user_reads')->withTimestamps();
+        return $this->belongsToMany(Post::class)->withTimestamps();
     }
 }

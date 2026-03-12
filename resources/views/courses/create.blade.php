@@ -1,5 +1,5 @@
 <x-layout title="Novo Curso">
-    <x-container class="pt-16 max-w-2xl">
+    <x-container class="max-w-2xl">
         <h1 class="text-3xl font-bold mb-6">Novo Curso</h1>
         <form action="{{ route('courses.store') }}" method="post" enctype="multipart/form-data" class="space-y-6">
             @csrf

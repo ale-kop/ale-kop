@@ -22,6 +22,7 @@ class PostRequest extends FormRequest
             'tag_id' => ['nullable', 'exists:tags,id'],
             'section_id' => ['nullable', 'exists:sections,id'],
             'featured_image' => ['nullable', 'file', 'image'],
+            'featured_image_remove' => ['nullable', 'in:0,1'],
         ];
     }
 }

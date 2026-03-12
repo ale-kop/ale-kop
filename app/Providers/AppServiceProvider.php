@@ -22,7 +22,6 @@ class AppServiceProvider extends ServiceProvider
     {
         setlocale(LC_TIME, config('app.locale'));
         Carbon::setLocale(config('app.locale'));
-
         Model::shouldBeStrict(! $this->app->isProduction());
 
         if (config('app.env') === 'production') {
@@ -34,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
             'components.header',
             'components.footer',
             'index',
+            'index2',
             'posts.index',
             'components.mobile-menu',
         ], function ($view) {
@@ -46,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
             $coursesWithContent = cache()->remember(
                 'coursesWithContent',
                 Carbon::now()->addMinutes(60),
-                fn () => Course::query()->whereHas('posts')->get()
+                fn () => Course::query()->whereHas('posts')->with(['media','posts'])->get()
             );
 
             return $view->with([
@@ -57,5 +57,10 @@ class AppServiceProvider extends ServiceProvider
 
         // Observe post changes to invalidate caches
         Post::observe(PostObserver::class);
+
+        // In debug, push a query logging middleware to help spot N+1 locally
+        if (config('app.debug')) {
+            $this->app['router']->pushMiddlewareToGroup('web', \App\Http\Middleware\QueryLogger::class);
+        }
     }
 }

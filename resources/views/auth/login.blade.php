@@ -5,8 +5,9 @@
     @endif
 
     <form method="POST" action="{{ url('/login') }}" class="mt-6 space-y-6">
+        
         @csrf
-
+        
         <div>
             <x-forms.label for="email">Email</x-forms.label>
             <x-forms.input icon-left="heroicon-c-envelope" id="email" name="email" type="email" value="{{ old('email') }}" />

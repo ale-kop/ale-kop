@@ -1,1 +1,1 @@
-<textarea {{ $attributes->class('block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm') }}>{{ $slot }}</textarea>
+<textarea {{ $attributes->class('block w-full rounded-md bg-white px-3.5 py-3 md:text-base text-gray-900 placeholder:text-gray-400 text-sm outline-none ring ring-gray-200 transition duration-150 focus-within:shadow-[0_0_7px_1px_rgba(100,175,255,0.45)]') }}>{{ $slot }}</textarea>

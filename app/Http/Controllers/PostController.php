@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\Section;
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -24,10 +25,11 @@ class PostController extends Controller
     {
         $tagSlug = $request->tagSlug ?? null;
         $tag = $tagSlug ? Tag::where('slug', $tagSlug)->first() : null;
-        $userId = auth()->id();
+        $userId = Auth::id();
         $posts = $tag
-            ? Post::with(['tag:id,name,slug', 'course:id,name,slug'])
-                ->withReadFlag($userId, ['posts.id','posts.slug','posts.name','posts.course_id','posts.tag_id','posts.meta'])
+            ? Post::with(['tag:id,name,slug', 'course:id,name,slug', 'media'])
+                ->select(['posts.id', 'posts.slug', 'posts.name', 'posts.course_id', 'posts.tag_id', 'posts.meta'])
+                ->withReadFlag($userId)
                 ->where('tag_id', $tag->id)
                 ->get()
             : collect();
@@ -41,9 +43,10 @@ class PostController extends Controller
 
     public function manage(Request $request)
     {
-        $userId = auth()->id();
+        $userId = Auth::id();
         $posts = Post::with(['tag:id,name,slug', 'course:id,name,slug', 'section:id,name,course_id'])
-            ->withReadFlag($userId, ['posts.id','posts.slug','posts.name','posts.course_id','posts.tag_id','posts.section_id'])
+            ->select(['posts.id', 'posts.slug', 'posts.name', 'posts.course_id', 'posts.tag_id', 'posts.section_id'])
+            ->withReadFlag($userId)
             ->latest()->paginate(20);
 
         if ($request->wantsJson()) {
@@ -80,7 +83,7 @@ class PostController extends Controller
             'tag_id' => $request->tag_id ?? null,
             'section_id' => $request->section_id ?? null,
             'extra->featured' => isset($request->extra['featured']),
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
         ]);
 
         if ($request->featured_image) {
@@ -99,22 +102,24 @@ class PostController extends Controller
      */
     public function show(Request $request): View
     {
+        $userId = Auth::id();
+
         $post = Post::whereSlug($request->post)
-            ->with('course', 'course.sections', 'course.sections.posts', 'tag')
+            ->with([
+                'tag',
+                'course',
+                'course.sections',
+                'course.sections.posts' => fn ($q) => $q
+                    ->select(['posts.id', 'posts.slug', 'posts.name', 'posts.course_id', 'posts.section_id', 'posts.tag_id'])
+                    ->withReadFlag($userId),
+            ])
+            ->withReadFlag($userId)
+            ->with('media')
             ->firstOrFail();
 
-        if ($post->course) {
-            return view('courses.show-post', compact('post'));
-        }
+        $isRead = $post->course && Auth::check() ? (bool) ($post->is_read ?? false) : null;
 
-        $recentPosts = Post::whereNull('course_id')
-            ->where('id', '!=', $post->id)
-            ->with('tag')
-            ->latest()
-            ->limit(20)
-            ->get();
-
-        return view('posts.show', compact('post', 'recentPosts'));
+        return view('posts.show', compact('post', 'isRead'));
     }
 
     /**
@@ -146,9 +151,11 @@ class PostController extends Controller
             'tag_id' => $request->tag_id ?? null,
         ]);
 
-        if ($request->featured_image) {
+        if ($request->hasFile('featured_image')) {
             $post->clearMediaCollection('post-image');
             $post->addMediaFromRequest('featured_image')->toMediaCollection('post-image');
+        } elseif ($request->boolean('featured_image_remove')) {
+            $post->clearMediaCollection('post-image');
         }
 
         if ($request->wantsJson()) {
@@ -178,9 +185,9 @@ class PostController extends Controller
             return back();
         }
 
-        $user = auth()->user();
-        if (! $user->readPosts()->where('post_id', $post->id)->exists()) {
-            $user->readPosts()->attach($post->id);
+        $userId = Auth::id();
+        if ($userId && ! $post->readers()->where('user_id', $userId)->exists()) {
+            $post->readers()->attach($userId);
         }
 
         return back();
@@ -192,8 +199,10 @@ class PostController extends Controller
             return back();
         }
 
-        $user = auth()->user();
-        $user->readPosts()->detach($post->id);
+        $userId = Auth::id();
+        if ($userId) {
+            $post->readers()->detach($userId);
+        }
 
         return back();
     }

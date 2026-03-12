@@ -34,9 +34,16 @@
         <button type="button" data-command="ordered" class="toolbar-item">
             <x-heroicon-s-numbered-list class="w-5 h-5 text-gray-600" />
         </button>
-        <button type="button" data-command="blockquote" class="toolbar-item">
+        <button type="button" data-command="blockquote" class="toolbar-item" title="Blockquote">
             <x-heroicon-s-chat-bubble-oval-left-ellipsis class="w-5 h-5 text-gray-600" />
         </button>
+        <select data-command="callout" class="toolbar-item text-sm" title="Inserir callout">
+            <option value="">💬 Callout…</option>
+            <option value="NOTE">📝 Nota</option>
+            <option value="TIP">💡 Dica</option>
+            <option value="WARNING">⚠️ Atenção</option>
+            <option value="DANGER">🚨 Cuidado</option>
+        </select>
         <button type="button" data-command="code" class="toolbar-item">
             <x-heroicon-s-code-bracket class="w-5 h-5 text-gray-600" />
         </button>
@@ -58,8 +65,22 @@
         <button type="button" data-command="redo" class="toolbar-item">
             <x-heroicon-s-arrow-uturn-right class="w-5 h-5 text-gray-600" />
         </button>
+
+        {{-- Ações de modo — empurradas para a direita --}}
+        <div class="ml-auto flex items-center gap-1">
+            <button type="button" data-command="toggle-code" class="toolbar-item" title="Alternar WYSIWYG / HTML">
+                <x-heroicon-o-code-bracket-square class="w-5 h-5 text-gray-600" />
+            </button>
+            <button type="button" data-command="toggle-maximize" class="toolbar-item" title="Maximizar editor">
+                <x-heroicon-o-arrows-pointing-out class="w-5 h-5 text-gray-600" data-icon="expand" />
+                <x-heroicon-o-arrows-pointing-in  class="w-5 h-5 text-gray-600 hidden" data-icon="collapse" />
+            </button>
+        </div>
     </div>
-    <div class="editor p-4"></div>
+    <div class="editor p-4 min-h-40 overflow-y-auto"></div>
+    <textarea data-code-area
+              class="hidden w-full font-mono text-sm p-4 min-h-40 resize-none bg-gray-50 focus:outline-none"
+              spellcheck="false"></textarea>
 </div>
 <textarea class="hidden" data-editor-initial="{{ $id }}">{!! $initial !!}</textarea>
 <input type="hidden" name="{{ $name }}" value="{{ $value }}" data-editor-target="{{ $id }}">

@@ -1,6 +1,6 @@
 @props(['title' => null])
     <!DOCTYPE html>
-<html lang="pt-BR" class="h-full bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+<html lang="pt-BR" class="h-full bg-cream text-gray-900 dark:bg-gray-900 dark:text-gray-100">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,7 +11,7 @@
         
         <x-header/>
 
-        <main class="flex-1">
+        <main class="flex-1 mt-20">
             {{ $slot }}
         </main>
 

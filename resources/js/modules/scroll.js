@@ -58,7 +58,7 @@ export function fireScrollRight(targetId, qty) {
     }
 }
 
-/*export function hideIfReachedEnd(trigger,targetId, direction) {
+/* export function hideIfReachedEnd(trigger,targetId, direction) {
     let scrollArea = document.getElementById(targetId)
 
     if (direction === 'right'){
@@ -76,4 +76,4 @@ export function fireScrollRight(targetId, qty) {
     }
 
     return false
-}*/
+} */

@@ -1,6 +1,6 @@
 @php /** @var \App\Models\Post $post */ @endphp
 <x-layout :title="'Editar Post: ' . $post->name">
-    <x-container class="pt-16 max-w-2xl">
+    <x-container class="max-w-2xl">
         <h1 class="text-3xl font-bold mb-6">Editar Post</h1>
         <form action="{{ route('posts.update', $post) }}" method="post" enctype="multipart/form-data" class="space-y-6">
             @csrf
@@ -9,6 +9,11 @@
             <div>
                 <x-forms.label for="name">Nome</x-forms.label>
                 <x-forms.input id="name" name="name" type="text" :value="old('name', $post->name)" required />
+            </div>
+
+            <div>
+                <x-forms.label for="meta[description]">Descrição</x-forms.label>
+                <x-forms.textarea id="meta[description]" name="meta[description]" rows="4">{{ old('meta[description]', $post->meta['description'] ?? '') }}</x-forms.textarea>
             </div>
 
             <div>
@@ -45,7 +50,7 @@
 
             <div>
                 <x-forms.label for="featured_image">Imagem destacada</x-forms.label>
-                <x-forms.file id="featured_image" name="featured_image" accept="image/*" />
+                <x-forms.file id="featured_image" name="featured_image" accept="image/*" :initial-url="$post->image('large')" />
             </div>
 
             <div class="flex items-center gap-2">

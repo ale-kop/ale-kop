@@ -28,7 +28,7 @@
 
     <div>
         <x-forms.label for="featured_image">Imagem</x-forms.label>
-        <x-forms.file id="featured_image" name="featured_image" accept="image/*" />
+        <x-forms.file id="featured_image" name="featured_image" accept="image/*" :initial-url="$course?->image('large')" />
     </div>
 
     @if($errors->any())
@@ -39,4 +39,3 @@
         </ul>
     @endif
 </div>
-

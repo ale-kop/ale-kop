@@ -1,5 +1,5 @@
 <x-layout title="Seções">
-    <x-container class="pt-16">
+    <x-container>
         <h1 class="text-4xl font-bold mb-6">Seções</h1>
         <div class="flex justify-end mb-4">
             <a href="{{ route('sections.create') }}" class="px-3 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-700">Nova seção</a>

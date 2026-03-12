@@ -23,6 +23,24 @@ const strike = {
     },
 }
 
+const calloutNodeSpec = {
+    attrs: { type: { default: 'note' } },
+    content: 'block+',
+    group: 'block',
+    defining: true,
+    parseDOM: [{
+        tag: 'aside[data-callout]',
+        getAttrs: dom => ({ type: dom.dataset.callout || 'note' }),
+    }],
+    toDOM(node) {
+        const roles = { note: 'note', tip: 'note', warning: 'note', danger: 'alert' }
+        return ['aside', {
+            'data-callout': node.attrs.type,
+            'role': roles[node.attrs.type] ?? 'note',
+        }, 0]
+    },
+}
+
 export function init() {
     document.querySelectorAll('[data-rich-text-editor]').forEach(container => {
         if (container.editor) return
@@ -33,6 +51,7 @@ export function init() {
         const value = initial || (hidden ? hidden.value : '')
 
         const nodeSpecs = addListNodes(basicSchema.spec.nodes, 'paragraph block*', 'block')
+            .addToEnd('callout', calloutNodeSpec)
             .update('paragraph', {
                 content: 'inline*',
                 group: 'block',
@@ -108,7 +127,7 @@ export function init() {
             }
         })
 
-        setupToolbar(container, schema, view)
+        setupToolbar(container, schema, view, hidden)
         if(hidden){
             hidden.value = getHTML(view.state.doc, schema)
         }
@@ -118,7 +137,7 @@ export function init() {
 
 }
 
-function setupToolbar(container, schema, view) {
+function setupToolbar(container, schema, view, hidden) {
     container.querySelectorAll('[data-command]').forEach(btn => {
         const cmd = btn.getAttribute('data-command')
         if (cmd === 'heading') {
@@ -144,6 +163,21 @@ function setupToolbar(container, schema, view) {
         } else if (cmd === 'blockquote') {
             btn.addEventListener('click', () => {
                 wrapIn(schema.nodes.blockquote)(view.state, view.dispatch)
+                view.focus()
+            })
+        } else if (cmd === 'callout') {
+            btn.addEventListener('change', e => {
+                const type = e.target.value
+                e.target.value = ''
+                if (!type) return
+
+                const node  = schema.nodes.callout.create(
+                    { type: type.toLowerCase() },
+                    schema.nodes.paragraph.create(),
+                )
+                const { state, dispatch } = view
+                const after = state.selection.$anchor.after(1)
+                dispatch(state.tr.insert(after, node))
                 view.focus()
             })
         } else if (cmd === 'code') {
@@ -194,6 +228,55 @@ function setupToolbar(container, schema, view) {
             btn.addEventListener('click', () => {
                 redo(view.state, view.dispatch)
                 view.focus()
+            })
+        } else if (cmd === 'toggle-code') {
+            const editorDiv = container.querySelector('.editor')
+            const codeArea  = container.querySelector('[data-code-area]')
+
+            // Mantém o input hidden em sync enquanto edita HTML cru
+            codeArea.addEventListener('input', () => {
+                if (hidden) hidden.value = codeArea.value
+            })
+
+            btn.addEventListener('click', () => {
+                const isCode = container.dataset.mode === 'code'
+
+                if (isCode) {
+                    // HTML → WYSIWYG
+                    const doc = new DOMParser().parseFromString(codeArea.value || '<p></p>', 'text/html')
+                    const pmDoc = ProseParser.fromSchema(schema).parse(doc.body)
+                    view.dispatch(view.state.tr.replaceWith(0, view.state.doc.content.size, pmDoc.content))
+                    if (hidden) hidden.value = getHTML(view.state.doc, schema)
+                    codeArea.classList.add('hidden')
+                    editorDiv.classList.remove('hidden')
+                    container.dataset.mode = 'wysiwyg'
+                    btn.classList.remove('active')
+                } else {
+                    // WYSIWYG → HTML
+                    codeArea.value = getHTML(view.state.doc, schema)
+                    if (hidden) hidden.value = codeArea.value
+                    editorDiv.classList.add('hidden')
+                    codeArea.classList.remove('hidden')
+                    codeArea.focus()
+                    container.dataset.mode = 'code'
+                    btn.classList.add('active')
+                }
+            })
+        } else if (cmd === 'toggle-maximize') {
+            btn.addEventListener('click', () => {
+                const isMax = container.classList.toggle('is-maximized')
+                btn.querySelector('[data-icon="expand"]').classList.toggle('hidden', isMax)
+                btn.querySelector('[data-icon="collapse"]').classList.toggle('hidden', !isMax)
+                document.body.classList.toggle('overflow-hidden', isMax)
+            })
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape' && container.classList.contains('is-maximized')) {
+                    container.classList.remove('is-maximized')
+                    btn.querySelector('[data-icon="expand"]').classList.remove('hidden')
+                    btn.querySelector('[data-icon="collapse"]').classList.add('hidden')
+                    document.body.classList.remove('overflow-hidden')
+                }
             })
         }
     })

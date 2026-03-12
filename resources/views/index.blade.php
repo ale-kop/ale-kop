@@ -3,14 +3,23 @@
     <div class="w-full bg-gradient-to-b from-white to-teal-50 absolute top-0 h-[300px] z-[-1]"></div>
     <div class="w-full bg-gradient-to-t from-white to-teal-50 absolute top-[300px] h-[300px] -z-1"></div>
 
-    <section class="mt-30 w-full flex flex-col gap-8 items-center z-10 mb-20 px-10 lg:px-0">
+    <section class="w-full flex flex-col gap-8 items-center z-10 mb-14 mt-10 px-10 lg:px-0 relative">
         <h1 class="text-6xl font-bold text-gray-700 text-shadow">
             <div class="flex gap-2 items-center justify-center">
                 <img src="{{ asset('img/akop-logo-sm.webp') }}" class="w-1/5"> <span class="w-full">Ale Kop</span>
             </div>
         </h1>
-        <p class="text-3xl text-center">Aprenda a <span class="bg-gradient-to-r from-yellow-200 via-yellow-200 to-white/50 bg-no-repeat [background-position:0_90%] [background-size:100%_0.3em]">comunicação eficaz</span>!</p>
-        <p class="text-xl text-center">Uma vez por semana <span class="bg-gradient-to-r from-purple-200 via-purple-200 to-white/50 bg-no-repeat [background-position:0_90%] [background-size:100%_0.3em]">3.000+</span> leitores já recebem<br> dicas para se comunicar melhor com colegas, clientes e família.</p>
+
+        <img src="{{ asset('img/curved-arrow.png') }}"
+             class="transform rotate-120 opacity-20 w-40 absolute top-42 mr-175 invisible md:visible">
+
+        <p class="text-2xl md:text-4xl text-center">Aprenda com <span
+                  class="bg-gradient-to-r from-yellow-200 via-yellow-200 to-white/50 bg-no-repeat [background-position:0_90%] [background-size:100%_0.3em]"><span
+                      class="font-medium">Métodos Práticos</span></span></p>
+        <p class="text-xl text-center">Chega de cursos sem fim. <span
+                  class="bg-gradient-to-r from-purple-200 via-purple-200 to-white/50 bg-no-repeat [background-position:0_90%] [background-size:100%_0.3em]">
+                Aplique o conhecimento imediatamente</span>.
+        </p>
         <!--
         <div class="text-sm md:text-lg flex gap-2 items-center">
             <div class="bg-gradient-to-r from-sky-200 to-white/50 bg-no-repeat [background-position:0_90%] [background-size:100%_0.3em] animate-slide-right-left-slow">Oportunidades profissionais</div>
@@ -21,12 +30,11 @@
         </div>
         -->
 
-        <form action="." method="post" class="space-y-6 w-full justify-center flex">
-        <x-forms.input-with-button name="email" class="w-full lg:w-1/2 text-2xl" placeholder="Cadastre seu e-mail aqui...">
-            <x-slot name="button">
-                Enviar
-            </x-slot>
-        </x-forms.input-with-button>
+        <form action="." method="post" class="space-y-6 w-full md:w-3/4 max-w-[980px] justify-center flex z-90">
+            <x-forms.input-with-button name="email" class="w-full lg:w-1/2 text-2xl"
+                                       placeholder="Cadastre seu e-mail aqui...">
+                <x-slot name="button">Enviar</x-slot>
+            </x-forms.input-with-button>
         </form>
     </section>
 
@@ -34,14 +42,20 @@
         @forelse($coursesWithContent as $course)
             @if (data_get($course->extra, 'featured'))
                 <a href="{{ data_get($course->extra, 'custom_url') ?: route('courses.show', $course->slug) }}"
-                   title="Conteúdo sobre {{ $course->name }}"
+                   title="Método de {{ $course->meta['description'] }}"
                    class="hover:bg-bottom col-span-1 h-64 xl:h-72 bg-no-repeat bg-cover bg-center rounded-xl relative shadow-md hover:ring-2 ring-offset-gray-500/10 ring-offset-1 ring-sky-800/20 transition-all duration-500 ease-in-out"
                    style="background-image: url({{ $course->getMedia('course-image')->first() ? $course->image('large') : asset('img/home-office-trabalho-remoto.webp') }})">
                     <div
                          class="absolute rounded-b-xl bottom-0 inset-x-0 from-gray-900/50 bg-gradient-to-t text-center text-white text-xl font-semibold flex h-[10rem] shadow-lg items-center justify-center pt-4 pb-2 px-6">
                     </div>
-                    <span style="text-wrap: balance"
-                          class="flex items-center absolute bottom-0 w-full mx-auto inset-x-0 text-center bg-gray-800/50 rounded-b-xl px-6 h-32 max-h-32 text-white font-medium tracking-tight justify-center text-xl lg:text-2xl">{{ $course->name }} com mais algo</span>
+                    <div
+                         class="flex flex-col absolute bottom-0 w-full mx-auto inset-x-0 text-center bg-gray-800/80 rounded-b-xl px-6 h-32 max-h-32 justify-center">
+                        <span style="text-wrap: balance"
+                              class="text-white font-medium tracking-tight text-xl lg:text-2xl">
+                            {{ $course->name }}
+                        </span>
+                        <small class="text-white text-sm">{{ $course->meta['description'] }}</small>
+                    </div>
                 </a>
             @endif
         @empty
@@ -55,44 +69,55 @@
 
         @if ($featuredPost)
             <article class="mx-auto w-full max-w-2xl lg:mx-0 lg:max-w-lg">
-                <span class="inline-block rounded-2xl bg-gradient-to-r from-amber-100 via-orange-200/75 to-orange-200 px-4 text-sm font-medium leading-6 text-gray-700">{{$featuredPost->tag->name}}</span>
+                <h1 class="text-2xl mb-4">Destaques</h1>
+                <div class="pr-4 float-left relative">
+                    <img src="{{ $featuredPost->image('thumb') }}" class="rounded-md shadow-md">
+                    <span
+                          class="absolute left-2 top-2 rounded-2xl bg-gradient-to-r from-amber-100 via-orange-200/75 to-orange-200 px-2 font-medium text-sm leading-6 text-gray-700">{{ $featuredPost->tag->name ?? 'Sem tag' }}</span>
+                </div>
                 <h2 id="featured-post"
-                    class="mt-2 text-3xl font-bold tracking-tight text-gray-800 sm:text-4xl">{{$featuredPost->name}}</h2>
-                <p class="mt-4 text-lg leading-8 text-gray-600">{{$featuredPost->meta['description']}}</p>
+                    class="text-2xl md:text-3xl font-semibold tracking-tight text-gray-800">{{ $featuredPost->name }}
+                </h2>
+                <p class="mt-4 text-lg leading-8 text-gray-600">
+                    {{ $featuredPost->meta['description'] ?? 'Sem descrição' }}</p>
                 <div
-                    class="mt-4 flex flex-col justify-between gap-6 sm:mt-8 sm:flex-row-reverse sm:gap-8 lg:mt-4 lg:flex-col">
+                     class="mt-4 flex flex-col justify-between gap-6 sm:mt-8 sm:flex-row-reverse sm:gap-8 lg:mt-4 lg:flex-col">
                     <div class="flex">
-                        <a href="{{route('posts.show',$featuredPost->slug)}}"
+                        <a href="{{ route('posts.show', $featuredPost->slug) }}"
                            class="text-sm font-semibold leading-6 text-indigo-600 group"
-                           aria-describedby="featured-post">Ler post <div class="inline-block group-hover:translate-x-0.5 transform transition-all duration-300 ease-in-out" aria-hidden="true">&rarr;</div></a>
+                           aria-describedby="featured-post">Ler post <div
+                                 class="inline-block group-hover:translate-x-0.5 transform transition-all duration-300 ease-in-out"
+                                 aria-hidden="true">&rarr;</div></a>
                     </div>
                 </div>
             </article>
         @endif
 
         <div
-            class="mx-auto w-full max-w-2xl border-t border-gray-900/10 pt-12 sm:pt-16 lg:mx-0 lg:max-w-none lg:border-t-0 lg:pt-0">
+             class="mx-auto w-full max-w-2xl border-t border-gray-900/10 pt-12 sm:pt-16 lg:mx-0 lg:max-w-none lg:border-t-0 lg:pt-0">
             <div class="-my-12 divide-y divide-gray-900/10">
                 @forelse($latestTwoPosts as $post)
                     <article class="py-12">
                         <div class="group relative max-w-xl">
-                            <span class="inline-block rounded-2xl bg-gradient-to-r from-amber-100 via-orange-200/75 to-orange-200 px-4 text-sm font-medium leading-6 text-gray-700">{{$post->tag->name}}</span>
+                            <span
+                                  class="inline-block rounded-2xl bg-gradient-to-r from-amber-100 via-orange-200/75 to-orange-200 px-4 text-sm font-medium leading-6 text-gray-700">{{ $post->tag->name ?? 'Sem tag' }}</span>
                             <h2 class="mt-2 text-lg lg:text-xl font-semibold text-gray-900 group-hover:text-gray-600">
-                                <a href="{{route('posts.show',$post->slug)}}" title="Ir para o post {{$post->name}}">
+                                <a href="{{ route('posts.show', $post->slug) }}"
+                                   title="Ir para o post {{ $post->name }}">
                                     <span class="absolute inset-0"></span>
-                                    {{$post->name}}
+                                    {{ $post->name }}
                                 </a>
                             </h2>
-                            <p class="mt-4 text-sm lg:text-base leading-6 text-gray-600">{{$post->meta['description'] ?? ''}}</p>
+                            <p class="mt-4 text-sm lg:text-base leading-6 text-gray-600">
+                                {{ $post->meta['description'] ?? '' }}</p>
                         </div>
                     </article>
                 @empty
-                    Nenhum post
+                    Nenhum post aqui
                 @endforelse
             </div>
         </div>
     </div>
-
 
     <div class="my-6">&nbsp;</div>
 
@@ -107,15 +132,18 @@
             <div class="relative">
                 <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div
-                        class="mx-auto flex max-w-2xl flex-col gap-16 bg-black/60 px-6 py-16 ring-1 ring-white/10 sm:rounded-3xl sm:p-8 lg:mx-0 lg:max-w-none lg:flex-row lg:items-start lg:py-20 xl:gap-x-20 xl:px-20">
+                         class="mx-auto flex max-w-2xl flex-col gap-16 bg-black/60 px-6 py-16 ring-1 ring-white/10 sm:rounded-3xl sm:p-8 lg:mx-0 lg:max-w-none lg:flex-row lg:items-start lg:py-20 xl:gap-x-20 xl:px-20">
                         <img alt="Mesa com copo de café a imagens com stickers de PHP, JS e fotos pessoais"
                              class="h-96 w-full flex-none rounded-2xl object-cover shadow-xl lg:aspect-square lg:h-auto lg:max-w-sm"
                              src="{{ asset('img/avatar-akop-4.webp') }}">
                         <div class="w-full flex-auto">
-                            <h2 class="text-3xl font-medium tracking-tight text-white sm:text-4xl">Conheça o proComercial</h2>
+                            <h2 class="text-3xl font-medium tracking-tight text-white sm:text-4xl">Conheça o
+                                proComercial</h2>
                             <p class="mt-6 text-base leading-7 text-white">
-                                👋🏻 Procurando um modelo de proposta comercial, uma planilha de fluxo de caixa ou um modelo de apresentação profissional?
-                                O proComercial tem a missão de oferecer muita variedade e qualidade para tarefas profissionais do dia-a-dia: aqui você encontra desde um simples exemplo de recibo,
+                                👋🏻 Procurando um modelo de proposta comercial, uma planilha de fluxo de caixa ou um
+                                modelo de apresentação profissional?
+                                O proComercial tem a missão de oferecer muita variedade e qualidade para tarefas
+                                profissionais do dia-a-dia: aqui você encontra desde um simples exemplo de recibo,
                                 até uma apresentação em PowerPoint de cair o queixo.
                             </p>
                             <ul role="list"
@@ -125,7 +153,7 @@
                                          aria-hidden="true">
                                         <path fill-rule="evenodd"
                                               d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                              clip-rule="evenodd"/>
+                                              clip-rule="evenodd" />
                                     </svg>
                                     Modelo de Proposta Comercial
                                 </li>
@@ -134,7 +162,7 @@
                                          aria-hidden="true">
                                         <path fill-rule="evenodd"
                                               d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                              clip-rule="evenodd"/>
+                                              clip-rule="evenodd" />
                                     </svg>
                                     Modelos de Planilhas Excel
                                 </li>
@@ -143,7 +171,7 @@
                                          aria-hidden="true">
                                         <path fill-rule="evenodd"
                                               d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                              clip-rule="evenodd"/>
+                                              clip-rule="evenodd" />
                                     </svg>
                                     Modelos de Cartas de Apresentação
                                 </li>
@@ -152,7 +180,7 @@
                                          aria-hidden="true">
                                         <path fill-rule="evenodd"
                                               d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                              clip-rule="evenodd"/>
+                                              clip-rule="evenodd" />
                                     </svg>
                                     Modelos de apresentação PowerPoint
                                 </li>
@@ -161,7 +189,7 @@
                                          aria-hidden="true">
                                         <path fill-rule="evenodd"
                                               d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                              clip-rule="evenodd"/>
+                                              clip-rule="evenodd" />
                                     </svg>
                                     Funções e Fórmulas Excel
                                 </li>
@@ -170,7 +198,7 @@
                                          aria-hidden="true">
                                         <path fill-rule="evenodd"
                                               d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                              clip-rule="evenodd"/>
+                                              clip-rule="evenodd" />
                                     </svg>
                                     Modelos de Currículos
                                 </li>
@@ -190,8 +218,8 @@
                 <div class="absolute inset-x-0 -top-16 -z-10 flex transform-gpu justify-center overflow-hidden blur-3xl"
                      aria-hidden="true">
                     <div
-                        class="aspect-[1318/752] w-[82.375rem] flex-none bg-gradient-to-r from-[#80caff] to-[#4f46e5] opacity-25"
-                        style="clip-path: polygon(73.6% 51.7%, 91.7% 11.8%, 100% 46.4%, 97.4% 82.2%, 92.5% 84.9%, 75.7% 64%, 55.3% 47.5%, 46.5% 49.4%, 45% 62.9%, 50.3% 87.2%, 21.3% 64.1%, 0.1% 100%, 5.4% 51.1%, 21.4% 63.9%, 58.9% 0.2%, 73.6% 51.7%)">
+                         class="aspect-[1318/752] w-[82.375rem] flex-none bg-gradient-to-r from-[#80caff] to-[#4f46e5] opacity-25"
+                         style="clip-path: polygon(73.6% 51.7%, 91.7% 11.8%, 100% 46.4%, 97.4% 82.2%, 92.5% 84.9%, 75.7% 64%, 55.3% 47.5%, 46.5% 49.4%, 45% 62.9%, 50.3% 87.2%, 21.3% 64.1%, 0.1% 100%, 5.4% 51.1%, 21.4% 63.9%, 58.9% 0.2%, 73.6% 51.7%)">
                     </div>
                 </div>
             </div>
@@ -213,7 +241,7 @@
                     </div>
                 </div>
                 <div
-                    class="mx-auto grid w-full max-w-xl grid-cols-2 items-center gap-y-12 lg:mx-0 lg:max-w-none lg:pl-8">
+                     class="mx-auto grid w-full max-w-xl grid-cols-2 items-center gap-y-12 lg:mx-0 lg:max-w-none lg:pl-8">
                     <img class="max-h-16 w-full object-contain object-left grayscale"
                          src="{{ asset('img/logo-arysta.webp') }}" title="Arysta" alt="Arysta - Logo">
                     <img class="max-h-16 w-full object-contain object-left grayscale"
@@ -244,7 +272,7 @@
     <div class="overflow-hidden bg-white py-24 sm:py-32">
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
             <div
-                class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+                 class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
                 <div class="lg:pr-8 lg:pt-4">
                     <div class="lg:max-w-lg">
                         <h2 class="text-base font-semibold leading-7 text-sky-600" id="projects">Software de Gestão
@@ -260,7 +288,7 @@
                                          fill="currentColor" aria-hidden="true">
                                         <path fill-rule="evenodd"
                                               d="M5.5 17a4.5 4.5 0 01-1.44-8.765 4.5 4.5 0 018.302-3.046 3.5 3.5 0 014.504 4.272A4 4 0 0115 17H5.5zm3.75-2.75a.75.75 0 001.5 0V9.66l1.95 2.1a.75.75 0 101.1-1.02l-3.25-3.5a.75.75 0 00-1.1 0l-3.25 3.5a.75.75 0 101.1 1.02l1.95-2.1v4.59z"
-                                              clip-rule="evenodd"/>
+                                              clip-rule="evenodd" />
                                     </svg>
                                     Disponível 24/7
                                 </dt>
@@ -275,7 +303,7 @@
                                          fill="currentColor" aria-hidden="true">
                                         <path fill-rule="evenodd"
                                               d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z"
-                                              clip-rule="evenodd"/>
+                                              clip-rule="evenodd" />
                                     </svg>
                                     Dados em segurança
                                 </dt>
@@ -290,7 +318,7 @@
                                          xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd"
                                               d="M10 1a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 1zM5.05 3.05a.75.75 0 011.06 0l1.062 1.06A.75.75 0 116.11 5.173L5.05 4.11a.75.75 0 010-1.06zm9.9 0a.75.75 0 010 1.06l-1.06 1.062a.75.75 0 01-1.062-1.061l1.061-1.06a.75.75 0 011.06 0zM3 8a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5A.75.75 0 013 8zm11 0a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5A.75.75 0 0114 8zm-6.828 2.828a.75.75 0 010 1.061L6.11 12.95a.75.75 0 01-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm3.594-3.317a.75.75 0 00-1.37.364l-.492 6.861a.75.75 0 001.204.65l1.043-.799.985 3.678a.75.75 0 001.45-.388l-.978-3.646 1.292.204a.75.75 0 00.74-1.16l-3.874-5.764z"
-                                              clip-rule="evenodd"/>
+                                              clip-rule="evenodd" />
                                     </svg>
                                     Interface amigável
                                 </dt>

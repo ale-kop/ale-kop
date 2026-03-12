@@ -12,13 +12,19 @@ use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    $featuredPost = Post::whereNull('course_id')
+    return view('index-temporary');
+})->name('index-temporary');
+
+if (config('app.env') === 'local')
+    {
+        Route::get('/', function () {
+    $featuredPost = Post::whereNotNull('course_id')->orWhereNull('course_id')
         ->with('tag')
         ->where('extra->featured', true)
         ->latest()
         ->first();
 
-    $latestTwoPosts = Post::whereNull('course_id')
+    $latestTwoPosts = Post::whereNotNull('course_id')->orWhereNull('course_id')
         ->with('tag')
         ->where('extra->featured', false)
         ->latest()
@@ -27,6 +33,14 @@ Route::get('/', function () {
 
     return view('index', compact('featuredPost', 'latestTwoPosts'));
 })->name('index');
+
+Route::get('/index2', function () {
+    $featuredPost = Post::with('tag')->where('extra->featured', true)->latest()->first();
+    $latestTwoPosts = Post::with('tag')->where('extra->featured', false)->latest()->limit(3)->get();
+
+    return view('index2', compact('featuredPost', 'latestTwoPosts'));
+});
+
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'show'])->name('login');
@@ -70,7 +84,7 @@ Route::get('cursos/{course}/edit', [CourseController::class, 'edit'])->name('cou
 Route::patch('cursos/{course}', [CourseController::class, 'update'])->name('courses.update');
 Route::delete('cursos/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');
 Route::get('cursos/{courseSlug}', [CourseController::class, 'show'])->name('courses.show');
-Route::get('cursos/{courseSlug}/{post}', [CourseController::class, 'showPost'])->name('courses.showPost');
 
 // Catch-all post slug must be last
 Route::get('{post:slug}', [PostController::class, 'show'])->name('posts.show');
+    }

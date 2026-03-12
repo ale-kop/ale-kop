@@ -16,8 +16,8 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         $user = User::query()->firstOrCreate(
-            ['email' => 'test@example.com'],
-            ['name' => 'Test User', 'password' => 'password']
+            ['email' => 'contato@alekop.com'],
+            ['name' => 'Aleksandr', 'password' => 'password']
         );
 
         $this->call([
@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             SectionSeeder::class,
             PostSeeder::class,
             TagSeeder::class,
+            ReadPostsSeeder::class,
         ]);
     }
 }

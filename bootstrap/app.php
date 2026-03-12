@@ -4,14 +4,15 @@ use App\Exceptions\Auth\LoginException;
 use App\Exceptions\Auth\RegistrationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -30,21 +31,25 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->expectsJson()) {
                 return response()->json([
                     'message' => $e->getMessage(),
-                ], 422);
+                ], 401);
             }
 
             return back()->withErrors(['auth' => $e->getMessage()])->withInput();
         });
 
         // Model not found => 404
-        $exceptions->render(function (ModelNotFoundException $e, Request $request) {
+        $exceptions->render(function (NotFoundHttpException|ModelNotFoundException $e, Request $request) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'message' => 'Resource not found',
                 ], 404);
             }
 
-            return response('Not Found', 404);
+            if (config('app.debug')) {
+                return null; // let the default debug page render
+            }
+
+            return response()->view('errors.404', [], 404);
         });
 
         // Authorization (policy/gate) => 403

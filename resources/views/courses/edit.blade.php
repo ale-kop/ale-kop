@@ -1,6 +1,6 @@
 @php /** @var \App\Models\Course $course */ @endphp
 <x-layout :title="'Editar Curso: ' . $course->name">
-    <x-container class="pt-16 max-w-2xl">
+    <x-container class="max-w-2xl">
         <h1 class="text-3xl font-bold mb-6">Editar Curso</h1>
         <form action="{{ route('courses.update', $course) }}" method="post" enctype="multipart/form-data" class="space-y-6">
             @csrf

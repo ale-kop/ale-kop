@@ -53,12 +53,43 @@
     font-display: swap;
 }
 
+/* Carrega Fraunces (display serif) — latin-ext para acentos portugueses */
+@font-face {
+    font-family: 'Fraunces';
+    src: url('/fonts/Fraunces-latin-ext.woff2') format('woff2');
+    font-weight: 400 900;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Carrega Fraunces (display serif) — latin */
+@font-face {
+    font-family: 'Fraunces';
+    src: url('/fonts/Fraunces-latin.woff2') format('woff2');
+    font-weight: 400 900;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @theme {
 
     /*--font-sans: InterVariable;*/
 
     --font-sans: 'Instrument Sans', InterVariable;
     --font-mono: 'Geist Mono';
+    --font-display: 'Fraunces', serif;
+
+    /* ── Paleta Ale Kop ──────────────────────────────── */
+    --color-brand:        #144A6E;   /* azul profundo    */
+    --color-brand-light:  #ECEFFE;   /* índigo claro     */
+    --color-accent:       #D95F02;   /* laranja queimado */
+    --color-accent-light: #FEF0E7;   /* laranja claro    */
+    --color-cream:        #F7F6F3;   /* fundo creme      */
+    --color-done:         #1A7F4E;   /* verde concluído  */
+    --color-done-light:   #E8F5EE;   /* verde claro      */
+    /* ─────────────────────────────────────────────────── */
 
     --animate-none: none;
     --animate-spin: spin 1s linear infinite;
@@ -118,6 +149,17 @@
     --animate-wiggle: wiggle 1s linear infinite;
     --animate-wiggle-once: wiggle 1s linear;
 
+    /* Hero ambient animations */
+    --animate-badge-float: badge-float 4s ease-in-out infinite;
+    --animate-badge-dot:   badge-dot 2s ease-in-out infinite;
+    --animate-ambient-fade-in: ambient-fade-in 2s ease 0.3s forwards;
+    --animate-orb-1: ambient-fade-in 1.8s ease forwards, orb-drift-1 20s ease-in-out 1.8s infinite;
+    --animate-orb-2: ambient-fade-in 2.2s ease forwards, orb-drift-2 25s ease-in-out 2.2s infinite;
+    --animate-orb-3: ambient-fade-in 2.6s ease forwards, orb-drift-3 18s ease-in-out 2.6s infinite;
+    --animate-fade-up: fade-up 0.6s ease both;
+    --animate-hero-breathe: hero-breathe 12s ease-in-out infinite alternate;
+    --animate-glow-pulse: glow-pulse 4s ease-in-out infinite alternate;
+
     /* keyframes */
     @keyframes dots {
         0%, 20% { content: ""; }
@@ -163,6 +205,69 @@
     @keyframes wiggle {
         0%,100% { transform: rotate(-3deg); }
         50%     { transform: rotate(3deg); }
+    }
+
+    @keyframes card-entry {
+        from { opacity: 0; transform: translateY(24px) scale(0.97); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes card-float {
+        0%,100% { transform: translateY(0); }
+        50%     { transform: translateY(-8px); }
+    }
+
+    @keyframes ring-pulse {
+        0%   { transform: translate(-50%,-50%) scale(0.45); opacity: 0; }
+        15%  { opacity: 0.7; }
+        100% { transform: translate(-50%,-50%) scale(1); opacity: 0; }
+    }
+
+    @keyframes ambient-fade-in {
+        to { opacity: 1; }
+    }
+
+    @keyframes orb-drift-1 {
+        0%,100% { transform: translate(0,0) scale(1); }
+        35%     { transform: translate(-22px,28px) scale(1.07); }
+        68%     { transform: translate(14px,-16px) scale(0.94); }
+    }
+
+    @keyframes orb-drift-2 {
+        0%,100% { transform: translate(0,0) scale(1); }
+        40%     { transform: translate(24px,-20px) scale(1.09); }
+        72%     { transform: translate(-12px,12px) scale(0.97); }
+    }
+
+    @keyframes orb-drift-3 {
+        0%,100% { transform: translate(0,0); }
+        50%     { transform: translate(-16px,18px); }
+    }
+
+    @keyframes badge-float {
+        0%,100% { transform: translateY(0); }
+        50%     { transform: translateY(-5px); }
+    }
+
+    @keyframes badge-dot {
+        0%,100% { opacity: 1; }
+        50%     { opacity: 0.4; }
+    }
+
+    @keyframes fade-up {
+        from { opacity: 0; transform: translateY(14px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes hero-breathe {
+        0%   { opacity: .65; }
+        50%  { opacity: 1; }
+        100% { opacity: .72; }
+    }
+
+    @keyframes glow-pulse {
+        from { opacity: .7; transform: scale(.96); }
+        to   { opacity: 1; transform: scale(1.04); }
     }
 
     @keyframes slide-up {
@@ -262,17 +367,93 @@ dialog::backdrop {
 .html-content li > ol { @apply mt-2; }
 
 .html-content blockquote {
-    @apply border-l-4 border-gray-300 dark:border-gray-700 pl-4 italic text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 rounded-r;
+    position: relative;
+    padding: 2px 16px 2px 52px;
+    font-style: italic;
+    color: #4B5563;
+    border: none;
+    background: transparent;
+    line-height: 1.75;
+    margin: 1.25rem 0;
+}
+.html-content blockquote::before {
+    content: "\201C";
+    position: absolute;
+    left: 4px;
+    top: -10px;
+    font-size: 4rem;
+    line-height: 1;
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #D95F02;
+    font-style: normal;
+}
+.html-content blockquote p { margin: 0; padding: 0; }
+:where(.dark, .dark *) .html-content blockquote {
+    color: #9CA3AF;
 }
 
+/* ── Callout boxes — <aside data-callout="note|tip|warning|danger"> ─ */
+.html-content aside[data-callout] {
+    border-left: 4px solid;
+    padding: 6px 16px;
+    background: transparent;
+    border-radius: 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin: 1.25rem 0;
+    color: inherit;
+}
+.html-content aside[data-callout] > p {
+    margin: 0;
+    padding: 0;
+    color: inherit;
+}
+.html-content aside[data-callout]::before {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+/* NOTE — azul */
+.html-content aside[data-callout="note"]          { border-color: #2563EB; }
+.html-content aside[data-callout="note"]::before  { content: "ℹ️ Nota";    color: #2563EB; }
+:where(.dark, .dark *) .html-content aside[data-callout="note"]         { border-color: #60A5FA; }
+:where(.dark, .dark *) .html-content aside[data-callout="note"]::before { color: #60A5FA; }
+
+/* TIP — verde */
+.html-content aside[data-callout="tip"]           { border-color: #1A7F4E; }
+.html-content aside[data-callout="tip"]::before   { content: "💡 Dica";   color: #1A7F4E; }
+:where(.dark, .dark *) .html-content aside[data-callout="tip"]          { border-color: #34D399; }
+:where(.dark, .dark *) .html-content aside[data-callout="tip"]::before  { color: #34D399; }
+
+/* WARNING — laranja accent */
+.html-content aside[data-callout="warning"]          { border-color: #D95F02; }
+.html-content aside[data-callout="warning"]::before  { content: "⚠️ Atenção"; color: #D95F02; }
+:where(.dark, .dark *) .html-content aside[data-callout="warning"]         { border-color: #FB923C; }
+:where(.dark, .dark *) .html-content aside[data-callout="warning"]::before { color: #FB923C; }
+
+/* DANGER — vermelho */
+.html-content aside[data-callout="danger"]          { border-color: #DC2626; }
+.html-content aside[data-callout="danger"]::before  { content: "🚨 Cuidado"; color: #DC2626; }
+:where(.dark, .dark *) .html-content aside[data-callout="danger"]          { border-color: #F87171; }
+:where(.dark, .dark *) .html-content aside[data-callout="danger"]::before  { color: #F87171; }
+
 .html-content code {
-    @apply text-sm px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-pink-600 dark:text-pink-400;
+    @apply text-sm px-1.5 py-0.5 rounded bg-[#F0F0EF] dark:bg-gray-800 text-accent dark:text-orange-400;
 }
 .html-content pre {
     @apply relative bg-[#272822] text-[#f8f8f2] rounded-lg p-4 overflow-x-auto my-6 shadow-sm;
 }
 .html-content pre code {
     @apply bg-transparent p-0 text-inherit leading-relaxed;
+}
+/* highlight.js: mantém o fundo do <pre>, não deixa .hljs sobrescrever */
+.html-content pre code.hljs {
+    background: transparent;
+    padding: 0;
 }
 /* Copy button for code blocks */
 .html-content pre .code-copy-btn {
@@ -329,4 +510,119 @@ dialog::backdrop {
 [data-tooltip]:hover::before,
 [data-tooltip]:hover::after{
     --scale: 1;
+}
+
+/* ── Hero background effects ────────────────────────── */
+
+.hero-grid {
+    background-image:
+        linear-gradient(rgba(109, 43, 126, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(43,76,126,0.07) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse 60% 60% at 62% 40%, black 15%, transparent 60%);
+    -webkit-mask-image: radial-gradient(ellipse 60% 60% at 62% 40%, black 15%, transparent 60%);
+}
+
+/* ── Marca-texto (highlighter) underline ─────────────── */
+.mark-highlight {
+    text-decoration: none;
+    padding-bottom: 2px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M0 4Q25 0 50 5Q75 9 100 3Q125-1 150 5Q175 9 200 4L200 10Q175 14 150 9Q125 5 100 10Q75 14 50 9Q25 5 0 10Z' fill='%23D95F02' opacity='0.35'/%3E%3C/svg%3E");
+    background-position: 0 100%;
+    background-size: 100% 10px;
+    background-repeat: no-repeat;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+}
+
+/* ── CTA Aurora effects ─────────────────────────────── */
+
+/* Diffuse glow trail behind the button */
+.cta-glow {
+    @apply absolute -inset-3 rounded-2xl pointer-events-none;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0%,
+        transparent 70%,
+        rgba(124,58,237,0.25) 80%,
+        rgba(99,102,241,0.15) 85%,
+        transparent 95%,
+        transparent 100%
+    );
+    filter: blur(10px);
+    animation: spin 3s linear infinite;
+}
+
+/* Border beam container */
+.cta-ring {
+    @apply absolute -inset-0.5 rounded-xl overflow-hidden pointer-events-none;
+}
+/* Spinning beam — narrow bright spot */
+.cta-ring::before {
+    content: '';
+    @apply absolute;
+    inset: -50%;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0%,
+        transparent 72%,
+        #a78bfa 78%,
+        #c4b5fd 80%,
+        #fff 81%,
+        #c4b5fd 82%,
+        #a78bfa 84%,
+        transparent 90%,
+        transparent 100%
+    );
+    animation: spin 3s linear infinite;
+}
+
+/* ── Glow Button (reusable component) ──────────────────
+   Usa @property para animar o ângulo do conic-gradient
+   de forma nativa (sem rotacionar o elemento inteiro).
+   Paleta: accent #D95F02 → brand #144A6E → violeta
+────────────────────────────────────────────────────── */
+
+@property --glow-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@keyframes glow-btn-spin {
+    to { --glow-angle: 360deg; }
+}
+
+.glow-btn-wrapper {
+    position: relative;
+}
+
+/* Bloom suave atrás do botão */
+.glow-btn-bloom {
+    position: absolute;
+    inset: 3px;
+    border-radius: 18px;
+    background: conic-gradient(
+        from var(--glow-angle),
+        #02d938 0%,
+        #407da5 35%,
+        #6366f1 65%,
+        #02d938 100%
+    );
+    filter: blur(14px);
+    opacity: 0.55;
+    animation: glow-btn-spin 4s linear infinite;
+    pointer-events: none;
+}
+
+/* Borda animada — 2px visível em volta do inner */
+.glow-btn-ring {
+    background: conic-gradient(
+        from var(--glow-angle),
+        #02d958 0%,
+        #287cb4 35%,
+        #818cf8 65%,
+        #02d958 100%
+    );
+    animation: glow-btn-spin 4s linear infinite;
 }

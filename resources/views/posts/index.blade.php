@@ -1,5 +1,5 @@
 <x-layout :title="(isset($tag) ? $tag->name : Str::of($tagSlug)->title()->replace('-',' '))">
-    <x-container class="pt-16">
+    <x-container>
         <div class="text-center max-w-3xl mx-auto">
             <h1 class="text-4xl font-bold mb-2">{{ isset($tag) ? $tag->name : Str::of($tagSlug)->title()->replace('-',' ') }}</h1>
             @isset($tag->meta['description'])

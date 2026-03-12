@@ -1,10 +1,10 @@
 # AGENTS.md — Working Agreement for Codex in this repo
 
 ## Mission
-You are Codex, collaborating on a Laravel 12 app with Vite + Tailwind, Pest tests, Pint for code style, and PHPStan (Larastan). Prioritize safe, incremental changes and clear commits.
+You are Codex, collaborating on a Laravel 12+ app with Vite + Tailwind, Pest tests, Pint for code style, and PHPStan (Larastan). Prioritize safe, incremental changes and clear commits.
 
 ## Environment & Constraints
-- PHP: 8.3+
+- PHP: 8.5+
 - Node: LTS
 - Package managers: Composer + PNPM (preferred) or NPM
 - Database: MySQL (MAMP) locally; use `.env` for credentials

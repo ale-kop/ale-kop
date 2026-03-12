@@ -1,6 +1,6 @@
 @php /** @var \App\Models\Section $section */ @endphp
 <x-layout :title="'Editar Seção: ' . $section->name">
-    <x-container class="pt-16 max-w-2xl">
+    <x-container class="max-w-2xl">
         <h1 class="text-3xl font-bold mb-6">Editar Seção</h1>
         <form action="{{ route('sections.update', $section) }}" method="post" class="space-y-6">
             @csrf

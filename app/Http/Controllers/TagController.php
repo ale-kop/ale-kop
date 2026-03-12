@@ -15,7 +15,7 @@ class TagController extends Controller
      */
     public function index(Request $request)
     {
-        $tags = Tag::withCount('posts')->get();
+        $tags = Tag::withCount('posts')->with('media')->get();
 
         if ($request->wantsJson()) {
             return response()->json(['tags' => $tags]);
@@ -45,7 +45,7 @@ class TagController extends Controller
             'meta->description' => data_get($request->meta, 'description'),
         ]);
 
-        if ($request->featured_image) {
+        if ($request->hasFile('featured_image')) {
             $tag->addMediaFromRequest('featured_image')->toMediaCollection('tag-image');
         }
 
@@ -85,9 +85,11 @@ class TagController extends Controller
             'meta->description' => data_get($request->meta, 'description'),
         ]);
 
-        if ($request->featured_image) {
+        if ($request->hasFile('featured_image')) {
             $tag->clearMediaCollection('tag-image');
             $tag->addMediaFromRequest('featured_image')->toMediaCollection('tag-image');
+        } elseif ($request->boolean('featured_image_remove')) {
+            $tag->clearMediaCollection('tag-image');
         }
 
         if ($request->wantsJson()) {

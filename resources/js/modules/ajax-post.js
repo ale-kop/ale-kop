@@ -113,6 +113,9 @@ async function handleAjaxResponse(response, button) {
 function setButtonLoadingState(button, isLoading) {
     const loadingIcon  = button.querySelector('.loading-icon')
     const originalIcon = button.querySelector('.original-icon')
+    // Support new data-* API used by <x-forms.button>
+    const spinnerEl = button.querySelector('[data-spinner]')
+    const labelEl   = button.querySelector('[data-label]')
 
     if (loadingIcon) {
         loadingIcon.classList.toggle('opacity-0', !isLoading)
@@ -122,6 +125,30 @@ function setButtonLoadingState(button, isLoading) {
     if (originalIcon) {
         originalIcon.classList.toggle('opacity-0', isLoading)
         originalIcon.classList.toggle('absolute', isLoading)
+    }
+
+    if (spinnerEl || labelEl) {
+        if (isLoading) {
+            if (spinnerEl) {
+                spinnerEl.classList.remove('opacity-0')
+                spinnerEl.classList.add('absolute')
+            }
+            if (labelEl) {
+                labelEl.classList.remove('hidden')
+                labelEl.classList.remove('opacity-100')
+                labelEl.classList.add('opacity-0')
+            }
+        } else {
+            if (spinnerEl) {
+                spinnerEl.classList.add('opacity-0')
+                // keep absolute to center overlay when hidden; harmless
+                spinnerEl.classList.add('absolute')
+            }
+            if (labelEl) {
+                labelEl.classList.remove('opacity-0')
+                labelEl.classList.add('opacity-100')
+            }
+        }
     }
 
     if (isLoading) {

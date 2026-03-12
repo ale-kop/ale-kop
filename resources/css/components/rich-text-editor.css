@@ -41,9 +41,88 @@
 }
 
 [data-rich-text-editor] .editor blockquote {
-    @apply border-l-4 border-gray-300 pl-4 italic text-gray-700 my-4;
+    position: relative;
+    padding: 2px 16px 2px 52px;
+    font-style: italic;
+    color: #6B7280;
+    border: none;
+    background: transparent;
+    line-height: 1.75;
+    margin: 12px 0;
 }
+[data-rich-text-editor] .editor blockquote::before {
+    content: "\201C";
+    position: absolute;
+    left: 4px;
+    top: -10px;
+    font-size: 4rem;
+    line-height: 1;
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #D95F02;
+    font-style: normal;
+}
+
+/* ── Callout preview no editor ─────────────────────── */
+[data-rich-text-editor] .editor aside[data-callout] {
+    border-left: 4px solid;
+    padding: 6px 16px;
+    background: transparent;
+    border-radius: 0;
+    margin: 8px 0;
+}
+[data-rich-text-editor] .editor aside[data-callout]::before {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+[data-rich-text-editor] .editor aside[data-callout="note"]         { border-color: #2563EB; }
+[data-rich-text-editor] .editor aside[data-callout="note"]::before  { content: "ℹ️ Nota";    color: #2563EB; }
+
+[data-rich-text-editor] .editor aside[data-callout="tip"]          { border-color: #1A7F4E; }
+[data-rich-text-editor] .editor aside[data-callout="tip"]::before   { content: "💡 Dica";    color: #1A7F4E; }
+
+[data-rich-text-editor] .editor aside[data-callout="warning"]         { border-color: #D95F02; }
+[data-rich-text-editor] .editor aside[data-callout="warning"]::before { content: "⚠️ Atenção"; color: #D95F02; }
+
+[data-rich-text-editor] .editor aside[data-callout="danger"]         { border-color: #DC2626; }
+[data-rich-text-editor] .editor aside[data-callout="danger"]::before { content: "🚨 Cuidado"; color: #DC2626; }
 
 [data-rich-text-editor] .editor pre {
     @apply bg-gray-100 text-sm font-mono p-4 rounded overflow-x-auto my-4;
+}
+
+/* ── Modo maximizado ─────────────────────────────── */
+[data-rich-text-editor].is-maximized {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    border: none;
+    box-shadow: 0 0 0 100vmax rgba(0,0,0,.35);
+}
+[data-rich-text-editor].is-maximized .toolbar {
+    flex-shrink: 0;
+}
+[data-rich-text-editor].is-maximized .editor,
+[data-rich-text-editor].is-maximized [data-code-area] {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+/* ── Área de código HTML ─────────────────────────── */
+[data-rich-text-editor] [data-code-area] {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.85rem;
+    line-height: 1.65;
+    color: #374151;
+    background: #F9FAFB;
+    border-top: 1px solid #E5E7EB;
+    width: 100%;
+    resize: none;
+    display: block;
 }

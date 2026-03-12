@@ -1,5 +1,5 @@
 <x-layout title="Gerenciar Posts">
-    <x-container class="pt-16">
+    <x-container>
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-3xl font-bold">Gerenciar Posts</h1>
             <a href="{{ route('posts.create') }}" class="px-3 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Novo Post</a>
@@ -29,7 +29,8 @@
                             <td class="px-4 py-2">
                                 @php
                                     $readable = $post->course_id !== null;
-                                    $isRead = $readable ? $post->isReadBy(auth()->user()) : false;
+                                    // Prefer the eager-loaded is_read flag; controllers already use withReadFlag
+                                    $isRead = $readable ? (bool) ($post->is_read ?? false) : false;
                                 @endphp
                                 <span class="inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded {{ $isRead ? 'bg-emerald-100 text-emerald-700' : ($readable ? 'bg-gray-100 text-gray-600' : 'bg-gray-50 text-gray-400') }}">
                                     {{ $isRead ? 'Lido' : ($readable ? 'Não lido' : 'Avulso') }}

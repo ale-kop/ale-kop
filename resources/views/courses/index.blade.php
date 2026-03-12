@@ -1,5 +1,5 @@
 <x-layout title="Cursos">
-    <x-container class="pt-16">
+    <x-container>
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-4xl font-bold">Cursos</h1>
             <a href="{{ route('courses.create') }}" class="px-3 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Novo Curso</a>

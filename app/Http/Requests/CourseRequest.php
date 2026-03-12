@@ -19,6 +19,8 @@ class CourseRequest extends FormRequest
             'meta' => ['nullable', 'array'],
             'extra' => ['nullable', 'array'],
             'featured_image' => ['nullable', 'file', 'image'],
+            // 0 = manter, 1 = remover imagem existente
+            'featured_image_remove' => ['nullable', 'in:0,1'],
         ];
     }
 }

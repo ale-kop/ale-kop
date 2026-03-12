@@ -1,46 +1,38 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class LoginExceptionTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    public function test_invalid_credentials_redirect_back_with_error(): void
-    {
-        User::factory()->create([
-            'email' => 'john@example.com',
-            'password' => bcrypt('secret123'),
-        ]);
+it('redirects back with error on invalid credentials', function () {
+    User::factory()->create([
+        'email' => 'john@example.com',
+        'password' => bcrypt('secret123'),
+    ]);
 
-        $response = $this->from('/login')->post('/login', [
-            'email' => 'john@example.com',
-            'password' => 'wrong',
-        ]);
+    $response = $this->from('/login')->post('/login', [
+        'email' => 'john@example.com',
+        'password' => 'wrong',
+    ]);
 
-        $response->assertRedirect('/login');
-        $response->assertSessionHasErrors('auth');
-    }
+    $response->assertRedirect('/login');
+    $response->assertSessionHasErrors('auth');
+});
 
-    public function test_invalid_credentials_ajax_returns_json(): void
-    {
-        User::factory()->create([
-            'email' => 'john@example.com',
-            'password' => bcrypt('secret123'),
-        ]);
+it('returns JSON 401 on invalid credentials for ajax', function () {
+    User::factory()->create([
+        'email' => 'john@example.com',
+        'password' => bcrypt('secret123'),
+    ]);
 
-        $response = $this->postJson('/login', [
-            'email' => 'john@example.com',
-            'password' => 'wrong',
-        ]);
+    $response = $this->postJson('/login', [
+        'email' => 'john@example.com',
+        'password' => 'wrong',
+    ]);
 
-        $response->assertStatus(422);
-        $response->assertJson([
-            'message' => 'Invalid credentials.',
-        ]);
-    }
-}
+    $response->assertStatus(401);
+    $response->assertJson([
+        'message' => 'Invalid credentials.',
+    ]);
+});

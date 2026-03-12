@@ -1,5 +1,5 @@
 <x-layout :title="$course->name">
-    <x-container class="mt-24">
+    <x-container>
         <h1 class="text-4xl font-bold mb-6">{{ $course->name }}</h1>
     </x-container>
 
@@ -11,12 +11,12 @@
         </div>
     @endif
 
-    <x-container class="pt-16">
+    <x-container>
         <p class="text-gray-600 dark:text-gray-300 mb-10">{{ data_get($course->meta, 'description') }}</p>
 
         <h2 class="text-2xl font-semibold mb-4">Posts</h2>
         @if($course->posts && $course->posts->count())
-            <x-posts-list route="courses.showPost" :posts="$course->posts" />
+            <x-posts-list :posts="$course->posts" />
         @else
             <p class="text-gray-600 dark:text-gray-300">Este curso ainda não possui posts.</p>
         @endif
