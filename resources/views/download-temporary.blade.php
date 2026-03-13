@@ -44,7 +44,7 @@
             <p class="text-base text-gray-600 leading-relaxed mb-8">
                 Seu arquivo está sendo baixado.<br>
                 <span class="text-gray-400 text-sm">Se não iniciou automaticamente,
-                    <a href="{{ route('download.stream', ['url' => $url]) }}"
+                    <a href="{{ $streamUrl }}"
                        class="underline hover:text-gray-700 transition-colors">clique aqui</a>.
                 </span>
             </p>
@@ -133,7 +133,7 @@
     // Dispara o download automaticamente ao carregar a página
     (function () {
         var link = document.createElement('a');
-        link.href = '{{ route('download.stream', ['url' => $url]) }}';
+        link.href = '{{ $streamUrl }}';
         link.style.display = 'none';
         document.body.appendChild(link);
         link.click();

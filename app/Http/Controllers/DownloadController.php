@@ -7,28 +7,39 @@ use Illuminate\Support\Facades\Http;
 
 class DownloadController extends Controller
 {
+    private function validateUrl(?string $url): bool
+    {
+        if (! $url) {
+            return false;
+        }
+
+        $parsed = parse_url($url);
+
+        return isset($parsed['scheme'], $parsed['host'])
+            && in_array($parsed['scheme'], ['http', 'https'])
+            && str_ends_with($parsed['host'], 'alekop.com');
+    }
+
     public function show(Request $request)
     {
         $url = $request->query('url');
 
-        abort_unless($url && filter_var($url, FILTER_VALIDATE_URL), 400);
+        abort_unless($this->validateUrl($url), 400);
 
-        return view('download-temporary', compact('url'));
+        // Build stream URL manually to avoid double-encoding
+        $streamUrl = url('/baixar/arquivo') . '?url=' . rawurlencode($url);
+
+        return view('download-temporary', compact('url', 'streamUrl'));
     }
 
     public function stream(Request $request)
     {
         $url = $request->query('url');
 
-        abort_unless($url && filter_var($url, FILTER_VALIDATE_URL), 400);
+        abort_unless($this->validateUrl($url), 403);
 
         $parsed = parse_url($url);
-        abort_unless(
-            isset($parsed['host']) && str_ends_with($parsed['host'], 'alekop.com'),
-            403
-        );
-
-        $response = Http::timeout(30)->get($url);
+        $response = Http::timeout(60)->get($url);
 
         abort_unless($response->successful(), 404);
 

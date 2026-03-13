@@ -1,6 +1,38 @@
 # Instruções e dicas gerais
 
-## Script de deploy
+## Deploy com Laravel Envoy
+
+O arquivo `Envoy.blade.php` na raiz do projeto automatiza o deploy via SSH.
+
+**Pré-requisito:** `composer require laravel/envoy --dev`
+**SSH:** requer host `akop` configurado em `~/.ssh/config` apontando para o servidor.
+
+### Deploy completo
+
+```bash
+php envoy run deploy
+```
+
+Executa em sequência: `pull` → `composer` → `npm` → `artisan` (migrations + caches + queues).
+
+### Tasks avulsas
+
+```bash
+php envoy run cache:clear   # limpa todos os caches sem derrubar o site
+php envoy run rollback      # reverte o último commit e refaz tudo
+php envoy run down          # coloca em manutenção
+php envoy run up            # volta ao ar
+```
+
+### Deploy em outra branch
+
+```bash
+php envoy run deploy --branch=staging
+```
+
+---
+
+## Script de deploy (legado)
 ```
 set -x
 function execute_run_php () {
