@@ -18,6 +18,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+/.claude
 
 # Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos,vim,phpstorm,intellij+all,visualstudiocode,openframeworks+visualstudio,laravel,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,macos,vim,phpstorm,intellij+all,visualstudiocode,openframeworks+visualstudio,laravel,node

@@ -20,7 +20,8 @@
     php artisan down --refresh=15 --retry=10
 
     echo "==> Pulling {{ $branch }}"
-    git pull origin {{ $branch }}
+    git fetch origin {{ $branch }}
+    git reset --hard origin/{{ $branch }}
 @endtask
 
 @task('composer', ['on' => 'web'])
