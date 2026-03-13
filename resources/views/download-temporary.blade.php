@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Ale Kop</title>
+    <title>Download · Ale Kop</title>
     <meta name="description" content="Conteúdo sobre IA, vendas consultivas, marketing e comunicação eficaz.">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -28,51 +28,37 @@
     <div class="w-full max-w-xl text-center">
 
         {{-- ── Foto ── --}}
-        
-    <img src="{{ asset('img/ale-kop-avatar-2.png') }}" alt="Ale Kop" class="w-1/2 rounded-full object-cover mx-auto mb-5 border border-sky-400/10 shadow-lg shadow-sky-100">
-        
+        <img src="{{ asset('img/ale-kop-avatar-2.png') }}" alt="Ale Kop"
+             class="w-1/2 rounded-full object-cover mx-auto mb-5 border border-sky-400/10 shadow-lg shadow-sky-100">
 
-        {{-- ── Nome + badge ── --}}
+        {{-- ── Mensagem de gratidão ── --}}
         <div class="animate-fade-up" style="animation-delay:.2s">
-            <h1 class="font-display text-4xl font-black text-gray-900 tracking-tight mb-2">Ale Kop</h1>
             <div class="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest
                         uppercase text-accent bg-accent/10 border border-accent/20
-                        px-3 py-1.5 rounded-full mb-5">
-                ✦ IA · Vendas · Marketing · Comunicação
+                        px-3 py-1.5 rounded-full mb-4">
+                ✦ Download em andamento
             </div>
+            <h1 class="font-display text-3xl font-black text-gray-900 tracking-tight mb-3">
+                Obrigado!
+            </h1>
+            <p class="text-base text-gray-600 leading-relaxed mb-8">
+                Seu arquivo está sendo baixado.<br>
+                <span class="text-gray-400 text-sm">Se não iniciou automaticamente,
+                    <a href="{{ route('download.stream', ['url' => $url]) }}"
+                       class="underline hover:text-gray-700 transition-colors">clique aqui</a>.
+                </span>
+            </p>
         </div>
 
-        {{-- ── Bio ── --}}
-        <p class="text-base text-gray-600 leading-relaxed mb-6 animate-fade-up" style="animation-delay:.3s">
-            Especialista em <strong class="text-gray-900">vendas consultivas e comunicação estratégica</strong>,
-            ajudo profissionais a construir conversas que convencem — e a usar
-            <strong class="text-gray-900">Inteligência Artificial</strong> para acelerar resultados em marketing,
-            negociação e relacionamento com clientes.
-        </p>
-
-        {{-- ── Chips de interesse ── --}}
-        <div class="flex flex-wrap justify-center gap-2 mb-10 animate-fade-up" style="animation-delay:.35s">
-            @foreach([
-                '🤖 Inteligência Artificial',
-                '🤝 Vendas Consultivas',
-                '📣 Marketing de Conteúdo',
-                '🗣️ Comunicação Eficaz',
-                '🧠 Persuasão',
-                '💼 Negociação',
-            ] as $topic)
-                <span class="bg-white border border-stone-200 text-gray-600 text-xs font-medium
-                             px-3 py-1.5 rounded-full shadow-sm">{{ $topic }}</span>
-            @endforeach
-        </div>
-
-        {{-- ── Newsletter ── --}}
-        <div class="bg-white border border-stone-200 rounded-2xl p-6 mb-8 animate-fade-up"
-             style="animation-delay:.4s;box-shadow:0 8px 32px rgba(20,74,110,0.07),0 0 0 1px rgba(0,0,0,0.03)">
+        {{-- ── Newsletter (oculta, aparece após 3s) ── --}}
+        <div id="newsletter-card"
+             class="bg-white border border-stone-200 rounded-2xl p-6 mb-8 opacity-0 translate-y-4 transition-all duration-700"
+             style="box-shadow:0 8px 32px rgba(20,74,110,0.07),0 0 0 1px rgba(0,0,0,0.03)">
 
             <div class="text-xs font-black uppercase tracking-widest text-brand mb-1">Newsletter</div>
             <p class="text-sm text-gray-500 mb-5 leading-relaxed">
-                Conteúdo sobre IA, vendas e comunicação direto no seu e-mail.<br>
-                <span class="text-gray-400">Sem spam. Cancele quando quiser.</span>
+                Não perca conteúdos como esse, que serão lançados em breve.<br>
+                <span class="text-gray-400">Sobre IA, Vendas, Marketing e Comunicação.</span>
             </p>
 
             {{-- SendPulse Simple Subscription Form --}}
@@ -142,6 +128,25 @@
     </div>
 
 </main>
+
+<script>
+    // Dispara o download automaticamente ao carregar a página
+    (function () {
+        var link = document.createElement('a');
+        link.href = '{{ route('download.stream', ['url' => $url]) }}';
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    })();
+
+    // Exibe o card da newsletter após 3 segundos
+    setTimeout(function () {
+        var card = document.getElementById('newsletter-card');
+        card.classList.remove('opacity-0', 'translate-y-4');
+        card.classList.add('opacity-100', 'translate-y-0');
+    }, 3000);
+</script>
 
 </body>
 </html>

@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\TagController;
@@ -14,6 +15,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('index-temporary');
 })->name('index-temporary');
+
+Route::get('/baixar', [DownloadController::class, 'show'])->name('download.show');
+Route::get('/baixar/arquivo', [DownloadController::class, 'stream'])->name('download.stream');
 
 if (config('app.env') === 'local')
     {

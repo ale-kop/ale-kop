@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ale Kop — Layout Redesign</title>
+  <style>
+    /* ─── Design Tokens ─────────────────────────────────────────── */
+    :root {
+      --bg:           #F7F6F3;   /* fundo creme quente — leitura amigável */
+      --surface:      #FFFFFF;
+      --primary:      #2B3A8F;   /* índigo profundo — identidade própria   */
+      --primary-lt:   #ECEFFE;
+      --accent:       #D95F02;   /* laranja queimado — energia / destaque   */
+      --accent-lt:    #FEF0E7;
+      --success:      #1A7F4E;   /* verde para "concluído"                  */
+      --success-lt:   #E8F5EE;
+      --text:         #1A1A2E;
+      --muted:        #6B7280;
+      --border:       #E4E2DC;
+      --sidebar-w:    280px;
+      --nav-h:        56px;
+      --r:            8px;
+    }
+
+    /* ─── Reset / Base ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ─── Navbar ────────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      height: var(--nav-h);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 24px;
+      gap: 32px;
+    }
+    .nav-brand {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--primary);
+      letter-spacing: -0.02em;
+    }
+    .nav-brand span { color: var(--accent); }
+    .nav-links {
+      display: flex; gap: 24px;
+      list-style: none;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .nav-links a { color: var(--muted); }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .nav-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+    .nav-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--primary-lt);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; color: var(--primary);
+    }
+    .btn-outline {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      padding: 5px 12px; border-radius: var(--r);
+      font-size: 0.82rem; cursor: pointer;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* ─── Course breadcrumb ──────────────────────────────────────── */
+    .breadcrumb {
+      background: var(--primary-lt);
+      border-bottom: 1px solid #D6DAF7;
+      padding: 10px 24px;
+      font-size: 0.82rem;
+      color: var(--primary);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .breadcrumb span { color: var(--muted); }
+    .breadcrumb .sep { color: var(--border); }
+
+    /* ─── Layout Shell ───────────────────────────────────────────── */
+    .shell {
+      display: grid;
+      grid-template-columns: 1fr var(--sidebar-w);
+      grid-template-rows: auto;
+      min-height: calc(100vh - var(--nav-h));
+      max-width: 1100px;
+      margin: 0 auto;
+      gap: 0;
+    }
+
+    /* ─── Main Content ───────────────────────────────────────────── */
+    .main {
+      padding: 40px 48px 80px;
+      border-right: 1px solid var(--border);
+      min-width: 0;
+    }
+
+    /* Lesson header — sem foto de stock */
+    .lesson-header {
+      margin-bottom: 32px;
+    }
+    .lesson-meta {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 12px;
+    }
+    .tag {
+      background: var(--accent-lt);
+      color: var(--accent);
+      font-size: 0.75rem; font-weight: 600;
+      padding: 3px 9px; border-radius: 99px;
+      letter-spacing: 0.03em;
+    }
+    .tag-muted {
+      background: #F0F0EF;
+      color: var(--muted);
+      font-size: 0.75rem;
+      padding: 3px 9px; border-radius: 99px;
+    }
+    .lesson-title {
+      font-size: 1.9rem;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .lesson-desc {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.6;
+    }
+
+    /* Decorative accent bar (substitui a foto genérica) */
+    .lesson-accent-bar {
+      height: 4px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+      margin-bottom: 32px;
+      width: 64px;
+    }
+
+    /* Thumbnail opcional — pequena e proposital */
+    .lesson-thumb {
+      margin-bottom: 32px;
+      border-radius: var(--r);
+      overflow: hidden;
+      height: 200px;              /* ← compacta, não domina */
+      background: linear-gradient(135deg, #1E2B6F 0%, #3D5AFE 60%, #D95F02 100%);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .lesson-thumb-label {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .lesson-thumb-icon {
+      position: absolute;
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+    }
+
+    /* Body text */
+    .lesson-body {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: #2E2E3A;
+      max-width: 620px;
+    }
+    .lesson-body h2 {
+      font-size: 1.2rem; font-weight: 700;
+      margin: 32px 0 12px;
+      color: var(--text);
+    }
+    .lesson-body p { margin-bottom: 16px; }
+    .lesson-body code {
+      background: #F0F0EF;
+      padding: 2px 6px; border-radius: 4px;
+      font-size: 0.88em;
+      color: var(--accent);
+    }
+    .lesson-body pre {
+      background: #1A1A2E;
+      color: #A8D8FF;
+      padding: 20px 24px;
+      border-radius: var(--r);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      margin: 24px 0;
+      overflow-x: auto;
+    }
+
+    /* ─── Marcar como lido — BOTTOM CTA ─────────────────────────── */
+    .lesson-complete {
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 16px;
+    }
+    .btn-complete {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--success);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: var(--r);
+      font-size: 0.95rem; font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-complete:hover { background: #15643E; }
+    .btn-complete svg { width: 18px; height: 18px; }
+    .complete-hint {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* Navegação entre aulas */
+    .lesson-nav {
+      margin-top: 24px;
+      display: flex; gap: 12px;
+    }
+    .btn-nav {
+      flex: 1;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 12px 16px; border-radius: var(--r);
+      font-size: 0.85rem; cursor: pointer;
+      color: var(--muted);
+      text-align: left;
+    }
+    .btn-nav:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-nav.next { text-align: right; color: var(--primary); border-color: var(--primary-lt); background: var(--primary-lt); }
+    .btn-nav small { display: block; font-size: 0.72rem; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.7; }
+    .btn-nav strong { display: block; }
+
+    /* ─── Sidebar ────────────────────────────────────────────────── */
+    .sidebar {
+      background: var(--bg);
+      padding: 28px 20px;
+      position: sticky;
+      top: var(--nav-h);
+      height: calc(100vh - var(--nav-h));
+      overflow-y: auto;
+    }
+
+    .progress-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .progress-card h3 {
+      font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .progress-bar-track {
+      height: 6px; border-radius: 99px;
+      background: var(--border);
+      margin-bottom: 8px;
+    }
+    .progress-bar-fill {
+      height: 100%; border-radius: 99px; width: 50%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+    .progress-label {
+      font-size: 0.8rem; color: var(--muted);
+      display: flex; justify-content: space-between;
+    }
+    .progress-label strong { color: var(--text); }
+
+    /* Module list */
+    .module-section { margin-bottom: 20px; }
+    .module-title {
+      font-size: 0.68rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--muted);
+      padding: 0 4px 8px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 6px;
+    }
+    .lesson-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 8px 6px; border-radius: 6px;
+      font-size: 0.85rem; color: var(--muted);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .lesson-item:hover { background: var(--surface); }
+    .lesson-item.active {
+      background: var(--primary-lt);
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .lesson-item.done { color: #9CA3AF; }
+    .lesson-dot {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .lesson-item.done .lesson-dot {
+      background: var(--success); border-color: var(--success);
+      position: relative;
+    }
+    .lesson-item.done .lesson-dot::after {
+      content: "✓";
+      position: absolute; top: -1px; left: 1px;
+      font-size: 9px; color: #fff; font-weight: 900;
+    }
+    .lesson-item.active .lesson-dot {
+      background: var(--primary); border-color: var(--primary);
+    }
+    .lesson-name { line-height: 1.4; }
+
+    /* ─── Annotation box ─────────────────────────────────────────── */
+    .annotation {
+      background: #FFFBF0;
+      border: 1px dashed #F5B942;
+      border-radius: var(--r);
+      padding: 12px 16px;
+      font-size: 0.8rem;
+      color: #7A5C00;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .annotation strong { color: #5C4200; }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ NAVBAR ═══════════════════════════════════════════════════ -->
+  <nav>
+    <div class="nav-brand">Ale<span>·</span>Kop</div>
+    <ul class="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Cursos</a></li>
+      <li><a href="#">Posts</a></li>
+      <li><a href="#">Tags</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="btn-outline">☀ Claro</button>
+      <div class="nav-avatar">AK</div>
+    </div>
+  </nav>
+
+  <!-- ═══ BREADCRUMB ════════════════════════════════════════════════ -->
+  <div class="breadcrumb">
+    <a href="#">Cursos</a>
+    <span class="sep">›</span>
+    <a href="#">Laravel do Zero</a>
+    <span class="sep">›</span>
+    <span>Introdução</span>
+  </div>
+
+  <!-- ═══ SHELL ═════════════════════════════════════════════════════ -->
+  <div class="shell">
+
+    <!-- ─── CONTEÚDO PRINCIPAL ──────────────────────────────────── -->
+    <main class="main">
+
+      <!-- CABEÇALHO DA AULA -->
+      <header class="lesson-header">
+        <div class="lesson-meta">
+          <span class="tag">Laravel</span>
+          <span class="tag-muted">Aula 1 de 8</span>
+          <span class="tag-muted">~12 min</span>
+        </div>
+        <h1 class="lesson-title">Bem-vindo ao Laravel</h1>
+        <p class="lesson-desc">Instalação, estrutura de pastas e seus primeiros passos com o framework PHP mais popular do mundo.</p>
+      </header>
+
+      <!-- BARRA DECORATIVA (no lugar da foto genérica) -->
+      <div class="annotation">
+        <strong>Nota de design:</strong> o degradê abaixo substitui a foto de stock. Ele ancora visualmente o topo da aula, tem personalidade de marca e não desperdiça espaço vertical.
+      </div>
+      <div class="lesson-thumb" style="margin-bottom:32px">
+        <div class="lesson-thumb-icon">🚀</div>
+        <span class="lesson-thumb-label" style="margin-top:68px">Introdução · Módulo 1</span>
+      </div>
+
+      <!-- CORPO DA AULA -->
+      <article class="lesson-body">
+        <h2>O que é o Laravel?</h2>
+        <p>
+          Laravel é um framework PHP com sintaxe expressiva e elegante. Ele abstrai as tarefas mais tediosas do desenvolvimento web — autenticação, rotas, migrações — para que você possa focar no que realmente importa.
+        </p>
+        <p>
+          Instalar o Laravel é simples. Com o Composer configurado na sua máquina, basta rodar:
+        </p>
+        <pre>composer create-project laravel/laravel meu-projeto
+cd meu-projeto
+php artisan serve</pre>
+        <p>
+          Seu servidor estará disponível em <code>http://localhost:8000</code>. A partir daqui, vamos explorar a estrutura de pastas e entender como cada peça se encaixa.
+        </p>
+        <h2>Estrutura de pastas</h2>
+        <p>
+          As pastas que você mais vai usar no dia-a-dia são <code>app/</code>, <code>routes/</code> e <code>resources/views/</code>. Nas próximas aulas vamos destrinchar cada uma delas.
+        </p>
+      </article>
+
+      <!-- ─── MARCAR COMO LIDO — posição correta: fim do conteúdo ── -->
+      <div class="annotation" style="margin-top:40px">
+        <strong>Nota de design:</strong> o botão foi movido para cá — fim da aula, contexto natural de conclusão. O verde reforça a semântica de "concluído" sem competir com ações de navegação.
+      </div>
+      <div class="lesson-complete">
+        <button class="btn-complete">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>
+          Marcar aula como concluída
+        </button>
+        <span class="complete-hint">Avança automaticamente para a próxima aula</span>
+      </div>
+
+      <!-- Navegação entre aulas -->
+      <div class="lesson-nav">
+        <button class="btn-nav">
+          <small>Anterior</small>
+          <strong>— (primeira aula)</strong>
+        </button>
+        <button class="btn-nav next">
+          <small>Próxima aula</small>
+          <strong>Rotas e Controllers</strong>
+        </button>
+      </div>
+
+    </main>
+
+    <!-- ─── SIDEBAR ──────────────────────────────────────────────── -->
+    <aside class="sidebar">
+
+      <div class="progress-card">
+        <h3>Seu Progresso</h3>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill"></div>
+        </div>
+        <div class="progress-label">
+          <span><strong>4</strong> de 8 aulas</span>
+          <span>50%</span>
+        </div>
+      </div>
+
+      <div class="module-section">
+        <div class="module-title">Introdução</div>
+        <div class="lesson-item done">
+          <div class="lesson-dot"></div>
+          <span class="lesson-name">O que é o Laravel?</span>
+        </div>
+        <div class="lesson-item active">
+          <div class="lesson-dot"></div>
+          <span class="lesson-name">Bem-vindo ao Laravel</span>
+        </div>
+      </div>
+
+      <div class="module-section">
+        <div class="module-title">Rotas e Controllers</div>
+        <div class="lesson-item done">
+          <div class="lesson-dot"></div>
+          <span class="lesson-name">Criando suas primeiras rotas</span>
+        </div>
+        <div class="lesson-item done">
+          <div class="lesson-dot"></div>
+          <span class="lesson-name">Controllers e Actions</span>
+        </div>
+        <div class="lesson-item">
+          <div class="lesson-dot"></div>
+          <span class="lesson-name">Middleware</span>
+        </div>
+      </div>
+
+      <div class="module-section">
+        <div class="module-title">Eloquent Básico</div>
+        <div class="lesson-item">
+          <div class="lesson-dot"></div>
+          <span class="lesson-name">Models e Migrações</span>
+        </div>
+        <div class="lesson-item">
+          <div class="lesson-dot"></div>
+          <span class="lesson-name">Relacionamentos</span>
+        </div>
+        <div class="lesson-item">
+          <div class="lesson-dot"></div>
+          <span class="lesson-name">Queries e Scopes</span>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+
+</body>
+</html>

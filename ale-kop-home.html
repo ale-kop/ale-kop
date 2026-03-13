@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ale Kop — Home</title>
+  <style>
+    /* ─── Design Tokens ─────────────────────────────────────────── */
+    :root {
+      --bg:           #F7F6F3;
+      --surface:      #FFFFFF;
+      --primary:      #2B3A8F;
+      --primary-lt:   #ECEFFE;
+      --accent:       #D95F02;
+      --accent-lt:    #FEF0E7;
+      --done:         #1A7F4E;
+      --text:         #1A1A2E;
+      --muted:        #6B7280;
+      --border:       #E4E2DC;
+      --r:            10px;
+      --nav-h:        56px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ─── Navbar ────────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(228,226,220,0.8);
+      height: var(--nav-h);
+      display: flex; align-items: center;
+      padding: 0 24px;
+    }
+    .nav-inner {
+      max-width: 1100px; width: 100%; margin: 0 auto;
+      display: flex; align-items: center; gap: 32px;
+    }
+    .brand {
+      font-weight: 800; font-size: 1.1rem;
+      color: var(--primary); letter-spacing: -0.02em;
+    }
+    .brand span { color: var(--accent); }
+    .nav-links {
+      display: flex; gap: 24px; list-style: none;
+      font-size: 0.875rem; font-weight: 600; color: var(--muted);
+    }
+    .nav-links a:hover { color: var(--primary); }
+    .nav-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+    .btn-ghost {
+      border: 1px solid var(--border); background: transparent;
+      color: var(--muted); font-size: 0.75rem; font-weight: 500;
+      padding: 5px 11px; border-radius: 8px; cursor: pointer;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+    .avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--primary-lt); color: var(--primary);
+      font-size: 0.7rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ─── Hero ──────────────────────────────────────────────────── */
+    .hero {
+      max-width: 1100px; margin: 0 auto;
+      padding: 72px 24px 64px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap-6px;
+      background: var(--accent-lt); color: var(--accent);
+      font-size: 0.72rem; font-weight: 700;
+      padding: 4px 10px; border-radius: 99px;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .hero-title {
+      font-size: 2.8rem; font-weight: 900;
+      line-height: 1.1; letter-spacing: -0.04em;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+    .hero-title em {
+      font-style: normal;
+      color: var(--primary);
+      position: relative;
+    }
+    .hero-title em::after {
+      content: '';
+      position: absolute; bottom: 2px; left: 0; right: 0;
+      height: 3px; border-radius: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      opacity: 0.5;
+    }
+    .hero-sub {
+      font-size: 1.05rem; color: var(--muted); line-height: 1.7;
+      max-width: 420px; margin-bottom: 32px;
+    }
+    .hero-form {
+      display: flex; gap: 8px; max-width: 400px;
+    }
+    .hero-input {
+      flex: 1;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      padding: 10px 14px; border-radius: var(--r);
+      font-size: 0.9rem; outline: none;
+      transition: border-color 0.15s;
+    }
+    .hero-input:focus { border-color: var(--primary); }
+    .btn-primary {
+      background: var(--primary); color: #fff;
+      border: none; padding: 10px 20px;
+      border-radius: var(--r); font-size: 0.9rem;
+      font-weight: 600; cursor: pointer; white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: #1d2c70; }
+
+    /* Hero visual side */
+    .hero-visual {
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px 20px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .stat-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .stat-icon.blue { background: var(--primary-lt); }
+    .stat-icon.orange { background: var(--accent-lt); }
+    .stat-icon.green { background: #E8F5EE; }
+    .stat-label { font-size: 0.8rem; color: var(--muted); }
+    .stat-value { font-size: 1.1rem; font-weight: 800; color: var(--text); line-height: 1.2; }
+
+    .mini-post-cards {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    }
+    .mini-post {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 12px 14px;
+      font-size: 0.82rem;
+    }
+    .mini-post-tag {
+      font-size: 0.68rem; font-weight: 700; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px;
+    }
+    .mini-post-title { font-weight: 600; color: var(--text); line-height: 1.3; }
+
+    /* ─── Section headers ───────────────────────────────────────── */
+    .section-header {
+      max-width: 1100px; margin: 0 auto 28px;
+      padding: 0 24px;
+      display: flex; align-items: baseline; justify-content: space-between;
+    }
+    .section-title {
+      font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .section-link {
+      font-size: 0.85rem; font-weight: 600; color: var(--primary);
+    }
+    .section-link:hover { text-decoration: underline; }
+
+    /* ─── Courses ───────────────────────────────────────────────── */
+    .section-wrap {
+      max-width: 1100px; margin: 0 auto; padding: 0 24px;
+    }
+    .section-block {
+      padding: 56px 0 48px;
+    }
+    .section-block + .section-block {
+      border-top: 1px solid var(--border);
+    }
+    .courses-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .course-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+      transition: box-shadow 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+    .course-card:hover { box-shadow: 0 8px 24px rgba(43,58,143,0.1); transform: translateY(-2px); }
+    .course-thumb {
+      height: 140px; position: relative;
+      overflow: hidden;
+    }
+    .course-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .course-thumb-fallback {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+    }
+    .course-badge {
+      position: absolute; top: 10px; left: 10px;
+      background: var(--primary); color: #fff;
+      font-size: 0.65rem; font-weight: 700;
+      padding: 3px 8px; border-radius: 99px;
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .course-body { padding: 16px 18px 18px; }
+    .course-name {
+      font-size: 0.95rem; font-weight: 700; color: var(--text);
+      margin-bottom: 6px; line-height: 1.3;
+    }
+    .course-desc {
+      font-size: 0.82rem; color: var(--muted); line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .course-meta {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.75rem; color: var(--muted);
+    }
+    .course-meta span { display: flex; align-items: center; gap: 3px; }
+
+    /* ─── Posts (Substack style) ────────────────────────────────── */
+    .posts-list { display: flex; flex-direction: column; gap: 0; }
+    .post-item {
+      display: flex; align-items: flex-start; gap: 20px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .post-item:first-child { padding-top: 0; }
+    .post-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .post-item-content { flex: 1; min-width: 0; }
+    .post-item-meta {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 6px;
+    }
+    .post-tag {
+      font-size: 0.7rem; font-weight: 700; color: var(--accent);
+      background: var(--accent-lt); padding: 2px 7px; border-radius: 99px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .post-date { font-size: 0.75rem; color: var(--muted); }
+    .post-title {
+      font-size: 1rem; font-weight: 700; color: var(--text);
+      margin-bottom: 5px; line-height: 1.35;
+    }
+    .post-title:hover { color: var(--primary); }
+    .post-excerpt { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
+    .post-thumb {
+      width: 80px; height: 60px; border-radius: 8px;
+      flex-shrink: 0; overflow: hidden;
+    }
+    .post-thumb-fallback {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+    }
+
+    /* ─── Two-column layout: posts + sidebar ────────────────────── */
+    .two-col {
+      display: grid; grid-template-columns: 1fr 280px; gap: 48px;
+    }
+    .sidebar-widget {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+    .widget-title {
+      font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--muted); margin-bottom: 14px;
+    }
+    .popular-list { display: flex; flex-direction: column; gap: 10px; }
+    .popular-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 0.85rem;
+    }
+    .popular-num {
+      font-size: 0.7rem; font-weight: 800; color: var(--primary-lt);
+      background: var(--primary); width: 18px; height: 18px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .popular-title { font-weight: 600; color: var(--text); line-height: 1.3; }
+    .popular-tag { font-size: 0.68rem; color: var(--muted); }
+
+    .tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag-pill {
+      background: var(--bg); border: 1px solid var(--border);
+      color: var(--muted); font-size: 0.75rem; font-weight: 500;
+      padding: 4px 10px; border-radius: 99px; cursor: pointer;
+    }
+    .tag-pill:hover { background: var(--primary-lt); border-color: var(--primary); color: var(--primary); }
+
+    /* ─── CTA Banner ────────────────────────────────────────────── */
+    .cta-banner {
+      margin: 48px 0 0;
+      background: linear-gradient(135deg, #1E2B6F 0%, var(--primary) 60%, #3D1A00 100%);
+      border-radius: 16px;
+      padding: 40px 48px;
+      display: flex; align-items: center; gap: 40px;
+    }
+    .cta-text { flex: 1; }
+    .cta-title {
+      font-size: 1.5rem; font-weight: 800; color: #fff;
+      letter-spacing: -0.02em; margin-bottom: 8px;
+    }
+    .cta-sub { font-size: 0.9rem; color: rgba(255,255,255,0.65); line-height: 1.6; }
+    .btn-cta {
+      background: var(--accent); color: #fff;
+      border: none; padding: 12px 24px;
+      border-radius: var(--r); font-size: 0.9rem; font-weight: 700;
+      cursor: pointer; white-space: nowrap; flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .btn-cta:hover { background: #b84e01; }
+
+    /* ─── Footer ────────────────────────────────────────────────── */
+    footer {
+      margin-top: 72px;
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+    }
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.82rem; color: var(--muted);
+    }
+    .footer-brand { font-weight: 800; color: var(--primary); font-size: 1rem; }
+    .footer-brand span { color: var(--accent); }
+    .footer-tags { display: flex; gap: 10px; }
+    .footer-tag {
+      background: var(--bg); border: 1px solid var(--border);
+      color: var(--muted); font-size: 0.72rem;
+      padding: 3px 9px; border-radius: 99px;
+    }
+
+    /* ─── Divider label ─────────────────────────────────────────── */
+    .divider-label {
+      border: none; border-top: 1px solid var(--border);
+      position: relative; margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ NAVBAR ══════════════════════════════════════════════════════ -->
+<nav>
+  <div class="nav-inner">
+    <div class="brand">Ale<span>·</span>Kop</div>
+    <ul class="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Cursos</a></li>
+      <li><a href="#">Posts</a></li>
+      <li><a href="#">Tags</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="btn-ghost">🌙 Escuro</button>
+      <div class="avatar">AK</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ════════════════════════════════════════════════════════ -->
+<div class="hero">
+
+  <!-- Texto -->
+  <div>
+    <div class="hero-eyebrow">✦ Cursos & Posts</div>
+    <h1 class="hero-title">
+      Aprenda com<br>
+      <em>métodos práticos</em>
+    </h1>
+    <p class="hero-sub">
+      Conteúdo direto ao ponto sobre desenvolvimento, negócios e trabalho remoto — do jeito que funciona de verdade.
+    </p>
+    <form class="hero-form" onsubmit="return false">
+      <input class="hero-input" type="email" placeholder="seu@email.com" />
+      <button class="btn-primary">Assinar</button>
+    </form>
+    <p style="font-size:0.75rem; color:var(--muted); margin-top:10px;">
+      Sem spam. Cancele quando quiser.
+    </p>
+  </div>
+
+  <!-- Visual: stats + mini posts -->
+  <div class="hero-visual">
+    <div class="stat-card">
+      <div class="stat-icon blue">📚</div>
+      <div>
+        <div class="stat-label">Cursos disponíveis</div>
+        <div class="stat-value">4 cursos completos</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon orange">✍️</div>
+      <div>
+        <div class="stat-label">Posts publicados</div>
+        <div class="stat-value">+40 artigos práticos</div>
+      </div>
+    </div>
+    <div class="mini-post-cards">
+      <div class="mini-post">
+        <div class="mini-post-tag">Laravel</div>
+        <div class="mini-post-title">Bem-vindo ao Laravel</div>
+      </div>
+      <div class="mini-post">
+        <div class="mini-post-tag">Vendas</div>
+        <div class="mini-post-title">Proposta que fecha</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ MAIN CONTENT ════════════════════════════════════════════════ -->
+<div style="border-top: 1px solid var(--border)">
+<div class="section-wrap">
+
+  <!-- ─── Cursos ──────────────────────────────────────────────── -->
+  <div class="section-block">
+    <div class="section-header" style="padding:0; margin-bottom:20px">
+      <h2 class="section-title">Cursos</h2>
+      <a href="#" class="section-link">Ver todos →</a>
+    </div>
+    <div class="courses-grid">
+
+      <div class="course-card">
+        <div class="course-thumb">
+          <div class="course-thumb-fallback" style="background:linear-gradient(135deg,#1E2B6F,#2B3A8F)">🤝</div>
+          <span class="course-badge">Vendas</span>
+        </div>
+        <div class="course-body">
+          <div class="course-name">Proposta Certa</div>
+          <div class="course-desc">Como criar propostas comerciais que convertem, sem enrolação.</div>
+          <div class="course-meta">
+            <span>📄 8 aulas</span>
+            <span>⏱ ~2h</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="course-card">
+        <div class="course-thumb">
+          <div class="course-thumb-fallback" style="background:linear-gradient(135deg,#7C2D12,#D95F02)">💬</div>
+          <span class="course-badge">Comunicação</span>
+        </div>
+        <div class="course-body">
+          <div class="course-name">Comunicação Eficaz</div>
+          <div class="course-desc">Técnicas para se comunicar melhor em reuniões, e-mails e apresentações.</div>
+          <div class="course-meta">
+            <span>📄 12 aulas</span>
+            <span>⏱ ~3h</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="course-card">
+        <div class="course-thumb">
+          <div class="course-thumb-fallback" style="background:linear-gradient(135deg,#064E3B,#1A7F4E)">🌐</div>
+          <span class="course-badge">Carreira</span>
+        </div>
+        <div class="course-body">
+          <div class="course-name">Trabalho Remoto</div>
+          <div class="course-desc">Como estruturar rotina, comunicação e entregas trabalhando à distância.</div>
+          <div class="course-meta">
+            <span>📄 10 aulas</span>
+            <span>⏱ ~2.5h</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ─── Posts + Sidebar ─────────────────────────────────────── -->
+  <div class="section-block">
+    <div class="two-col">
+
+      <!-- Posts (estilo Substack) -->
+      <div>
+        <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:20px">
+          <h2 class="section-title">Destaques</h2>
+          <a href="#" class="section-link">Ver todos →</a>
+        </div>
+
+        <div class="posts-list">
+
+          <div class="post-item">
+            <div class="post-item-content">
+              <div class="post-item-meta">
+                <span class="post-tag">Laravel</span>
+                <span class="post-date">20 fev 2026</span>
+              </div>
+              <div class="post-title">Bem-vindo ao Laravel — instalação e primeiros passos</div>
+              <div class="post-excerpt">Configure seu ambiente, entenda a estrutura de pastas e faça sua primeira rota funcionar.</div>
+            </div>
+            <div class="post-thumb">
+              <div class="post-thumb-fallback" style="background:var(--primary-lt)">🚀</div>
+            </div>
+          </div>
+
+          <div class="post-item">
+            <div class="post-item-content">
+              <div class="post-item-meta">
+                <span class="post-tag">Vendas</span>
+                <span class="post-date">14 fev 2026</span>
+              </div>
+              <div class="post-title">Como escrever uma proposta comercial que fecha em 2025</div>
+              <div class="post-excerpt">Estrutura, tom, precificação e os erros que afastam clientes antes da reunião acontecer.</div>
+            </div>
+            <div class="post-thumb">
+              <div class="post-thumb-fallback" style="background:var(--accent-lt)">📄</div>
+            </div>
+          </div>
+
+          <div class="post-item">
+            <div class="post-item-content">
+              <div class="post-item-meta">
+                <span class="post-tag">Carreira</span>
+                <span class="post-date">8 fev 2026</span>
+              </div>
+              <div class="post-title">O que ninguém te conta sobre trabalho remoto depois de 1 ano</div>
+              <div class="post-excerpt">Produtividade, solidão e a disciplina que nenhum curso ensina — mas você vai descobrir na marra.</div>
+            </div>
+            <div class="post-thumb">
+              <div class="post-thumb-fallback" style="background:#E8F5EE">🌐</div>
+            </div>
+          </div>
+
+          <div class="post-item">
+            <div class="post-item-content">
+              <div class="post-item-meta">
+                <span class="post-tag">Comunicação</span>
+                <span class="post-date">1 fev 2026</span>
+              </div>
+              <div class="post-title">Por que suas reuniões não funcionam — e como consertar</div>
+              <div class="post-excerpt">Três mudanças simples que transformam reuniões cansativas em decisões reais.</div>
+            </div>
+            <div class="post-thumb">
+              <div class="post-thumb-fallback" style="background:#F0F0EF">💬</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <aside>
+        <!-- Widget: populares -->
+        <div class="sidebar-widget">
+          <div class="widget-title">Mais lidos</div>
+          <div class="popular-list">
+            <div class="popular-item">
+              <div class="popular-num" style="font-size:0.65rem">1</div>
+              <div>
+                <div class="popular-title">Como escrever uma proposta que fecha</div>
+                <div class="popular-tag">Vendas</div>
+              </div>
+            </div>
+            <div class="popular-item">
+              <div class="popular-num" style="font-size:0.65rem">2</div>
+              <div>
+                <div class="popular-title">Trabalho remoto depois de 1 ano</div>
+                <div class="popular-tag">Carreira</div>
+              </div>
+            </div>
+            <div class="popular-item">
+              <div class="popular-num" style="font-size:0.65rem">3</div>
+              <div>
+                <div class="popular-title">Por que suas reuniões não funcionam</div>
+                <div class="popular-tag">Comunicação</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Widget: tags -->
+        <div class="sidebar-widget">
+          <div class="widget-title">Explorar por tag</div>
+          <div class="tag-cloud">
+            <span class="tag-pill">Laravel</span>
+            <span class="tag-pill">Vendas</span>
+            <span class="tag-pill">Carreira</span>
+            <span class="tag-pill">Comunicação</span>
+            <span class="tag-pill">Remoto</span>
+            <span class="tag-pill">PHP</span>
+            <span class="tag-pill">Produtividade</span>
+          </div>
+        </div>
+
+        <!-- Widget: newsletter -->
+        <div class="sidebar-widget" style="background:var(--primary-lt); border-color:#D6DAF7">
+          <div class="widget-title" style="color:var(--primary)">Newsletter</div>
+          <p style="font-size:0.82rem; color:var(--primary); opacity:0.8; margin-bottom:12px; line-height:1.5">
+            Novos posts e aulas direto no seu e-mail.
+          </p>
+          <input class="hero-input" type="email" placeholder="seu@email.com" style="width:100%; margin-bottom:8px; font-size:0.82rem; padding:8px 12px">
+          <button class="btn-primary" style="width:100%; font-size:0.82rem; padding:8px">Assinar grátis</button>
+        </div>
+      </aside>
+
+    </div>
+
+    <!-- CTA Banner -->
+    <div class="cta-banner">
+      <div class="cta-text">
+        <div class="cta-title">Pronto para aprofundar?</div>
+        <div class="cta-sub">Acesse todos os cursos completos e comece a colocar em prática hoje mesmo.</div>
+      </div>
+      <button class="btn-cta">Ver todos os cursos →</button>
+    </div>
+
+  </div>
+
+</div><!-- /section-wrap -->
+</div>
+
+<!-- ═══ FOOTER ═══════════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">Ale<span>·</span>Kop</div>
+    <div class="footer-tags">
+      <span class="footer-tag">Laravel</span>
+      <span class="footer-tag">PHP</span>
+      <span class="footer-tag">Tailwind</span>
+    </div>
+    <span>© 2026</span>
+  </div>
+</footer>
+
+</body>
+</html>
