@@ -4,7 +4,6 @@ import tailwindcss from '@tailwindcss/vite';
 import {ViteImageOptimizer} from 'vite-plugin-image-optimizer';
 
 export default defineConfig({
-    publicDir: 'public',
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],

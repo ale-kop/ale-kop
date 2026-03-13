@@ -66,7 +66,7 @@ export async function postData(e, ajaxElement) {
         // Execute JavaScript code if provided, even on error
         if (errorBody.js) {
             try {
-                eval(errorBody.js)
+                new Function(errorBody.js)()
             } catch (jsError) {
                 console.error('Error executing server-provided JS (from error response):', jsError)
             }
@@ -95,7 +95,7 @@ async function handleAjaxResponse(response, button) {
     // Execute JavaScript code if provided
     if (data.js) {
         try {
-            eval(data.js) // Execute JavaScript code received from the server
+            new Function(data.js)()
         } catch (error) {
             console.error('Error executing server-provided JS:', error)
         }
