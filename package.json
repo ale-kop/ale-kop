@@ -16,7 +16,6 @@
         "vite-plugin-image-optimizer": "^2.0.2"
     },
     "dependencies": {
-        "highlight.js": "^11.11.1",
         "prosemirror-commands": "^1.7.1",
         "prosemirror-history": "^1.4.1",
         "prosemirror-inputrules": "^1.5.0",

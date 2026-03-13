@@ -4,6 +4,25 @@ import tailwindcss from '@tailwindcss/vite';
 import {ViteImageOptimizer} from 'vite-plugin-image-optimizer';
 
 export default defineConfig({
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'vendor-prosemirror': [
+                        'prosemirror-state',
+                        'prosemirror-view',
+                        'prosemirror-model',
+                        'prosemirror-schema-basic',
+                        'prosemirror-schema-list',
+                        'prosemirror-history',
+                        'prosemirror-keymap',
+                        'prosemirror-commands',
+                        'prosemirror-inputrules',
+                    ],
+                },
+            },
+        },
+    },
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],

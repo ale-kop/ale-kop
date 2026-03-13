@@ -12,7 +12,7 @@
 
 @font-face {
     font-family: 'InterVariable';
-    src: url('/fonts/InterVariable.woff2') format('woff2');
+    src: url('../fonts/InterVariable.woff2') format('woff2');
     font-weight: 100 900;
     font-style: normal;
     font-display: swap;
@@ -20,7 +20,7 @@
 
 @font-face {
     font-family: 'InterVariable';
-    src: url('/fonts/InterVariable-Italic.woff2') format('woff2');
+    src: url('../fonts/InterVariable-Italic.woff2') format('woff2');
     font-weight: 100 900;
     font-style: italic;
     font-display: swap;
@@ -29,7 +29,7 @@
 /* Carrega Instrument Sans (Variable) */
 @font-face {
     font-family: 'Instrument Sans';
-    src: url('/fonts/InstrumentSans-VariableFont_wdth,wght.woff2') format('woff2-variations');
+    src: url('../fonts/InstrumentSans-VariableFont_wdth,wght.woff2') format('woff2-variations');
     font-weight: 100 900;
     font-style: normal;
     font-display: swap;
@@ -38,7 +38,7 @@
 /* Carrega Instrument Sans Italic (Variable) */
 @font-face {
     font-family: 'Instrument Sans';
-    src: url('/fonts/InstrumentSans-Italic-VariableFont_wdth,wght.woff2') format('woff2-variations');
+    src: url('../fonts/InstrumentSans-Italic-VariableFont_wdth,wght.woff2') format('woff2-variations');
     font-weight: 100 900;
     font-style: italic;
     font-display: swap;
@@ -47,7 +47,7 @@
 /* Carrega Geist Mono (Variable) */
 @font-face {
     font-family: 'Geist Mono';
-    src: url('/fonts/GeistMono-VariableFont_wght.woff2') format('woff2-variations');
+    src: url('../fonts/GeistMono-VariableFont_wght.woff2') format('woff2-variations');
     font-weight: 100 900;
     font-style: normal;
     font-display: swap;
@@ -56,7 +56,7 @@
 /* Carrega Fraunces (display serif) — latin-ext para acentos portugueses */
 @font-face {
     font-family: 'Fraunces';
-    src: url('/fonts/Fraunces-latin-ext.woff2') format('woff2');
+    src: url('../fonts/Fraunces-latin-ext.woff2') format('woff2');
     font-weight: 400 900;
     font-style: normal;
     font-display: swap;
@@ -66,7 +66,7 @@
 /* Carrega Fraunces (display serif) — latin */
 @font-face {
     font-family: 'Fraunces';
-    src: url('/fonts/Fraunces-latin.woff2') format('woff2');
+    src: url('../fonts/Fraunces-latin.woff2') format('woff2');
     font-weight: 400 900;
     font-style: normal;
     font-display: swap;
@@ -449,11 +449,6 @@ dialog::backdrop {
 }
 .html-content pre code {
     @apply bg-transparent p-0 text-inherit leading-relaxed;
-}
-/* highlight.js: mantém o fundo do <pre>, não deixa .hljs sobrescrever */
-.html-content pre code.hljs {
-    background: transparent;
-    padding: 0;
 }
 /* Copy button for code blocks */
 .html-content pre .code-copy-btn {

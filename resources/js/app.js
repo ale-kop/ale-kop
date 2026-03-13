@@ -1,4 +1,3 @@
-import 'highlight.js/styles/monokai.css'
 
 import * as toggle from './modules/toggle'
 import * as modal from './modules/modal'
@@ -8,7 +7,6 @@ import * as richEditor from './modules/rich-text-editor.js'
 import * as themeSwitch from './modules/theme-switch.js'
 import * as formSubmit from './modules/form-submit.js'
 import * as codeCopy from './modules/code-copy.js'
-import * as codeHighlight from './modules/code-highlight.js'
 import * as postIndex from './modules/post-index.js'
 import * as sidePanel from './modules/side-panel.js'
 import * as topNav from './modules/top-nav.js'
@@ -16,7 +14,6 @@ import * as fileUpload from './modules/file-upload.js'
 
 import.meta.glob([
     '../img/**',
-    '../fonts/**',
 ])
 
 window.globalModules = {
@@ -25,7 +22,6 @@ window.globalModules = {
     "themeSwitch"  : themeSwitch,
     "formSubmit"   : formSubmit,
     "codeCopy"     : codeCopy,
-    "codeHighlight": codeHighlight,
     "postIndex"    : postIndex,
     "sidePanel"    : sidePanel,
     "topNav"       : topNav,
