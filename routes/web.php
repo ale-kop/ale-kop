@@ -13,6 +13,9 @@ use App\Http\Controllers\TagController;
 use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', function () {
+    return view('index-temporary');
+})->name('index-temporary');
 
 Route::get('/baixar', [DownloadController::class, 'show'])->name('download.show');
 Route::get('/baixar/arquivo', [DownloadController::class, 'stream'])->name('download.stream');
@@ -20,25 +23,22 @@ Route::get('/baixar/arquivo', [DownloadController::class, 'stream'])->name('down
 if (config('app.env') === 'local')
     {
         Route::get('/', function () {
-            $featuredPost = Post::whereNotNull('course_id')->orWhereNull('course_id')
-            ->with('tag')
-            ->where('extra->featured', true)
-            ->latest()
-            ->first();
-            
-            $latestTwoPosts = Post::whereNotNull('course_id')->orWhereNull('course_id')
-            ->with('tag')
-            ->where('extra->featured', false)
-            ->latest()
-            ->limit(3)
-            ->get();
-            
-            return view('index', compact('featuredPost', 'latestTwoPosts'));
-            })->name('index');
-            
-            Route::get('/', function () {
-                return view('index-temporary');
-            })->name('index-temporary');
+    $featuredPost = Post::whereNotNull('course_id')->orWhereNull('course_id')
+        ->with('tag')
+        ->where('extra->featured', true)
+        ->latest()
+        ->first();
+
+    $latestTwoPosts = Post::whereNotNull('course_id')->orWhereNull('course_id')
+        ->with('tag')
+        ->where('extra->featured', false)
+        ->latest()
+        ->limit(3)
+        ->get();
+
+    return view('index', compact('featuredPost', 'latestTwoPosts'));
+})->name('index');
+
 Route::get('/index2', function () {
     $featuredPost = Post::with('tag')->where('extra->featured', true)->latest()->first();
     $latestTwoPosts = Post::with('tag')->where('extra->featured', false)->latest()->limit(3)->get();
