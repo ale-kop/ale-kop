@@ -38,15 +38,15 @@
             <div class="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest
                         uppercase text-accent bg-accent/10 border border-accent/20
                         px-3 py-1.5 rounded-full mb-5">
-                ✦ IA · Vendas · Marketing · Comunicação
+                ✦ Comunicação & IA Aplicada
             </div>
         </div>
 
         {{-- ── Bio ── --}}
         <p class="text-base text-gray-600 leading-relaxed mb-6 animate-fade-up" style="animation-delay:.3s">
-            Especialista em <strong class="text-gray-900">vendas consultivas e comunicação estratégica</strong>,
-            ajudo profissionais a construir conversas que convencem — e a usar
-            <strong class="text-gray-900">Inteligência Artificial</strong> para acelerar resultados em marketing,
+            Especialista em <strong class="text-gray-900">comunicação estratégica e IA aplicada no dia a dia</strong>,
+            ajudo profissionais e empresas a comunicar de forma clara e a usar
+            <strong class="text-gray-900">Inteligência Artificial</strong> para acelerar resultados em
             negociação e relacionamento com clientes.
         </p>
 

@@ -5,7 +5,10 @@
       "Bash(du:*)",
       "Bash(ls:*)",
       "Bash(# O que tem em akop-pro/ingest? du -sh ~/projects/akop-pro/ingest/*)",
-      "Bash(rm /Users/aleksandr/projects/ale-kop/resources/js/modules/code-highlight.js && npm uninstall highlight.js)"
+      "Bash(rm /Users/aleksandr/projects/ale-kop/resources/js/modules/code-highlight.js && npm uninstall highlight.js)",
+      "WebSearch",
+      "WebFetch(domain:packagist.org)",
+      "Bash(composer update:*)"
     ]
   }
 }

@@ -29,7 +29,7 @@ class DownloadController extends Controller
         // Build stream URL manually to avoid double-encoding
         $streamUrl = url('/baixar/arquivo') . '?url=' . rawurlencode($url);
 
-        return view('download-temporary', compact('url', 'streamUrl'));
+        return view('download', compact('url', 'streamUrl'));
     }
 
     public function stream(Request $request)

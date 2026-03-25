@@ -13,7 +13,7 @@ use Illuminate\View\View;
 class CourseController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Admin listing of all courses.
      */
     public function index(Request $request)
     {
@@ -24,6 +24,16 @@ class CourseController extends Controller
         }
 
         return view('courses.index', compact('courses'));
+    }
+
+    /**
+     * Public listing of courses.
+     */
+    public function publicIndex()
+    {
+        $courses = Course::with('media')->get();
+
+        return view('courses.public', compact('courses'));
     }
 
     /**
@@ -54,7 +64,7 @@ class CourseController extends Controller
             return response()->json($course, 201);
         }
 
-        return redirect()->route('courses.index');
+        return redirect()->route('admin.courses');
     }
 
     /**
@@ -111,7 +121,7 @@ class CourseController extends Controller
             return response()->json($course);
         }
 
-        return redirect()->route('courses.index');
+        return redirect()->route('admin.courses');
     }
 
     /**
@@ -134,6 +144,6 @@ class CourseController extends Controller
             return response()->json(['deleted' => true]);
         }
 
-        return redirect()->route('courses.index');
+        return redirect()->route('admin.courses');
     }
 }

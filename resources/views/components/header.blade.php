@@ -2,15 +2,6 @@
 $navLinks = [
     ['/', 'Home'],
     [route('courses.index'), 'Cursos'],
-    [route('tags.index'), 'Tags'],
-];
-
-$adminLinks = [
-    [route('posts.manage'),  'Gerenciar posts'],
-    [route('posts.create'),  'Criar post'],
-    [route('sections.index'), 'Gerenciar seções'],
-    [route('tags.index'),    'Gerenciar tags'],
-    [route('courses.index'), 'Gerenciar cursos'],
 ];
 @endphp
 
@@ -30,19 +21,6 @@ $adminLinks = [
                 @foreach($navLinks as [$href, $label])
                     <li><a href="{{ $href }}" class="hover:text-brand dark:hover:text-brand-light transition-colors">{{ $label }}</a></li>
                 @endforeach
-
-                <li class="relative">
-                    <button ak-toggle="admin-dropdown" ak-toggle-classes="hidden" ak-toggle-close-on-blur="true"
-                            class="flex items-center gap-1 hover:text-brand dark:hover:text-brand-light transition-colors focus:outline-none">
-                        Admin <x-heroicon-o-chevron-down class="w-4 h-4"/>
-                    </button>
-                    <ul id="admin-dropdown"
-                        class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg hidden">
-                        @foreach($adminLinks as [$href, $label])
-                            <li><a href="{{ $href }}" class="block px-4 py-2 hover:bg-brand-light dark:hover:bg-gray-700 text-sm">{{ $label }}</a></li>
-                        @endforeach
-                    </ul>
-                </li>
 
                 <li class="relative">
                     <button ak-toggle="topics-dropdown" ak-toggle-classes="hidden" ak-toggle-close-on-blur="true"
@@ -79,10 +57,13 @@ $adminLinks = [
 
                 {{-- Avatar --}}
                 @auth
-                    <div class="hidden md:flex w-8 h-8 rounded-full bg-brand-light dark:bg-indigo-900/50 items-center justify-center
-                                text-[11px] font-bold text-brand dark:text-indigo-300 select-none">
+                    <a href="{{ route('admin.index') }}"
+                       class="hidden md:flex w-8 h-8 rounded-full bg-brand-light dark:bg-indigo-900/50 items-center justify-center
+                              text-[11px] font-bold text-brand dark:text-indigo-300 select-none
+                              hover:ring-2 hover:ring-brand/30 transition-all"
+                       title="Painel admin">
                         {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 2)) }}
-                    </div>
+                    </a>
                 @endauth
 
                 {{-- Hamburger mobile --}}
@@ -130,6 +111,10 @@ $adminLinks = [
                 @endforeach
             </ul>
         </li>
+
+        @auth
+            <li><a href="{{ route('admin.index') }}" class="block py-2 text-sm text-gray-500">Admin</a></li>
+        @endauth
 
     </ul>
 </aside>

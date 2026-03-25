@@ -48,7 +48,7 @@ class SectionController extends Controller
             return response()->json($section, 201);
         }
 
-        return redirect()->route('sections.index');
+        return redirect()->route('admin.sections');
     }
 
     /**
@@ -83,7 +83,7 @@ class SectionController extends Controller
             return response()->json($section);
         }
 
-        return redirect()->route('sections.index');
+        return redirect()->route('admin.sections');
     }
 
     /**
@@ -105,6 +105,6 @@ class SectionController extends Controller
             return response()->json(['deleted' => true]);
         }
 
-        return redirect()->route('sections.index');
+        return redirect()->route('admin.sections');
     }
 }

@@ -53,7 +53,7 @@ class TagController extends Controller
             return response()->json($tag, 201);
         }
 
-        return redirect()->route('tags.index');
+        return redirect()->route('admin.tags');
     }
 
     /**
@@ -96,7 +96,7 @@ class TagController extends Controller
             return response()->json($tag);
         }
 
-        return redirect()->route('tags.index');
+        return redirect()->route('admin.tags');
     }
 
     /**
@@ -118,6 +118,6 @@ class TagController extends Controller
             return response()->json(['deleted' => true]);
         }
 
-        return redirect()->route('tags.index');
+        return redirect()->route('admin.tags');
     }
 }

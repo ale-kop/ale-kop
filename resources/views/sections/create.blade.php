@@ -6,7 +6,7 @@
             @include('sections.form', ['courses' => $courses])
             <div class="flex gap-3">
                 <x-forms.button type="submit">Salvar</x-forms.button>
-                <a href="{{ route('sections.index') }}" class="px-3 py-2 rounded border hover:bg-gray-50 dark:hover:bg-gray-800">Cancelar</a>
+                <a href="{{ route('admin.sections') }}" class="px-3 py-2 rounded border hover:bg-gray-50 dark:hover:bg-gray-800">Cancelar</a>
             </div>
         </form>
     </x-container>

@@ -1,7 +1,10 @@
 <x-layout title="Gerenciar Posts">
     <x-container>
         <div class="flex items-center justify-between mb-6">
-            <h1 class="text-3xl font-bold">Gerenciar Posts</h1>
+            <div>
+                <a href="{{ route('admin.index') }}" class="text-sm text-gray-500 hover:text-brand transition-colors">← Admin</a>
+                <h1 class="text-3xl font-bold mt-1">Posts</h1>
+            </div>
             <a href="{{ route('posts.create') }}" class="px-3 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Novo Post</a>
         </div>
 

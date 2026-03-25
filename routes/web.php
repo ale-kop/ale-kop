@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -12,9 +13,6 @@ use App\Http\Controllers\TagController;
 use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('index-temporary');
-})->name('index-temporary');
 
 Route::get('/baixar', [DownloadController::class, 'show'])->name('download.show');
 Route::get('/baixar/arquivo', [DownloadController::class, 'stream'])->name('download.stream');
@@ -22,22 +20,25 @@ Route::get('/baixar/arquivo', [DownloadController::class, 'stream'])->name('down
 if (config('app.env') === 'local')
     {
         Route::get('/', function () {
-    $featuredPost = Post::whereNotNull('course_id')->orWhereNull('course_id')
-        ->with('tag')
-        ->where('extra->featured', true)
-        ->latest()
-        ->first();
-
-    $latestTwoPosts = Post::whereNotNull('course_id')->orWhereNull('course_id')
-        ->with('tag')
-        ->where('extra->featured', false)
-        ->latest()
-        ->limit(3)
-        ->get();
-
-    return view('index', compact('featuredPost', 'latestTwoPosts'));
-})->name('index');
-
+            $featuredPost = Post::whereNotNull('course_id')->orWhereNull('course_id')
+            ->with('tag')
+            ->where('extra->featured', true)
+            ->latest()
+            ->first();
+            
+            $latestTwoPosts = Post::whereNotNull('course_id')->orWhereNull('course_id')
+            ->with('tag')
+            ->where('extra->featured', false)
+            ->latest()
+            ->limit(3)
+            ->get();
+            
+            return view('index', compact('featuredPost', 'latestTwoPosts'));
+            })->name('index');
+            
+            Route::get('/', function () {
+                return view('index-temporary');
+            })->name('index-temporary');
 Route::get('/index2', function () {
     $featuredPost = Post::with('tag')->where('extra->featured', true)->latest()->first();
     $latestTwoPosts = Post::with('tag')->where('extra->featured', false)->latest()->limit(3)->get();
@@ -65,23 +66,33 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout']);
 });
 
-// Content routes (public)
-Route::resource('sections', SectionController::class)->except(['show']);
-Route::resource('tags', TagController::class)->except(['show']);
-Route::get('tags/{tag}', [TagController::class, 'show'])->name('tags.show');
+// Admin panel (auth required)
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', AdminController::class)->name('index');
+    Route::get('/posts', [PostController::class, 'manage'])->name('posts');
+    Route::get('/tags', [TagController::class, 'index'])->name('tags');
+    Route::get('/sections', [SectionController::class, 'index'])->name('sections');
+    Route::get('/courses', [CourseController::class, 'index'])->name('courses');
+});
 
+// Sections CRUD (no public listing)
+Route::resource('sections', SectionController::class)->except(['index', 'show']);
+
+// Tags CRUD (no public listing)
+Route::resource('tags', TagController::class)->except(['index', 'show']);
+
+// Posts
 Route::get('posts/create', [PostController::class, 'create'])->name('posts.create');
 Route::post('posts', [PostController::class, 'store'])->name('posts.store');
 Route::get('posts/edit/{post}', [PostController::class, 'edit'])->name('posts.edit');
 Route::patch('posts/{post}', [PostController::class, 'update'])->name('posts.update');
 Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
-Route::get('posts/manage', [PostController::class, 'manage'])->name('posts.manage');
 Route::post('posts/{post}/read', [PostController::class, 'markRead'])->name('posts.read');
 Route::post('posts/{post}/unread', [PostController::class, 'markUnread'])->name('posts.unread');
 Route::get('posts-{tagSlug}', [PostController::class, 'index'])->name('posts.index');
 
-// Courses CRUD + listing
-Route::get('cursos', [CourseController::class, 'index'])->name('courses.index');
+// Courses - public listing + CRUD + show
+Route::get('cursos', [CourseController::class, 'publicIndex'])->name('courses.index');
 Route::get('cursos/create', [CourseController::class, 'create'])->name('courses.create');
 Route::post('cursos', [CourseController::class, 'store'])->name('courses.store');
 Route::get('cursos/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');

@@ -175,59 +175,43 @@
             </div>
         </section>
     </div>
-
+    
     {{-- ═══ CONTEÚDO PRINCIPAL ════════════════════════════════════════ --}}
     <div class="border-t border-stone-200">
-    <div class="max-w-[1100px] mx-auto px-6">
-
+        <div class="max-w-275 mx-auto px-6">
+            
         {{-- ─── Cursos ─────────────────────────────────────────────── --}}
-        <div class="py-14 border-b border-stone-200">
-
-            <div class="flex items-baseline justify-between mb-5">
-                <h2 class="text-2xl font-black text-gray-900">Cursos</h2>
+        <div class="flex items-baseline justify-between mb-5">
+            <h2 class="text-2xl font-black text-gray-900 mt-10">Cursos</h2>
                 <a href="{{ route('courses.index') }}"
                    class="text-sm font-semibold text-brand hover:underline">Ver todos →</a>
             </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 px-6 lg:px-0 max-w-6xl place-content-around mx-auto gap-6 lg:gap-10">
+        @forelse($coursesWithContent as $course)
+            @if (data_get($course->extra, 'featured'))
+                <a href="{{ data_get($course->extra, 'custom_url') ?: route('courses.show', $course->slug) }}"
+                   title="Método de {{ $course->meta['description'] }}"
+                   class="hover:bg-bottom col-span-1 h-64 xl:h-72 bg-no-repeat bg-cover bg-center rounded-xl relative shadow-sm hover:shadow-[0_8px_24px_rgba(43,58,143,0.1)] hover:-translate-y-0.5 transition-all duration-500 ease-in-out"
+                   style="background-image: url({{ $course->getMedia('course-image')->first() ? $course->image('large') : asset('img/home-office-trabalho-remoto.webp') }})">
+                    <div
+                         class="absolute rounded-b-xl bottom-0 inset-x-0 from-gray-900/50 bg-linear-to-t text-white text-xl font-semibold flex h-40 shadow-lg items-center justify-start pt-4 pb-2 px-6">
+                    </div>
+                    <div
+                         class="flex flex-col absolute bottom-0 w-full mx-auto inset-x-0 text-left bg-white/95 rounded-b-xl px-4 h-32 max-h-32 justify-center">
+                        <span style="text-wrap: balance"
+                              class="text-gray-700 text-lg font-bold mb-1.5 leading-snug">
+                            {{ $course->name }}
+                        </span>
+                        <small class="text-gray-600 text-sm">{{ $course->meta['description'] }}</small>
+                    </div>
+                </a>
+            @endif
+        @empty
+            Nenhum assunto em destaque encontrado
+        @endforelse
+    </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                @forelse($coursesWithContent->take(3) as $course)
-                    <a href="{{ data_get($course->extra, 'custom_url') ?: route('courses.show', $course->slug) }}"
-                       class="bg-white border border-stone-200 rounded-xl overflow-hidden
-                              hover:shadow-[0_8px_24px_rgba(43,58,143,0.1)] hover:-translate-y-0.5
-                              transition-all duration-200 block">
-
-                        {{-- Thumb --}}
-                        <div class="h-36 relative overflow-hidden">
-                            @if($url = $course->image('large'))
-                                <img src="{{ $url }}" alt="{{ $course->name }}"
-                                     class="w-full h-full object-cover">
-                            @else
-                                <div class="w-full h-full flex items-center justify-center text-4xl"
-                                     style="background: linear-gradient(135deg,#1E2B6F,#2B3A8F)">
-                                    📚
-                                </div>
-                            @endif
-                            <span class="absolute top-2.5 left-2.5 bg-brand text-white
-                                         text-xs font-bold px-2 py-0.5 rounded-full tracking-wider">
-                                📄 {{ $course->posts->count() }} aulas
-                            </span>
-                        </div>
-
-                        {{-- Body --}}
-                        <div class="px-4 py-4">
-                            <div class="text-base font-bold text-gray-900 mb-1.5 leading-snug">
-                                {{ $course->name }}
-                            </div>
-                            <div class="text-sm text-gray-500 leading-relaxed line-clamp-2">
-                                {{ data_get($course->meta, 'description') }}
-                            </div>
-                        </div>
-                    </a>
-                @empty
-                    <p class="col-span-3 text-sm text-gray-500">Nenhum curso disponível.</p>
-                @endforelse
-            </div>
-        </div>
+        
 
         {{-- ─── Posts + Sidebar ────────────────────────────────────── --}}
         <div class="py-14">

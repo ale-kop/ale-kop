@@ -1,31 +1,45 @@
-<x-layout title="Seções">
+<x-layout title="Gerenciar Seções">
     <x-container>
-        <h1 class="text-4xl font-bold mb-6">Seções</h1>
-        <div class="flex justify-end mb-4">
-            <a href="{{ route('sections.create') }}" class="px-3 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-700">Nova seção</a>
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <a href="{{ route('admin.index') }}" class="text-sm text-gray-500 hover:text-brand transition-colors">← Admin</a>
+                <h1 class="text-3xl font-bold mt-1">Seções</h1>
+            </div>
+            <a href="{{ route('sections.create') }}" class="px-3 py-2 rounded-lg bg-brand text-white text-sm font-semibold hover:bg-brand/90 transition-colors">Nova seção</a>
         </div>
 
-        @if(isset($sections) && $sections->count())
-            <div class="grid gap-6 sm:grid-cols-2">
-                @foreach($sections as $section)
-                    <article class="rounded-lg border border-gray-200 dark:border-gray-800 p-4 space-y-2">
-                        <h2 class="text-lg font-semibold">{{ $section->name }}</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-300">Curso: {{ $section->course?->name }}</p>
-                        <p class="text-xs text-gray-500">{{ $section->posts_count }} posts</p>
-                        <div class="flex gap-2 pt-2">
-                            <a href="{{ route('sections.edit', $section) }}" class="px-2 py-1 rounded border hover:bg-gray-50 dark:hover:bg-gray-800">Editar</a>
-                            <form action="{{ route('sections.destroy', $section) }}" method="post" onsubmit="return confirm('Apagar seção?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="px-2 py-1 rounded border border-red-300 text-red-600 hover:bg-red-50">Apagar</button>
-                            </form>
-                        </div>
-                    </article>
-                @endforeach
-            </div>
-        @else
-            <p class="text-gray-600 dark:text-gray-300">Nenhuma seção encontrada.</p>
-        @endif
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                <thead class="bg-gray-50 dark:bg-gray-800/50">
+                    <tr>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300">Nome</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300">Curso</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300">Posts</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($sections as $section)
+                        <tr class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                            <td class="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">{{ $section->name }}</td>
+                            <td class="px-4 py-3 text-gray-500">{{ $section->course?->name ?? '—' }}</td>
+                            <td class="px-4 py-3 text-gray-500">{{ $section->posts_count }}</td>
+                            <td class="px-4 py-3 space-x-2">
+                                <a href="{{ route('sections.edit', $section) }}" class="px-2 py-1 rounded border text-xs hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Editar</a>
+                                <form action="{{ route('sections.destroy', $section) }}" method="post" class="inline" onsubmit="return confirm('Apagar seção?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="px-2 py-1 rounded border border-red-200 text-red-600 text-xs hover:bg-red-50 transition-colors">Apagar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td class="px-4 py-4 text-gray-500" colspan="4">Nenhuma seção encontrada.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </x-container>
 </x-layout>
-

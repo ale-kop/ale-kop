@@ -1,5 +1,7 @@
 # Instruções e dicas gerais
 
+> **Stack:** Laravel 13 · PHP 8.5+ · Blade · Tailwind CSS · Vanilla JS
+
 ## Deploy com Laravel Envoy
 
 O arquivo `Envoy.blade.php` na raiz do projeto automatiza o deploy via SSH.
