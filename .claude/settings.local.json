@@ -8,7 +8,8 @@
       "Bash(rm /Users/aleksandr/projects/ale-kop/resources/js/modules/code-highlight.js && npm uninstall highlight.js)",
       "WebSearch",
       "WebFetch(domain:packagist.org)",
-      "Bash(composer update:*)"
+      "Bash(composer update:*)",
+      "Bash(npm run *)"
     ]
   }
 }

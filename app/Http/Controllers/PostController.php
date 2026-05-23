@@ -28,7 +28,7 @@ class PostController extends Controller
         $userId = Auth::id();
         $posts = $tag
             ? Post::with(['tag:id,name,slug', 'course:id,name,slug', 'media'])
-                ->select(['posts.id', 'posts.slug', 'posts.name', 'posts.course_id', 'posts.tag_id', 'posts.meta'])
+                ->select(['posts.id', 'posts.slug', 'posts.name', 'posts.course_id', 'posts.tag_id', 'posts.meta', 'posts.created_at'])
                 ->withReadFlag($userId)
                 ->where('tag_id', $tag->id)
                 ->get()

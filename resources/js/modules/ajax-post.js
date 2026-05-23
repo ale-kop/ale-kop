@@ -6,7 +6,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const ajaxElement = e.target.closest('[ak-ajax-click]')
         if (!ajaxElement) return
 
+        e.preventDefault()
         postData(e, ajaxElement)
+    })
+
+    document.body.addEventListener('submit', function (e) {
+        const ajaxButton = e.target.querySelector('[ak-ajax-click]')
+        if (!ajaxButton) return
+
+        e.preventDefault()
+        postData(e, ajaxButton)
     })
 })
 

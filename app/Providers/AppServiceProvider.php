@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
             'posts.index',
             'components.mobile-menu',
         ], function ($view) {
+            
             $tagsWithContent = cache()->remember(
                 'tagsWithContent',
                 Carbon::now()->addMinutes(60),
@@ -60,7 +62,8 @@ class AppServiceProvider extends ServiceProvider
 
         // In debug, push a query logging middleware to help spot N+1 locally
         if (config('app.debug')) {
-            $this->app['router']->pushMiddlewareToGroup('web', \App\Http\Middleware\QueryLogger::class);
+            //$this->app['router']->pushMiddlewareToGroup('web', \App\Http\Middleware\QueryLogger::class);
+            Route::pushMiddlewareToGroup('web',\App\Http\Middleware\QueryLogger::class);
         }
     }
 }

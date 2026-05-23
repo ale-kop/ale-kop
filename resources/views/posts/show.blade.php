@@ -1,83 +1,49 @@
 <x-layout :title="$post->name . ($post->course ? ' — ' . $post->course->name : '')">
 
-    {{-- ── Breadcrumb full-width (só em aulas de curso) ────────────── --}}
     @if($post->course)
-        <div class="w-full bg-brand-light dark:bg-indigo-950/50 border-b border-[#D6DAF7] dark:border-indigo-900/40">
-            <div class="max-w-7xl mx-auto px-4 xl:px-0 py-2.5 flex items-center gap-1.5 text-sm text-brand dark:text-indigo-300 font-medium">
-                <a href="{{ route('courses.index') }}" class="hover:underline opacity-70 hover:opacity-100 transition-opacity">Cursos</a>
-                <span class="opacity-30">›</span>
-                <a href="{{ route('courses.show', $post->course->slug) }}" class="hover:underline opacity-80 hover:opacity-100 transition-opacity">{{ $post->course->name }}</a>
-                <span class="opacity-30">›</span>
-                <span class="opacity-60">{{ $post->name }}</span>
-            </div>
-        </div>
-    @endif
+        {{-- ─── Aula de curso: layout com sidebar lateral ─────────── --}}
+        <x-container>
+            <div class="grid lg:grid-cols-[1fr_280px]">
 
-    <x-container>
-        <div class="grid @if($post->course) lg:grid-cols-[1fr_280px] @lese grid-cols-1 @endif">
-            <article class="min-w-0 py-10 pr-12 pb-20 @if($post->course) lg:border-r border-gray-200 dark:border-gray-700 @endif">
+                <article class="min-w-0 pr-0 lg:pr-12 pb-20 lg:border-r border-gray-200">
 
-                {{-- ── Cabeçalho ────────────────────────────────────────── --}}
-                <header class="mb-6 space-y-3">
-                    {{-- Meta: tag + status --}}
-                    <div class="flex flex-wrap items-center gap-2">
-                        @if($post->tag)
-                            <a href="{{ route('posts.index', ['tagSlug' => $post->tag->slug]) }}"
-                               class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
-                                      bg-accent-light text-accent dark:bg-orange-900/40 dark:text-orange-300
-                                      hover:opacity-80 transition-opacity">
-                                {{ $post->tag->name }}
-                            </a>
-                        @endif
+                    {{-- ── Cabeçalho radiant ───────────────────────── --}}
+                    <header class="mb-10">
+                        <p class="font-mono text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">
+                            <a href="{{ route('courses.index') }}" class="hover:text-gray-950 transition-colors">Cursos</a>
+                            <span class="mx-1 text-gray-300">/</span>
+                            <a href="{{ route('courses.show', $post->course->slug) }}" class="hover:text-gray-950 transition-colors">{{ $post->course->name }}</a>
+                        </p>
+                        <h1 class="mt-2 font-serif text-4xl font-medium tracking-tighter text-pretty text-gray-900 sm:text-5xl">
+                            {{ $post->name }}
+                        </h1>
+                        {{-- @if($post->tag)
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                <a href="{{ route('posts.index', $post->tag->slug) }}"
+                                   class="rounded-full border border-dotted border-gray-300 bg-gray-50 px-2 text-sm/6 font-medium text-gray-500 hover:text-gray-950">
+                                    {{ $post->tag->name }}
+                                </a>
+                            </div>
+                        @endif --}}
+                    </header>
 
-                        @if($post->course)
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                         bg-brand-light text-brand dark:bg-indigo-900/40 dark:text-indigo-300">
-                                Aula do curso
-                            </span>
-                        @else
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                         bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
-                                Post avulso
-                            </span>
-                        @endif
-                    </div>
+                    {{-- ── Hero image ──────────────────────────────── --}}
+                    @if($url = $post->image('large'))
+                        <img src="{{ $url }}" alt="{{ $post->name }}"
+                             class="mb-10 aspect-3/2 w-full rounded-2xl object-cover shadow-xl">
+                    @endif
 
-                    {{-- Título --}}
-                    <h1 class="text-3xl font-display font-bold tracking-tight leading-tight text-gray-900 dark:text-gray-100">
-                        {{ $post->name }}
-                    </h1>
-                </header>
+                    {{-- ── Conteúdo ────────────────────────────────── --}}
+                    <div class="html-content max-w-none text-gray-700">{!! $post->content !!}</div>
 
-                {{-- ── Hero image (compacta, com fallback gradiente) ─────── --}}
-                @if($url = $post->image('large'))
-                    <div class="mb-8 rounded-xl overflow-hidden" style="max-height:220px">
-                        <img src="{{ $url }}"
-                             alt="{{ $post->name }}"
-                             class="w-full h-full object-cover object-center"
-                             style="max-height:220px">
-                    </div>
-                @elseif($post->course)
-                    <div class="mb-8 rounded-xl overflow-hidden flex items-center justify-center"
-                         style="height:160px; background: linear-gradient(135deg, #1E2B6F 0%, #2B3A8F 55%, #D95F02 100%);">
-                        <span class="text-white/80 text-xs font-semibold tracking-widest uppercase">
-                            {{ $post->course->name }}
-                        </span>
-                    </div>
-                @endif
+                    {{-- ── Marcar como lido ───────────────────────── --}}
+                    @if($isRead !== null)
+                        <div class="mt-12 pt-8 border-t border-gray-200">
+                            <x-mark-read-post-button :post="$post" :is-read="$isRead" />
+                        </div>
+                    @endif
 
-                {{-- ── Conteúdo ─────────────────────────────────────────── --}}
-                <div class="html-content max-w-none">{!! $post->content !!}</div>
-
-                {{-- ── Marcar como lido — no fim, onde faz sentido ─────── --}}
-                @if($isRead !== null)
-                    <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
-                        <x-mark-read-post-button :post="$post" :is-read="$isRead" />
-                    </div>
-                @endif
-
-                {{-- ── Navegação prev/next (somente em aulas de curso) ──── --}}
-                @if($post->course)
+                    {{-- ── Navegação prev/next ───────────────────── --}}
                     @php
                         $allPosts     = $post->course->sections->flatMap(fn ($s) => $s->posts);
                         $currentIndex = $allPosts->search(fn ($p) => $p->slug === $post->slug);
@@ -85,20 +51,14 @@
                         $nextPost     = $currentIndex < $allPosts->count() - 1 ? $allPosts[$currentIndex + 1] : null;
                     @endphp
 
-                    <div class="mt-6 grid grid-cols-2 gap-3">
-                        {{-- Anterior --}}
+                    <div class="mt-10 grid grid-cols-2 gap-3">
                         @if($prevPost)
                             <a href="{{ route('posts.show', $prevPost->slug) }}"
-                               class="flex flex-col gap-0.5 rounded-lg border border-gray-200 dark:border-gray-700
-                                      bg-white dark:bg-gray-800/60 px-4 py-3
-                                      text-left hover:border-brand dark:hover:border-indigo-600
-                                      transition-colors group">
-                                <span class="text-[0.7rem] font-semibold uppercase tracking-widest
-                                             text-gray-400 dark:text-gray-500 group-hover:text-brand dark:group-hover:text-indigo-400
-                                             flex items-center gap-1">
-                                    <x-heroicon-o-arrow-left class="w-3 h-3"/> Anterior
+                               class="flex flex-col gap-0.5 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-left hover:border-gray-400 transition-colors group">
+                                <span class="text-[0.7rem] font-semibold uppercase tracking-widest text-gray-400 group-hover:text-gray-950 flex items-center gap-1">
+                                    <x-heroicon-s-chevron-left class="w-3 h-3"/> Anterior
                                 </span>
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-200 leading-snug line-clamp-2">
+                                <span class="text-sm font-medium text-gray-700 leading-snug line-clamp-2">
                                     {{ $prevPost->name }}
                                 </span>
                             </a>
@@ -106,21 +66,13 @@
                             <div></div>
                         @endif
 
-                        {{-- Próxima --}}
                         @if($nextPost)
                             <a href="{{ route('posts.show', $nextPost->slug) }}"
-                               class="flex flex-col gap-0.5 rounded-lg
-                                      bg-brand-light dark:bg-indigo-950/60
-                                      border border-[#D6DAF7] dark:border-indigo-900/50
-                                      px-4 py-3 text-right
-                                      hover:border-brand dark:hover:border-indigo-600
-                                      transition-colors group">
-                                <span class="text-[0.7rem] font-semibold uppercase tracking-widest
-                                             text-brand/60 dark:text-indigo-400/70 group-hover:text-brand dark:group-hover:text-indigo-300
-                                             flex items-center justify-end gap-1">
-                                    Próxima aula <x-heroicon-o-arrow-right class="w-3 h-3"/>
+                               class="flex flex-col gap-0.5 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-right hover:border-gray-400 transition-colors group">
+                                <span class="text-[0.7rem] font-semibold uppercase tracking-widest text-gray-400 group-hover:text-gray-950 flex items-center justify-end gap-1">
+                                    Próxima aula <x-heroicon-s-chevron-right class="w-3 h-3"/>
                                 </span>
-                                <span class="text-sm font-medium text-brand dark:text-indigo-300 leading-snug line-clamp-2">
+                                <span class="text-sm font-medium text-gray-700 leading-snug line-clamp-2">
                                     {{ $nextPost->name }}
                                 </span>
                             </a>
@@ -128,20 +80,62 @@
                             <div></div>
                         @endif
                     </div>
-                @else
-                    <p class="mt-8">
-                        <a href="{{ url()->previous() }}"
-                           class="inline-flex items-center gap-1.5 text-sm text-brand hover:underline dark:text-brand-light">
-                            <x-heroicon-o-arrow-left class="w-3.5 h-3.5"/> Voltar
-                        </a>
-                    </p>
-                @endif
 
-            </article>
+                </article>
 
-            @if($post->course)
+                {{-- Sidebar do curso permanece como está --}}
                 <x-post-index :post="$post" />
-            @endif
-        </div>
-    </x-container>
+
+            </div>
+        </x-container>
+
+    @else
+        {{-- ─── Post avulso: layout radiant blog post ────────────── --}}
+        <x-container>
+            <div class="text-center">
+                <p class="font-mono text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">
+                    {{ optional($post->created_at)->translatedFormat('l, j \\d\\e F \\d\\e Y') }}
+                </p>
+                <h1 class="mt-6 text-4xl font-serif font-medium tracking-tighter text-pretty text-gray-950 sm:text-5xl">
+                    {{ $post->name }}
+                </h1>
+            </div>
+
+            <div class="mt-10 gap-8 pb-24">
+                {{-- <div class="flex flex-wrap items-center gap-8 max-lg:justify-between lg:flex-col lg:items-start">
+                    @if($post->tag)
+                        <div class="flex flex-wrap gap-2">
+                            <a href="{{ route('posts.index', $post->tag->slug) }}"
+                               class="rounded-full border border-dotted border-gray-300 bg-gray-50 px-2 text-sm/6 font-medium text-gray-500 hover:text-gray-950">
+                                {{ $post->tag->name }}
+                            </a>
+                        </div>
+                    @endif
+                    sidebar...
+                </div> --}}
+
+                <div class="text-gray-700">
+                    <div class="max-w-3xl lg:px-4 md:mx-auto">
+
+                        @if($url = $post->image('large'))
+                            <img src="{{ $url }}" alt="{{ $post->name }}"
+                                 class="mb-10 aspect-3/2 w-full rounded-2xl object-cover shadow-xl">
+                        @endif
+
+                        <div class="html-content font-serif text-xl">{!! $post->content !!}</div>
+
+                        <div class="mt-10">
+                            <a href="{{ $post->tag ? route('posts.index', $post->tag->slug) : url()->previous() }}"
+                               class="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-1.5 text-sm font-medium text-gray-950 hover:bg-gray-50 transition-colors">
+                                <x-heroicon-s-chevron-left class="size-4"/>
+                                Voltar
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </x-container>
+    @endif
+
 </x-layout>

@@ -1,25 +1,34 @@
-// top-nav.js
-// Toggle "shadow-xl" em elementos com o atributo [ak-top-nav] quando houver scroll
+// top-nav.js — hide on scroll down, reveal on scroll up
 export function init() {
-    const targets = document.querySelectorAll('[ak-top-nav]');
-    if (!targets[0]) return;
+    const headers = document.querySelectorAll('[ak-top-nav]');
+    if (!headers[0]) return;
 
-    const toggleShadow = () => {
-        const scrolled = window.scrollY > 0;
-        targets.forEach((el) => {
-            // smooth animation
-            el.classList.add('transition-all', 'duration-300');
+    let lastScrollY = window.scrollY;
 
-            if (scrolled) {
-                el.classList.add('shadow-sm/10');
-                el.classList.remove('py-6');
+    const update = () => {
+        const currentScrollY = window.scrollY;
+        const goingDown = currentScrollY > lastScrollY && currentScrollY > 80;
+
+        headers.forEach((el) => {
+            if (goingDown) {
+                el.classList.add('-translate-y-full');
             } else {
-                el.classList.add('py-6');
-                el.classList.remove('shadow-sm/10');
+                el.classList.remove('-translate-y-full');
+            }
+
+            if (currentScrollY === 0) {
+                el.classList.add('bg-transparent');
+                el.classList.remove('bg-white/50');
+                el.classList.remove('backdrop-blur-sm');
+            } else if (currentScrollY > 100) {
+                el.classList.remove('bg-transparent');
+                el.classList.add('bg-white/50');
+                el.classList.add('backdrop-blur-sm');
             }
         });
+
+        lastScrollY = currentScrollY;
     };
 
-    toggleShadow();
-    document.addEventListener('scroll', toggleShadow, { passive: true });
+    window.addEventListener('scroll', update, { passive: true });
 }

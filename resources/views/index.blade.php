@@ -1,125 +1,189 @@
 <x-layout>
 
-    <div class="w-full bg-gradient-to-b from-white to-teal-50 absolute top-0 h-[300px] z-[-1]"></div>
-    <div class="w-full bg-gradient-to-t from-white to-teal-50 absolute top-[300px] h-[300px] -z-1"></div>
-
-    <section class="w-full flex flex-col gap-8 items-center z-10 mb-14 mt-10 px-10 lg:px-0 relative">
-        <h1 class="text-6xl font-bold text-gray-700 text-shadow">
-            <div class="flex gap-2 items-center justify-center">
-                <img src="{{ asset('img/akop-logo-sm.webp') }}" class="w-1/5"> <span class="w-full">Ale Kop</span>
-            </div>
-        </h1>
-
-        <img src="{{ asset('img/curved-arrow.png') }}"
-             class="transform rotate-120 opacity-20 w-40 absolute top-42 mr-175 invisible md:visible">
-
-        <p class="text-2xl md:text-4xl text-center">Aprenda com <span
-                  class="bg-gradient-to-r from-yellow-200 via-yellow-200 to-white/50 bg-no-repeat [background-position:0_90%] [background-size:100%_0.3em]"><span
-                      class="font-medium">Métodos Práticos</span></span></p>
-        <p class="text-xl text-center">Chega de cursos sem fim. <span
-                  class="bg-gradient-to-r from-purple-200 via-purple-200 to-white/50 bg-no-repeat [background-position:0_90%] [background-size:100%_0.3em]">
-                Aplique o conhecimento imediatamente</span>.
-        </p>
-        <!--
-        <div class="text-sm md:text-lg flex gap-2 items-center">
-            <div class="bg-gradient-to-r from-sky-200 to-white/50 bg-no-repeat [background-position:0_90%] [background-size:100%_0.3em] animate-slide-right-left-slow">Oportunidades profissionais</div>
-            <div class="text-gray-400 animate-slide-right-left-slow">←</div>
-            <div class="font-semibold">Comunicação Eficaz</div>
-            <div class="text-gray-400 animate-slide-left-right-slow">→</div>
-            <div class="bg-gradient-to-r from-emerald-200 to-white/50 bg-no-repeat [background-position:0_90%] [background-size:100%_0.3em] animate-slide-left-right-slow">Confiança do Cliente</div>
+    {{-- Hero estilo Radiant --}}
+    <div class="relative -mt-30">
+        <div
+             class="absolute inset-x-2 top-2 bottom-0 rounded-4xl
+                    bg-linear-115 from-accent-light from-28% via-brand-light via-70% to-[#b7cee5]
+                    sm:bg-linear-145
+                    ring-1 ring-black/5 ring-inset">
         </div>
-        -->
 
-        <form action="." method="post" class="space-y-6 w-full md:w-3/4 max-w-[980px] justify-center flex z-90">
-            <x-forms.input-with-button name="email" class="w-full lg:w-1/2 text-2xl"
-                                       placeholder="Cadastre seu e-mail aqui...">
-                <x-slot name="button">Enviar</x-slot>
-            </x-forms.input-with-button>
-        </form>
-    </section>
+        <div class="relative px-6 lg:px-8">
+            <div class="mx-auto max-w-2xl lg:max-w-7xl lg:px-10">
+                <div class="pt-36 pb-24 sm:pt-40 sm:pb-32 md:pb-48">
+                    <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] lg:gap-3">
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 px-6 lg:px-0 max-w-6xl place-content-around mx-auto gap-6 lg:gap-10">
-        @forelse($coursesWithContent as $course)
-            @if (data_get($course->extra, 'featured'))
-                <a href="{{ data_get($course->extra, 'custom_url') ?: route('courses.show', $course->slug) }}"
-                   title="Método de {{ $course->meta['description'] }}"
-                   class="hover:bg-bottom col-span-1 h-64 xl:h-72 bg-no-repeat bg-cover bg-center rounded-xl relative shadow-md hover:ring-2 ring-offset-gray-500/10 ring-offset-1 ring-sky-800/20 transition-all duration-500 ease-in-out"
-                   style="background-image: url({{ $course->getMedia('course-image')->first() ? $course->image('large') : asset('img/home-office-trabalho-remoto.webp') }})">
-                    <div
-                         class="absolute rounded-b-xl bottom-0 inset-x-0 from-gray-900/50 bg-gradient-to-t text-center text-white text-xl font-semibold flex h-[10rem] shadow-lg items-center justify-center pt-4 pb-2 px-6">
+                        {{-- Texto --}}
+                        <div class="flex items-center">
+                            <div class="mx-auto flex max-w-4xl flex-col gap-6 max-lg:text-center">
+                                <h1
+                                    class="font-serif text-5xl/[0.9] font-medium tracking-tight text-balance text-gray-950 sm:text-7xl/[0.8] md:text-7xl/[1]">
+                                    Comunicar é garantir que a mensagem foi entendida
+                                </h1>
+                                <p class="text-xl/7 font-serif font-medium text-gray-950/75 sm:text-3xl/8">
+                                    Vendas e autoridade são perdidas na comunicação com ruído.
+                                    <br>Criei um método que remove esse ruído.
+                                </p>
+                                <p class="text-base font-medium text-brand-deep/90">
+                                    Aplico esse método há mais de 20 anos, compartilhando com <strong
+                                            class="text-accent">vendedores, líderes e equipes</strong>.
+                                </p>
+
+                                <div class="flex flex-col gap-x-6 gap-y-4 sm:flex-row max-lg:justify-center mt-2">
+                                    {{-- <a href="{{ route('courses.index') }}"
+                                       class="inline-flex items-center justify-center px-4 py-[calc(--spacing(2)-1px)] rounded-full border border-transparent bg-gray-950 shadow-md text-base font-medium text-white hover:bg-gray-800 transition-colors">
+                                        Quero aprender o método
+                                    </a> --}}
+                                    <a href="#posts"
+                                       class="relative inline-flex items-center justify-center px-4 py-[calc(--spacing(2)-1px)] rounded-full border border-transparent bg-white/15 shadow-md ring-1 ring-brand/15 after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_0_2px_1px_#ffffff4d] text-base font-medium text-gray-950 hover:bg-white/20 transition-colors">
+                                        Ler posts
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Foto --}}
+                        <div class="max-lg:mx-auto max-lg:max-w-xs max-lg:mt-16">
+                            <div
+                                 class="-m-2 rounded-4xl bg-white/15 shadow-[inset_0_0_2px_1px_#ffffff4d] ring-1 ring-black/5">
+                                <div class="rounded-4xl p-2 shadow-md shadow-black/5">
+                                    <div
+                                         class="overflow-hidden rounded-3xl shadow-2xl outline outline-1 -outline-offset-1 outline-black/10">
+                                        <img alt="Aleksandr Kopelevitch"
+                                             class="aspect-6/7 object-cover object-[-50px]"
+                                             src="{{ asset('img/aleksandr-sitting-office-modern.png') }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-4 text-right italic font-serif px-4">
+                                Aleksandr Kopelevitch
+                            </p>
+                        </div>
+
                     </div>
-                    <div
-                         class="flex flex-col absolute bottom-0 w-full mx-auto inset-x-0 text-center bg-gray-800/80 rounded-b-xl px-6 h-32 max-h-32 justify-center">
-                        <span style="text-wrap: balance"
-                              class="text-white font-medium tracking-tight text-xl lg:text-2xl">
-                            {{ $course->name }}
-                        </span>
-                        <small class="text-white text-sm">{{ $course->meta['description'] }}</small>
-                    </div>
-                </a>
-            @endif
-        @empty
-            Nenhum assunto em destaque encontrado
-        @endforelse
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="my-6">&nbsp;</div>
+    <div id="posts" class="py-14 max-w-7xl mx-auto px-6 lg:px-8">
 
-    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-x-8 gap-y-12 px-6 sm:gap-y-16 lg:grid-cols-2 lg:px-8">
+        @php
+            $sidePosts = $gridPosts->take(3);
+            $remainingPosts = $gridPosts->skip(3);
+        @endphp
 
-        @if ($featuredPost)
-            <article class="mx-auto w-full max-w-2xl lg:mx-0 lg:max-w-lg">
-                <h1 class="text-2xl mb-4">Destaques</h1>
-                <div class="pr-4 float-left relative">
-                    <img src="{{ $featuredPost->image('thumb') }}" class="rounded-md shadow-md">
-                    <span
-                          class="absolute left-2 top-2 rounded-2xl bg-gradient-to-r from-amber-100 via-orange-200/75 to-orange-200 px-2 font-medium text-sm leading-6 text-gray-700">{{ $featuredPost->tag->name ?? 'Sem tag' }}</span>
-                </div>
-                <h2 id="featured-post"
-                    class="text-2xl md:text-3xl font-semibold tracking-tight text-gray-800">{{ $featuredPost->name }}
-                </h2>
-                <p class="mt-4 text-lg leading-8 text-gray-600">
-                    {{ $featuredPost->meta['description'] ?? 'Sem descrição' }}</p>
-                <div
-                     class="mt-4 flex flex-col justify-between gap-6 sm:mt-8 sm:flex-row-reverse sm:gap-8 lg:mt-4 lg:flex-col">
-                    <div class="flex">
-                        <a href="{{ route('posts.show', $featuredPost->slug) }}"
-                           class="text-sm font-semibold leading-6 text-indigo-600 group"
-                           aria-describedby="featured-post">Ler post <div
-                                 class="inline-block group-hover:translate-x-0.5 transform transition-all duration-300 ease-in-out"
-                                 aria-hidden="true">&rarr;</div></a>
+        @if ($featuredPost || $sidePosts->isNotEmpty())
+            {{-- relative: ancora o absolute dos posts laterais; height = post em destaque --}}
+            <div class="relative flex flex-col gap-6 mb-14 lg:block">
+
+                {{-- Post em destaque: padding-right reserva espaço para os laterais no desktop --}}
+                @if ($featuredPost)
+                    <a href="{{ route('posts.show', $featuredPost->slug) }}"
+                       class="group flex flex-col gap-4 lg:pr-[calc(30%+1.5rem)]">
+                        <div
+                             class="aspect-video rounded-xl overflow-hidden bg-stone-100 shadow border border-stone-300">
+                            @if ($url = $featuredPost->image('large'))
+                                <img src="{{ $url }}" alt="{{ $featuredPost->name }}"
+                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center text-5xl bg-stone-200">📄
+                                </div>
+                            @endif
+                        </div>
+                        <div class="text-center">
+                            <h2
+                                class="font-serif text-2xl font-black text-gray-900 leading-tight group-hover:text-brand transition-colors mb-2">
+                                {{ $featuredPost->name }}
+                            </h2>
+                            @if ($desc = data_get($featuredPost->meta, 'description'))
+                                <p class="text-sm text-gray-500 leading-relaxed max-w-md mx-auto mb-3">
+                                    {{ $desc }}</p>
+                            @endif
+                            <p class="text-xs text-gray-400 uppercase tracking-widest">
+                                {{ $featuredPost->created_at->translatedFormat('d M, Y') }}
+                                {{-- @if ($featuredPost->tag)
+                                    &middot; {{ Str::upper($featuredPost->tag->name) }}
+                                @endif --}}
+                            </p>
+                        </div>
+                    </a>
+                @endif
+
+                {{-- Posts laterais: absolute no desktop → h-full = altura do post em destaque --}}
+                @if ($sidePosts->isNotEmpty())
+                    <div
+                         class="flex flex-col divide-y divide-gray-100
+                                lg:absolute lg:top-0 lg:right-0 lg:w-[30%] lg:h-full lg:overflow-hidden">
+                        @foreach ($sidePosts as $post)
+                            <a href="{{ route('posts.show', $post->slug) }}"
+                               class="group flex items-start gap-4 py-5 first:pt-0 last:pb-0">
+                                <div class="flex-1 min-w-0">
+                                    <h3
+                                        class="font-serif font-bold text-gray-900 leading-snug group-hover:text-brand transition-colors text-base lg:text-xl line-clamp-3">
+                                        {{ $post->name }}
+                                    </h3>
+                                    <p class="text-xs text-gray-400 mt-1.5 uppercase tracking-widest">
+                                        {{ $post->created_at->translatedFormat('M d, Y') }}
+                                        {{-- @if ($post->tag)
+                                            &middot; {{ Str::upper($post->tag->name) }}
+                                        @endif --}}
+                                    </p>
+                                </div>
+                                <div
+                                     class="shrink-0 w-20 h-20 rounded-lg overflow-hidden bg-stone-100 shadow border border-stone-300">
+                                    @if ($url = $post->image('thumb'))
+                                        <img src="{{ $url }}" alt="{{ $post->name }}"
+                                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    @else
+                                        <div
+                                             class="w-full h-full flex items-center justify-center text-2xl bg-stone-200">
+                                            📄</div>
+                                    @endif
+                                </div>
+                            </a>
+                        @endforeach
                     </div>
-                </div>
-            </article>
+                @endif
+
+            </div>
         @endif
 
-        <div
-             class="mx-auto w-full max-w-2xl border-t border-gray-900/10 pt-12 sm:pt-16 lg:mx-0 lg:max-w-none lg:border-t-0 lg:pt-0">
-            <div class="-my-12 divide-y divide-gray-900/10">
-                @forelse($latestTwoPosts as $post)
-                    <article class="py-12">
-                        <div class="group relative max-w-xl">
-                            <span
-                                  class="inline-block rounded-2xl bg-gradient-to-r from-amber-100 via-orange-200/75 to-orange-200 px-4 text-sm font-medium leading-6 text-gray-700">{{ $post->tag->name ?? 'Sem tag' }}</span>
-                            <h2 class="mt-2 text-lg lg:text-xl font-semibold text-gray-900 group-hover:text-gray-600">
-                                <a href="{{ route('posts.show', $post->slug) }}"
-                                   title="Ir para o post {{ $post->name }}">
-                                    <span class="absolute inset-0"></span>
-                                    {{ $post->name }}
-                                </a>
-                            </h2>
-                            <p class="mt-4 text-sm lg:text-base leading-6 text-gray-600">
-                                {{ $post->meta['description'] ?? '' }}</p>
+        @if ($remainingPosts->isNotEmpty())
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
+                @foreach ($remainingPosts as $post)
+                    <a href="{{ route('posts.show', $post->slug) }}" class="group flex flex-col gap-3">
+                        <div
+                             class="aspect-video rounded-lg overflow-hidden bg-stone-100 shadow border border-stone-300">
+                            @if ($url = $post->image('medium'))
+                                <img src="{{ $url }}" alt="{{ $post->name }}"
+                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center text-3xl">📄</div>
+                            @endif
                         </div>
-                    </article>
-                @empty
-                    Nenhum post aqui
-                @endforelse
+                        <div>
+                            <h3
+                                class="font-bold text-gray-900 leading-snug group-hover:text-brand transition-colors mb-1">
+                                {{ $post->name }}
+                            </h3>
+                            @if ($desc = data_get($post->meta, 'description'))
+                                <p class="text-sm text-gray-500 line-clamp-2 leading-relaxed">{{ $desc }}</p>
+                            @endif
+                            <p class="text-xs text-gray-400 mt-2 uppercase tracking-wide">
+                                {{ $post->created_at->translatedFormat('d M') }}
+                                @if ($post->tag)
+                                    &middot; {{ $post->tag->name }}
+                                @endif
+                            </p>
+                        </div>
+                    </a>
+                @endforeach
             </div>
-        </div>
-    </div>
+        @endif
 
-    <div class="my-6">&nbsp;</div>
+    </div>
 
     <div class="relative">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" class="absolute -top-10">
@@ -137,16 +201,22 @@
                              class="h-96 w-full flex-none rounded-2xl object-cover shadow-xl lg:aspect-square lg:h-auto lg:max-w-sm"
                              src="{{ asset('img/avatar-akop-4.webp') }}">
                         <div class="w-full flex-auto">
-                            <h2 class="text-3xl font-medium tracking-tight text-white sm:text-4xl">Conheça o
-                                proComercial</h2>
-                            <p class="mt-6 text-base leading-7 text-white">
-                                👋🏻 Procurando um modelo de proposta comercial, uma planilha de fluxo de caixa ou um
-                                modelo de apresentação profissional?
-                                O proComercial tem a missão de oferecer muita variedade e qualidade para tarefas
-                                profissionais do dia-a-dia: aqui você encontra desde um simples exemplo de recibo,
-                                até uma apresentação em PowerPoint de cair o queixo.
+                            <h2 class="text-3xl font-semibold tracking-wide text-white sm:text-4xl">
+                                Olá 👋🏻 sou<br> Aleksandr Kopelevitch
+                            </h2>
+                            <p class="mt-6 text-lg/6 text-white font-serif">
+                                Sou apaixonado por comunicação escrita e falada.<br>
+                                Há 20 anos escrevo e analiso propostas comerciais, converso com clientes para entender suas necessidades e planejo soluções para seus problemas.
+                                <br><br>
+                                Trabalhei em empresas pequenas, médias e grandes para descobrir como funcionam as engrenagens corporativas e tomadas de decisão em vendas B2B.
+                                <br><br>
+                                Compartilho esse conhecimento com colegas, amigos e qualquer pessoa com interesse.
+                                <br><br>
+                                Percebi que existe muita vontade em aprender <strong>como comunicar melhor em vendas, posicionamento profissional e mesmo no dia a dia do corporativo</strong>.
+                                
+                                <br><br>Por isso iniciei o projeto Comunicação Eficaz.
                             </p>
-                            <ul role="list"
+                            {{-- <ul role="list"
                                 class="mt-10 grid grid-cols-1 gap-x-8 gap-y-3 leading-7 text-gray-100 sm:grid-cols-2">
                                 <li class="flex gap-x-3">
                                     <svg class="h-7 w-5 flex-none" viewBox="0 0 20 20" fill="currentColor"
@@ -202,7 +272,7 @@
                                     </svg>
                                     Modelos de Currículos
                                 </li>
-                            </ul>
+                            </ul> --}}
                             <div class="mt-10 flex group">
                                 <a href="#clients"
                                    class="scroll-smooth text-sm font-semibold leading-6 text-indigo-100 hover:text-white">Veja

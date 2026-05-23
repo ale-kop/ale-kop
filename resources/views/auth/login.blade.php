@@ -4,7 +4,7 @@
         <div>{{ implode(', ', $errors->all()) }}</div>
     @endif
 
-    <form method="POST" action="{{ url('/login') }}" class="mt-6 space-y-6">
+    <form method="POST" action="{{ url('/login') }}" name="form-login" class="mt-6 space-y-6">
         
         @csrf
         

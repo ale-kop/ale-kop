@@ -23,27 +23,26 @@ Route::get('/baixar/arquivo', [DownloadController::class, 'stream'])->name('down
 if (config('app.env') === 'local')
     {
         Route::get('/', function () {
-    $featuredPost = Post::whereNotNull('course_id')->orWhereNull('course_id')
-        ->with('tag')
-        ->where('extra->featured', true)
-        ->latest()
-        ->first();
+    $featuredPost = Post::with('tag')->where('extra->featured', true)->latest()->first()
+        ?? Post::with('tag')->latest()->first();
 
-    $latestTwoPosts = Post::whereNotNull('course_id')->orWhereNull('course_id')
-        ->with('tag')
-        ->where('extra->featured', false)
-        ->latest()
-        ->limit(3)
-        ->get();
+    $excludeIds = $featuredPost ? [$featuredPost->id] : [];
+    $gridPosts  = Post::with('tag')->whereNotIn('id', $excludeIds)->latest()->limit(9)->get();
 
-    return view('index', compact('featuredPost', 'latestTwoPosts'));
+    return view('index', compact('featuredPost', 'gridPosts'));
 })->name('index');
 
 Route::get('/index2', function () {
-    $featuredPost = Post::with('tag')->where('extra->featured', true)->latest()->first();
-    $latestTwoPosts = Post::with('tag')->where('extra->featured', false)->latest()->limit(3)->get();
+    $featuredPost = Post::with('tag')->where('extra->featured', true)->latest()->first()
+        ?? Post::with('tag')->latest()->first();
 
-    return view('index2', compact('featuredPost', 'latestTwoPosts'));
+    $excludeIds     = $featuredPost ? [$featuredPost->id] : [];
+    $secondaryPosts = Post::with('tag')->whereNotIn('id', $excludeIds)->latest()->limit(2)->get();
+    $excludeIds     = array_merge($excludeIds, $secondaryPosts->pluck('id')->all());
+    $popularPosts   = Post::with('tag')->whereNotIn('id', $excludeIds)->latest()->limit(7)->get();
+    $gridPosts      = Post::with('tag')->whereNotIn('id', $excludeIds)->latest()->skip(0)->limit(9)->get();
+
+    return view('index2', compact('featuredPost', 'secondaryPosts', 'popularPosts', 'gridPosts'));
 });
 
 

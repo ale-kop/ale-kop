@@ -10,18 +10,17 @@
 @endphp
 
 {{-- ── Lista de aulas (reutilizada em desktop e mobile) ─── --}}
-<div class="space-y-5">
-    @foreach($post->course->sections as $section)
-        <div class="module-section">
+<div class="space-y-7">
+    @foreach($post->course->sections as $i => $section)
+        <div class="module-section {{ $i > 0 ? 'pt-6 border-t border-gray-100 dark:border-gray-800' : '' }}">
 
             @if($post->course->sections->count() > 1)
-                <p class="text-[0.68rem] font-extrabold text-gray-500 dark:text-gray-400 uppercase tracking-[0.1em]
-                           pb-2 mb-1.5 px-1 border-b border-stone-200 dark:border-gray-700">
+                <p class="font-mono text-[0.7rem] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-3 px-1">
                     {{ $section->name }}
                 </p>
             @endif
 
-            <ul>
+            <ul class="space-y-0.5">
                 @foreach($section->posts as $sectionPost)
                     @php
                         $active = $post->slug === $sectionPost->slug;
@@ -29,17 +28,17 @@
                     @endphp
                     <li>
                         <a href="{{ route('posts.show', $sectionPost->slug) }}"
-                           class="flex items-start gap-2.5 px-1.5 py-2 rounded-md text-sm transition-colors
+                           class="flex items-start gap-2.5 pl-3 pr-2 py-2 rounded-r-md border-l-2 text-sm transition-colors
                                {{ $active
-                                   ? 'bg-brand-light dark:bg-indigo-950/60 text-brand dark:text-indigo-300 font-semibold'
+                                   ? 'bg-brand-light dark:bg-indigo-950/60 text-brand-deep dark:text-indigo-300 font-semibold border-brand-deep dark:border-indigo-400'
                                    : ($isRead
-                                       ? 'text-gray-400 dark:text-gray-500 hover:bg-white dark:hover:bg-gray-800'
-                                       : 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800') }}">
+                                       ? 'border-transparent text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800'
+                                       : 'border-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800') }}">
 
                             {{-- Read state indicator --}}
                             <span class="mt-0.5 w-4 h-4 shrink-0 rounded-full border-2 flex items-center justify-center relative
                                 {{ $active && !$isRead
-                                    ? 'border-brand dark:border-indigo-500'
+                                    ? 'border-brand-deep dark:border-indigo-500'
                                     : ($isRead
                                         ? 'bg-done border-done dark:bg-emerald-600 dark:border-emerald-600'
                                         : 'bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600') }}">
@@ -59,8 +58,8 @@
 
 @php $navHtml = ob_get_clean(); @endphp
 
-{{-- ─── Desktop sidebar — fiel ao mockup ─────────────────────────── --}}
-<aside class="hidden lg:block shrink-0 bg-cream dark:bg-gray-900/50
+{{-- ─── Desktop sidebar ─────────────────────────────────────────── --}}
+<aside class="hidden lg:block shrink-0 dark:bg-gray-900/50
                sticky top-20 h-[calc(100vh-5rem)] overflow-y-auto
                px-5 py-7">
 
@@ -88,7 +87,7 @@
     type="button"
     data-side-panel-open="#{{ $panelId }}" data-side-panel-overlay="#{{ $overlayId }}"
     class="lg:hidden fixed right-4 top-20 z-40 inline-flex items-center gap-2 px-3 py-2 rounded-lg border
-           bg-white/90 dark:bg-gray-800/90 shadow-md text-sm font-medium text-brand dark:text-indigo-300
+           bg-white/90 dark:bg-gray-800/90 shadow-md text-sm font-medium text-brand-deep dark:text-indigo-300
            border-brand-light dark:border-indigo-900 opacity-50 hover:opacity-100"
 >
     <x-heroicon-o-list-bullet class="w-4 h-4"/>

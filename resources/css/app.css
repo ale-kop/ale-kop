@@ -4,85 +4,82 @@
 @import './components/scrollbar.css';
 @import './components/rich-text-editor.css';
 
+@source not "../../radiant-js";
+@source not "../../spotlight-js";
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source "../**/*.blade.php";
 @source "../**/*.js";
 @source "../**/*.vue";
 
+/* Inter — display font para menus, labels e títulos curtos */
 @font-face {
-    font-family: 'InterVariable';
-    src: url('../fonts/InterVariable.woff2') format('woff2');
-    font-weight: 100 900;
+    font-family: 'Inter';
+    src: url('../fonts/Inter-VariableFont_opsz,wght.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Spectral — fonte editorial para conteúdo (apenas pesos essenciais) */
+@font-face {
+    font-family: 'Spectral';
+    src: url('../fonts/Spectral-Light.woff2') format('woff2');
+    font-weight: 300;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'InterVariable';
-    src: url('../fonts/InterVariable-Italic.woff2') format('woff2');
-    font-weight: 100 900;
+    font-family: 'Spectral';
+    src: url('../fonts/Spectral-LightItalic.woff2') format('woff2');
+    font-weight: 300;
     font-style: italic;
     font-display: swap;
 }
 
-/* Carrega Instrument Sans (Variable) */
 @font-face {
-    font-family: 'Instrument Sans';
-    src: url('../fonts/InstrumentSans-VariableFont_wdth,wght.woff2') format('woff2-variations');
-    font-weight: 100 900;
+    font-family: 'Spectral';
+    src: url('../fonts/Spectral-Regular.woff2') format('woff2');
+    font-weight: 400;
     font-style: normal;
     font-display: swap;
 }
 
-/* Carrega Instrument Sans Italic (Variable) */
 @font-face {
-    font-family: 'Instrument Sans';
-    src: url('../fonts/InstrumentSans-Italic-VariableFont_wdth,wght.woff2') format('woff2-variations');
-    font-weight: 100 900;
+    font-family: 'Spectral';
+    src: url('../fonts/Spectral-Italic.woff2') format('woff2');
+    font-weight: 400;
     font-style: italic;
     font-display: swap;
 }
 
-/* Carrega Geist Mono (Variable) */
 @font-face {
-    font-family: 'Geist Mono';
-    src: url('../fonts/GeistMono-VariableFont_wght.woff2') format('woff2-variations');
-    font-weight: 100 900;
+    font-family: 'Spectral';
+    src: url('../fonts/Spectral-SemiBold.woff2') format('woff2');
+    font-weight: 600;
     font-style: normal;
     font-display: swap;
 }
 
-/* Carrega Fraunces (display serif) — latin-ext para acentos portugueses */
 @font-face {
-    font-family: 'Fraunces';
-    src: url('../fonts/Fraunces-latin-ext.woff2') format('woff2');
-    font-weight: 400 900;
-    font-style: normal;
+    font-family: 'Spectral';
+    src: url('../fonts/Spectral-SemiBoldItalic.woff2') format('woff2');
+    font-weight: 600;
+    font-style: italic;
     font-display: swap;
-    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-
-/* Carrega Fraunces (display serif) — latin */
-@font-face {
-    font-family: 'Fraunces';
-    src: url('../fonts/Fraunces-latin.woff2') format('woff2');
-    font-weight: 400 900;
-    font-style: normal;
-    font-display: swap;
-    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @theme {
 
-    /*--font-sans: InterVariable;*/
-
-    --font-sans: 'Instrument Sans', InterVariable;
-    --font-mono: 'Geist Mono';
-    --font-display: 'Fraunces', serif;
+    --font-sans: 'Inter', sans-serif;
+    --font-mono: ui-monospace, monospace;
+    /* --font-display: 'League Gothic', sans-serif; */
+    --font-serif: 'Spectral', Georgia, serif;
 
     /* ── Paleta Ale Kop ──────────────────────────────── */
-    --color-brand:        #144A6E;   /* azul profundo    */
+    --color-brand:        #4087C2;   /* azul AKOP (logo) */
+    --color-brand-deep:   #144A6E;   /* azul profundo    */
     --color-brand-light:  #ECEFFE;   /* índigo claro     */
     --color-accent:       #D95F02;   /* laranja queimado */
     --color-accent-light: #FEF0E7;   /* laranja claro    */
@@ -350,12 +347,12 @@ dialog::backdrop {
 .html-content > * + * {
     @apply mt-4;
 }
-.html-content h1 { @apply text-4xl font-bold tracking-tight mt-6 mb-3; }
-.html-content h2 { @apply text-3xl font-bold tracking-tight mt-6 mb-3; }
-.html-content h3 { @apply text-2xl font-semibold mt-5 mb-2; }
-.html-content h4 { @apply text-xl font-semibold mt-4 mb-2; }
-.html-content h5 { @apply text-lg font-semibold mt-4 mb-2; }
-.html-content h6 { @apply text-base font-semibold mt-4 mb-2; }
+.html-content h1 { @apply font-sans text-4xl font-bold tracking-wide mt-6 mb-3; }
+.html-content h2 { @apply font-sans text-3xl font-bold mt-6 tracking-wide mb-3; }
+.html-content h3 { @apply font-sans text-2xl font-semibold tracking-wide mt-5 mb-2; }
+.html-content h4 { @apply font-sans text-xl font-semibold mt-4 mb-2; }
+.html-content h5 { @apply font-sans text-lg font-semibold mt-4 mb-2; }
+.html-content h6 { @apply font-sans text-base font-semibold mt-4 mb-2; }
 
 .html-content p { @apply mt-4; }
 .html-content a { @apply text-blue-600 hover:underline; }
