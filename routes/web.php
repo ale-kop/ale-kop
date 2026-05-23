@@ -13,16 +13,16 @@ use App\Http\Controllers\TagController;
 use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('index-temporary');
-})->name('index-temporary');
+// Route::get('/', function () {
+//     return view('index-temporary');
+// })->name('index-temporary');
 
 Route::get('/baixar', [DownloadController::class, 'show'])->name('download.show');
 Route::get('/baixar/arquivo', [DownloadController::class, 'stream'])->name('download.stream');
 
-if (config('app.env') === 'local')
-    {
-        Route::get('/', function () {
+//if (config('app.env') === 'local')
+//  {
+Route::get('/', function () {
     $featuredPost = Post::with('tag')->where('extra->featured', true)->latest()->first()
         ?? Post::with('tag')->latest()->first();
 
@@ -32,19 +32,18 @@ if (config('app.env') === 'local')
     return view('index', compact('featuredPost', 'gridPosts'));
 })->name('index');
 
-Route::get('/index2', function () {
-    $featuredPost = Post::with('tag')->where('extra->featured', true)->latest()->first()
-        ?? Post::with('tag')->latest()->first();
+// Route::get('/index2', function () {
+//     $featuredPost = Post::with('tag')->where('extra->featured', true)->latest()->first()
+//         ?? Post::with('tag')->latest()->first();
 
-    $excludeIds     = $featuredPost ? [$featuredPost->id] : [];
-    $secondaryPosts = Post::with('tag')->whereNotIn('id', $excludeIds)->latest()->limit(2)->get();
-    $excludeIds     = array_merge($excludeIds, $secondaryPosts->pluck('id')->all());
-    $popularPosts   = Post::with('tag')->whereNotIn('id', $excludeIds)->latest()->limit(7)->get();
-    $gridPosts      = Post::with('tag')->whereNotIn('id', $excludeIds)->latest()->skip(0)->limit(9)->get();
+//     $excludeIds     = $featuredPost ? [$featuredPost->id] : [];
+//     $secondaryPosts = Post::with('tag')->whereNotIn('id', $excludeIds)->latest()->limit(2)->get();
+//     $excludeIds     = array_merge($excludeIds, $secondaryPosts->pluck('id')->all());
+//     $popularPosts   = Post::with('tag')->whereNotIn('id', $excludeIds)->latest()->limit(7)->get();
+//     $gridPosts      = Post::with('tag')->whereNotIn('id', $excludeIds)->latest()->skip(0)->limit(9)->get();
 
-    return view('index2', compact('featuredPost', 'secondaryPosts', 'popularPosts', 'gridPosts'));
-});
-
+//     return view('index2', compact('featuredPost', 'secondaryPosts', 'popularPosts', 'gridPosts'));
+// });
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'show'])->name('login');
@@ -101,4 +100,5 @@ Route::get('cursos/{courseSlug}', [CourseController::class, 'show'])->name('cour
 
 // Catch-all post slug must be last
 Route::get('{post:slug}', [PostController::class, 'show'])->name('posts.show');
-    }
+
+//}
