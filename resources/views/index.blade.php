@@ -22,12 +22,12 @@
                                     Comunicar é garantir que a mensagem foi entendida
                                 </h1>
                                 <p class="text-xl/7 font-serif font-medium text-gray-950/75 sm:text-3xl/8">
-                                    Vendas e autoridade são perdidas na comunicação com ruído.
-                                    <br>Criei um método que remove esse ruído.
+                                    Estudo e compartilho o que aprendi em mais de 20 anos comunicando profissionalmente.
+                                
                                 </p>
                                 <p class="text-base font-medium text-brand-deep/90">
-                                    Aplico esse método há mais de 20 anos, compartilhando com <strong
-                                            class="text-accent">vendedores, líderes e equipes</strong>.
+                                    Vem junto para aprender a <strong class="text-accent">Apresentar, Instruir, Reunir, Vender</strong> e comunicar bem em qualquer situação
+
                                 </p>
 
                                 <div class="flex flex-col gap-x-6 gap-y-4 sm:flex-row max-lg:justify-center mt-2">

@@ -57,7 +57,6 @@ class Tag extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('tag-image')
-            ->useDisk('public')
             ->singleFile();
     }
 }
