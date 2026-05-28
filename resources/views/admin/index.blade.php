@@ -67,9 +67,39 @@
                 </div>
             </a>
 
+            <a href="{{ route('admin.newsletter.campaigns.index') }}"
+               class="group flex flex-col gap-3 p-6 rounded-xl border border-gray-200 dark:border-gray-700
+                      bg-white dark:bg-gray-800 hover:border-brand hover:shadow-md transition-all">
+                <div class="w-10 h-10 rounded-lg bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                    <x-heroicon-o-envelope class="w-5 h-5 text-sky-600 dark:text-sky-400"/>
+                </div>
+                <div>
+                    <div class="font-semibold text-gray-900 dark:text-gray-100 group-hover:text-brand transition-colors">Newsletter</div>
+                    <div class="text-sm text-gray-500 mt-0.5">Campanhas e listas de inscritos</div>
+                </div>
+                <div class="mt-auto flex items-center gap-1.5 text-xs font-semibold text-brand opacity-0 group-hover:opacity-100 transition-opacity">
+                    Gerenciar <x-heroicon-o-arrow-right class="w-3.5 h-3.5"/>
+                </div>
+            </a>
+
+            <a href="{{ route('admin.newsletter.subscribers.index') }}"
+               class="group flex flex-col gap-3 p-6 rounded-xl border border-gray-200 dark:border-gray-700
+                      bg-white dark:bg-gray-800 hover:border-brand hover:shadow-md transition-all">
+                <div class="w-10 h-10 rounded-lg bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
+                    <x-heroicon-o-users class="w-5 h-5 text-teal-600 dark:text-teal-400"/>
+                </div>
+                <div>
+                    <div class="font-semibold text-gray-900 dark:text-gray-100 group-hover:text-brand transition-colors">Inscritos</div>
+                    <div class="text-sm text-gray-500 mt-0.5">Pessoas cadastradas na newsletter</div>
+                </div>
+                <div class="mt-auto flex items-center gap-1.5 text-xs font-semibold text-brand opacity-0 group-hover:opacity-100 transition-opacity">
+                    Ver lista <x-heroicon-o-arrow-right class="w-3.5 h-3.5"/>
+                </div>
+            </a>
+
         </div>
 
-        <div class="mt-8 flex gap-3">
+        <div class="mt-8 flex gap-3 flex-wrap">
             <a href="{{ route('posts.create') }}"
                class="px-4 py-2 rounded-lg bg-brand text-white text-sm font-semibold hover:bg-brand/90 transition-colors">
                 + Novo Post
@@ -78,6 +108,11 @@
                class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-semibold
                       hover:border-brand hover:text-brand transition-colors dark:text-gray-300">
                 + Novo Curso
+            </a>
+            <a href="{{ route('admin.newsletter.campaigns.create') }}"
+               class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-semibold
+                      hover:border-brand hover:text-brand transition-colors dark:text-gray-300">
+                + Nova Campanha
             </a>
         </div>
 

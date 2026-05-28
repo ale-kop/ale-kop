@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\NewsletterCampaignController;
+use App\Http\Controllers\Admin\NewsletterListController;
+use App\Http\Controllers\Admin\NewsletterSubscriberController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
@@ -7,6 +10,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DownloadController;
+use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\TagController;
@@ -19,6 +23,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/baixar', [DownloadController::class, 'show'])->name('download.show');
 Route::get('/baixar/arquivo', [DownloadController::class, 'stream'])->name('download.stream');
+
+// Newsletter subscription (public)
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
+    ->middleware('throttle:5,1')
+    ->name('newsletter.subscribe');
+
+Route::get('/newsletter/descadastrar/{token}', [NewsletterController::class, 'unsubscribe'])
+    ->name('newsletter.unsubscribe');
+
+Route::post('/newsletter/descadastrar/{token}', [NewsletterController::class, 'confirmUnsubscribe'])
+    ->name('newsletter.unsubscribe.confirm');
 
 //if (config('app.env') === 'local')
 //  {
@@ -71,6 +86,21 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/tags', [TagController::class, 'index'])->name('tags');
     Route::get('/sections', [SectionController::class, 'index'])->name('sections');
     Route::get('/courses', [CourseController::class, 'index'])->name('courses');
+
+    // Newsletter admin
+    Route::prefix('newsletter')->name('newsletter.')->group(function () {
+        Route::get('subscribers', [NewsletterSubscriberController::class, 'index'])->name('subscribers.index');
+        Route::resource('lists', NewsletterListController::class)->except(['show']);
+        Route::get('campaigns', [NewsletterCampaignController::class, 'index'])->name('campaigns.index');
+        Route::get('campaigns/create', [NewsletterCampaignController::class, 'create'])->name('campaigns.create');
+        Route::post('campaigns', [NewsletterCampaignController::class, 'store'])->name('campaigns.store');
+        Route::get('campaigns/{campaign}', [NewsletterCampaignController::class, 'show'])->name('campaigns.show');
+        Route::get('campaigns/{campaign}/edit', [NewsletterCampaignController::class, 'edit'])->name('campaigns.edit');
+        Route::patch('campaigns/{campaign}', [NewsletterCampaignController::class, 'update'])->name('campaigns.update');
+        Route::delete('campaigns/{campaign}', [NewsletterCampaignController::class, 'destroy'])->name('campaigns.destroy');
+        Route::post('campaigns/{campaign}/send', [NewsletterCampaignController::class, 'send'])->name('campaigns.send');
+        Route::post('campaigns/{campaign}/cancel', [NewsletterCampaignController::class, 'cancel'])->name('campaigns.cancel');
+    });
 });
 
 // Sections CRUD (no public listing)

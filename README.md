@@ -363,3 +363,109 @@ Abre e fecha painéis laterais (mobile menu, índice de posts, etc.) via atribut
 ### `code-highlight` — syntax highlighting
 
 Aplicado automaticamente a todo `pre > code` dentro de elementos `.html-content` (renderização de posts). Usa `highlight.js`. Nenhuma configuração necessária — o módulo é idempotente (`data-highlighted` evita re-processamento).
+
+---
+
+## Newsletter
+
+Sistema próprio de captura, gerenciamento e envio de newsletters, sem dependência de SendPulse.
+
+### Painel administrativo
+
+| URL | Descrição |
+|-----|-----------|
+| `/admin/newsletter/subscribers` | Lista de inscritos com filtro por status e lista |
+| `/admin/newsletter/lists` | CRUD de listas de inscritos |
+| `/admin/newsletter/campaigns` | CRUD de campanhas |
+| `/admin/newsletter/campaigns/{id}` | Status de envio da campanha (total / enviados / falhas / pendentes) |
+
+### Queue dedicada
+
+Os e-mails são enviados via fila `newsletter`, separada da fila `default`. Isso permite controlar a taxa de envio sem bloquear outras operações da aplicação.
+
+**Iniciar worker apenas para newsletter (recomendado em produção):**
+
+```bash
+php artisan queue:work --queue=newsletter --sleep=3 --tries=3 --backoff=60
+```
+
+**Iniciar ambas as filas juntas (desenvolvimento):**
+
+```bash
+php artisan queue:work --queue=newsletter,default --sleep=3 --tries=3 --backoff=60
+```
+
+> Em produção, adicione um processo separado no Supervisor para a fila `newsletter` (veja configuração abaixo).
+
+### Configuração do Supervisor para newsletter
+
+Adicione este bloco ao lado do processo Horizon existente em `/etc/supervisor/conf.d/`:
+
+```ini
+[program:laravel-newsletter]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/project-folder/artisan queue:work --queue=newsletter --sleep=3 --tries=3 --backoff=60 --max-time=3600
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=root
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/www/project-folder/storage/logs/newsletter-worker.log
+```
+
+Após criar o arquivo:
+
+```bash
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start laravel-newsletter:*
+```
+
+### Configuração de e-mail (`.env`)
+
+O sistema é compatível com qualquer driver SMTP. Exemplos:
+
+```env
+# KingHost / Locaweb (SMTP compartilhado)
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.kinghost.net       # ou smtp.locaweb.com.br
+MAIL_PORT=587
+MAIL_USERNAME=seu@dominio.com.br
+MAIL_PASSWORD=sua_senha
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=seu@dominio.com.br
+MAIL_FROM_NAME="Ale Kop"
+
+# Mailgun
+MAIL_MAILER=mailgun
+MAILGUN_DOMAIN=mg.seudominio.com
+MAILGUN_SECRET=key-xxxxxxxxxxxx
+```
+
+### Como funciona o envio
+
+1. No painel, acesse uma campanha em status **Rascunho** ou **Agendado** e clique em **Enviar agora**
+2. O job `ProcessNewsletterCampaign` é despachado para a fila `newsletter`
+3. Ele coleta todos os inscritos ativos das listas vinculadas à campanha e cria um log de envio por inscrito
+4. Em seguida, despacha jobs `SendNewsletterEmail` em **chunks de 50** com **60 segundos de intervalo entre lotes** — seguro para SMTP compartilhado
+5. Cada job individual tem **3 tentativas** com **60 segundos de backoff** em caso de falha
+6. Os contadores da campanha (enviados / falhas) são atualizados em tempo real; quando `enviados + falhas = total`, o status muda para **Concluído**
+
+### Descadastro
+
+Cada e-mail enviado contém um link de descadastro único no rodapé (`/newsletter/descadastrar/{token}`). O inscrito confirma clicando em um botão e o status é marcado como `unsubscribed` — o registro nunca é removido do banco.
+
+### Formulários de captura
+
+Os formulários nas páginas públicas (download e página temporária) enviam para `POST /newsletter/subscribe` com:
+
+- `name` — nome (opcional)
+- `email` — obrigatório
+- `list` — slug da lista de destino (padrão: `newsletter`)
+- Parâmetros UTM capturados automaticamente e salvos no campo `metadata`
+- Campo honeypot `website` (oculto) para bloqueio básico de bots
+- Rate limit de 5 requisições por minuto por IP
+
+Se o e-mail já existir, o cadastro **não é duplicado**: os metadados são atualizados e o inscrito é adicionado à lista caso ainda não esteja nela.
