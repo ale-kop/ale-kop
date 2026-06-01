@@ -58,8 +58,9 @@ if (config('app.env') === 'local') {
 
     //     return view('index2', compact('featuredPost', 'secondaryPosts', 'popularPosts', 'gridPosts'));
     // });
+}
 
-    Route::middleware('guest')->group(function () {
+Route::middleware('guest')->group(function () {
         Route::get('/login', [LoginController::class, 'show'])->name('login');
         Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:6,1');
 
