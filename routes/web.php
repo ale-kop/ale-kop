@@ -58,7 +58,7 @@ Route::get('/', function () {
 //     $gridPosts      = Post::with('tag')->whereNotIn('id', $excludeIds)->latest()->skip(0)->limit(9)->get();
 
 //     return view('index2', compact('featuredPost', 'secondaryPosts', 'popularPosts', 'gridPosts'));
- });
+// });
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'show'])->name('login');
@@ -131,4 +131,4 @@ Route::get('cursos/{courseSlug}', [CourseController::class, 'show'])->name('cour
 // Catch-all post slug must be last
 Route::get('{post:slug}', [PostController::class, 'show'])->name('posts.show');
 
-//}
+}
