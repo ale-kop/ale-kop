@@ -128,6 +128,5 @@ Route::middleware('guest')->group(function () {
     Route::delete('cursos/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');
     Route::get('cursos/{courseSlug}', [CourseController::class, 'show'])->name('courses.show');
 
-    // Catch-all post slug must be last
-    Route::get('{post:slug}', [PostController::class, 'show'])->name('posts.show');
-}
+// Catch-all post slug must be last
+Route::get('{post:slug}', [PostController::class, 'show'])->name('posts.show');
