@@ -16,6 +16,7 @@
 
                         {{-- Texto --}}
                         <div class="flex items-center">
+                            
                             <div class="mx-auto flex max-w-4xl flex-col gap-6 max-lg:text-center">
                                 <h1
                                     class="font-serif text-5xl/[0.9] font-medium tracking-tight text-balance text-gray-950 sm:text-7xl/[0.8] md:text-7xl/[1]">
@@ -201,20 +202,20 @@
                              class="h-96 w-full flex-none rounded-2xl object-cover shadow-xl lg:aspect-square lg:h-auto lg:max-w-sm"
                              src="{{ asset('img/avatar-akop-4.webp') }}">
                         <div class="w-full flex-auto">
-                            <h2 class="text-3xl font-semibold tracking-wide text-white sm:text-4xl">
-                                Olá 👋🏻 sou<br> Aleksandr Kopelevitch
+                            <h2 class="text-3xl font-semibold tracking-tight font-serif text-white sm:text-3xl">
+                                Sobre mim, Aleksandr Kopelevitch
                             </h2>
-                            <p class="mt-6 text-lg/6 text-white font-serif">
-                                Sou apaixonado por comunicação escrita e falada.<br>
-                                Há 20 anos escrevo e analiso propostas comerciais, converso com clientes para entender suas necessidades e planejo soluções para seus problemas.
+                            <p class="mt-6 text-base/7 text-white">
+                                Há mais de 20 anos, atendo empresas e 
+                                pessoas focando em planos de comunicação entre equipes, lideranças, campanhas de SEO, 
+                                posicionamento e desenvolvimento de produtos.
                                 <br><br>
-                                Trabalhei em empresas pequenas, médias e grandes para descobrir como funcionam as engrenagens corporativas e tomadas de decisão em vendas B2B.
+                                Comunicar é a habilidade de deixar claro o que precisa ser entendido e feito.
                                 <br><br>
-                                Compartilho esse conhecimento com colegas, amigos e qualquer pessoa com interesse.
+                                Muitos <strong>pensam</strong> que comunicam bem. Mas a realidadde é diferente: falar e escrever pouco, de forma 
+                                objetiva é raro tanto na vida profissional, quanto pessoal.
                                 <br><br>
-                                Percebi que existe muita vontade em aprender <strong>como comunicar melhor em vendas, posicionamento profissional e mesmo no dia a dia do corporativo</strong>.
-                                
-                                <br><br>Por isso iniciei o projeto Comunicação Eficaz.
+                                Felizmente, <strong>você pode treinar e aperfeiçoar essa habilidade!</strong>
                             </p>
                             {{-- <ul role="list"
                                 class="mt-10 grid grid-cols-1 gap-x-8 gap-y-3 leading-7 text-gray-100 sm:grid-cols-2">
@@ -296,118 +297,55 @@
         </div>
     </div>
 
-    <div class="bg-white">
-        <div class="mx-auto max-w-7xl px-6 lg:px-8">
-            <div class="grid grid-cols-1 items-start gap-x-8 gap-y-16 lg:grid-cols-2 py-10">
-                <div class="mx-auto w-full max-w-xl lg:mx-0">
-                    <h2 class="text-3xl font-bold tracking-tight text-gray-900" id="clients">Clientes atendidos</h2>
-                    <p class="mt-6 text-lg leading-8 text-gray-600">Ao longo dos mais de 20 anos de jornada, atendi
-                        inúmeras empresas criando sites, softwares de gestão, campanhas de SEO e prestando consultoria
-                        para os mais variados fins dentro do espectro de produtos Web.</p>
-                    <div class="mt-8 flex group">
-                        <a href="#projects"
-                           class="active:scale-[0.99] transform transition-all duration-200 ease-in-out rounded-md bg-sky-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                            Conheça meus principais projetos</a>
-                    </div>
+    <style>
+        @keyframes marquee-ltr {
+            from { transform: translateX(-50%); }
+            to   { transform: translateX(0%); }
+        }
+        .marquee-track {
+            animation: marquee-ltr 28s linear infinite;
+            will-change: transform;
+        }
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+    </style>
+
+    <div class="bg-white py-12" id="clients">
+        <div class="mx-auto max-w-7xl px-6 lg:px-8 mb-10">
+            <h2 class="text-3xl font-serif font-bold tracking-tight text-gray-900">Clientes atendidos</h2>
+        </div>
+
+        <div class="relative overflow-hidden">
+            {{-- Máscaras de fade nas bordas --}}
+            <div class="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-white to-transparent sm:w-32"></div>
+            <div class="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-white to-transparent sm:w-32"></div>
+
+            <div class="marquee-track flex items-center">
+                {{-- Conjunto 1 --}}
+                <div class="flex shrink-0 items-center gap-12 px-6 sm:gap-16 sm:px-10">
+                    <img class="h-10 w-auto object-contain grayscale sm:h-12" src="{{ asset('img/logo-arysta.webp') }}" title="Arysta" alt="Arysta">
+                    <img class="h-10 w-auto object-contain grayscale sm:h-12" src="{{ asset('img/logo-iac.webp') }}" title="Instituto Agronômico de Campinas" alt="IAC">
+                    <img class="h-10 w-auto object-contain grayscale sm:h-12" src="{{ asset('img/logo-apta.webp') }}" title="APTA SP" alt="APTA SP">
+                    <img class="h-10 w-auto object-contain grayscale sm:h-12" src="{{ asset('img/logo-lider-leiloes.webp') }}" title="Líder Leilões" alt="Líder Leilões">
+                    <img class="h-10 w-auto object-contain grayscale sm:h-12" src="{{ asset('img/logo-fundepag.webp') }}" title="Fundepag" alt="Fundepag">
+                    <img class="h-10 w-auto object-contain grayscale sm:h-12" src="{{ asset('img/logo-capital-consultoria.webp') }}" title="Capital Consultoria" alt="Capital Consultoria">
+                    <img class="h-10 w-auto object-contain grayscale sm:h-12" src="{{ asset('img/logo-tdg.webp') }}" title="TDG Informática" alt="TDG">
+                    <img class="h-10 w-auto object-contain grayscale sm:h-12" src="{{ asset('img/logo-mossebo.webp') }}" title="Mossebo Interior Design" alt="Mossebo">
                 </div>
-                <div
-                     class="mx-auto grid w-full max-w-xl grid-cols-2 items-center gap-y-12 lg:mx-0 lg:max-w-none lg:pl-8">
-                    <img class="max-h-16 w-full object-contain object-left grayscale"
-                         src="{{ asset('img/logo-arysta.webp') }}" title="Arysta" alt="Arysta - Logo">
-                    <img class="max-h-16 w-full object-contain object-left grayscale"
-                         src="{{ asset('img/logo-iac.webp') }}" title="Instituto Agronômico de Campinas"
-                         alt="Instituo Agronômico de Campinas - Logo">
-                    <img class="max-h-20 w-full object-contain object-left grayscale"
-                         src="{{ asset('img/logo-apta.webp') }}" title="APTA SP" alt="APTA Governo SP - Logo">
-                    <img class="max-h-16 w-full object-contain object-left grayscale"
-                         src="{{ asset('img/logo-lider-leiloes.webp') }}" title="Líder Leilões"
-                         alt="Líder Leilões - Logo">
-                    <img class="max-h-16 w-full object-contain object-left grayscale"
-                         src="{{ asset('img/logo-fundepag.webp') }}" title="Fundepag" alt="Fundepag - Logo">
-                    <img class="max-h-16 w-full object-contain object-left grayscale"
-                         src="{{ asset('img/logo-capital-consultoria.webp') }}" title="Capital Consultoria"
-                         alt="Capital Consultoria - Logo">
-                    <img class="max-h-20 w-full object-contain object-left grayscale"
-                         src="{{ asset('img/logo-tdg.webp') }}" title="TDG Informática" alt="TDG - Logo">
-                    <img class="max-h-16 w-full object-contain object-left grayscale"
-                         src="{{ asset('img/logo-mossebo.webp') }}" title="Mossebo Interior Design"
-                         alt="Mossebo Interior Design - Logo">
+                {{-- Conjunto 2 — duplicado para o loop contínuo --}}
+                <div class="flex shrink-0 items-center gap-12 px-6 sm:gap-16 sm:px-10" aria-hidden="true">
+                    <img class="h-10 w-auto object-contain grayscale sm:h-12" src="{{ asset('img/logo-arysta.webp') }}" alt="">
+                    <img class="h-10 w-auto object-contain grayscale sm:h-12" src="{{ asset('img/logo-iac.webp') }}" alt="">
+                    <img class="h-10 w-auto object-contain grayscale sm:h-12" src="{{ asset('img/logo-apta.webp') }}" alt="">
+                    <img class="h-10 w-auto object-contain grayscale sm:h-12" src="{{ asset('img/logo-lider-leiloes.webp') }}" alt="">
+                    <img class="h-10 w-auto object-contain grayscale sm:h-12" src="{{ asset('img/logo-fundepag.webp') }}" alt="">
+                    <img class="h-10 w-auto object-contain grayscale sm:h-12" src="{{ asset('img/logo-capital-consultoria.webp') }}" alt="">
+                    <img class="h-10 w-auto object-contain grayscale sm:h-12" src="{{ asset('img/logo-tdg.webp') }}" alt="">
+                    <img class="h-10 w-auto object-contain grayscale sm:h-12" src="{{ asset('img/logo-mossebo.webp') }}" alt="">
                 </div>
             </div>
         </div>
     </div>
-
-
-    {{-- App Showcase --}}
-    <div class="overflow-hidden bg-white py-24 sm:py-32">
-        <div class="mx-auto max-w-7xl px-6 lg:px-8">
-            <div
-                 class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
-                <div class="lg:pr-8 lg:pt-4">
-                    <div class="lg:max-w-lg">
-                        <h2 class="text-base font-semibold leading-7 text-sky-600" id="projects">Software de Gestão
-                        </h2>
-                        <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">SGP AgroSP</p>
-                        <p class="mt-6 text-lg leading-8 text-gray-600">O SGP AgroSP integra as área da pesquisa com
-                            outras coordenadorias da Secretaria de Agricultura e Abastecimento, além de promover a
-                            interação entre seus institutos na programação de PD&I</p>
-                        <dl class="mt-10 max-w-xl space-y-8 text-base leading-7 text-gray-600 lg:max-w-none">
-                            <div class="relative pl-9">
-                                <dt class="inline font-semibold text-gray-900">
-                                    <svg class="absolute left-1 top-1 h-5 w-5 text-sky-600" viewBox="0 0 20 20"
-                                         fill="currentColor" aria-hidden="true">
-                                        <path fill-rule="evenodd"
-                                              d="M5.5 17a4.5 4.5 0 01-1.44-8.765 4.5 4.5 0 018.302-3.046 3.5 3.5 0 014.504 4.272A4 4 0 0115 17H5.5zm3.75-2.75a.75.75 0 001.5 0V9.66l1.95 2.1a.75.75 0 101.1-1.02l-3.25-3.5a.75.75 0 00-1.1 0l-3.25 3.5a.75.75 0 101.1 1.02l1.95-2.1v4.59z"
-                                              clip-rule="evenodd" />
-                                    </svg>
-                                    Disponível 24/7
-                                </dt>
-                                <dd class="inline">Software disponível o tempo todo: do computador de mesa, notebook,
-                                    tablet ou smartphone. Basta ter uma conexão com a Internet para usá-lo a qualquer
-                                    hora e em qualquer lugar.
-                                </dd>
-                            </div>
-                            <div class="relative pl-9">
-                                <dt class="inline font-semibold text-gray-900">
-                                    <svg class="absolute left-1 top-1 h-5 w-5 text-sky-600" viewBox="0 0 20 20"
-                                         fill="currentColor" aria-hidden="true">
-                                        <path fill-rule="evenodd"
-                                              d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z"
-                                              clip-rule="evenodd" />
-                                    </svg>
-                                    Dados em segurança
-                                </dt>
-                                <dd class="inline">Além de contar com transmissão de dados através do protocolo HTTPS,
-                                    está em conformidade com a LGPD, mantendo as informações encriptadas no banco de
-                                    dados.
-                                </dd>
-                            </div>
-                            <div class="relative pl-9">
-                                <dt class="inline font-semibold text-gray-900">
-                                    <svg class="absolute left-1 top-1 h-5 w-5 text-sky-600"
-                                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                              d="M10 1a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 1zM5.05 3.05a.75.75 0 011.06 0l1.062 1.06A.75.75 0 116.11 5.173L5.05 4.11a.75.75 0 010-1.06zm9.9 0a.75.75 0 010 1.06l-1.06 1.062a.75.75 0 01-1.062-1.061l1.061-1.06a.75.75 0 011.06 0zM3 8a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5A.75.75 0 013 8zm11 0a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5A.75.75 0 0114 8zm-6.828 2.828a.75.75 0 010 1.061L6.11 12.95a.75.75 0 01-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm3.594-3.317a.75.75 0 00-1.37.364l-.492 6.861a.75.75 0 001.204.65l1.043-.799.985 3.678a.75.75 0 001.45-.388l-.978-3.646 1.292.204a.75.75 0 00.74-1.16l-3.874-5.764z"
-                                              clip-rule="evenodd" />
-                                    </svg>
-                                    Interface amigável
-                                </dt>
-                                <dd class="inline">Elaborado com as melhores práticas de User Experience, o SGP AgroSP
-                                    possui interface amigável e intuitiva, para todos os usuários.
-                                </dd>
-                            </div>
-                        </dl>
-                    </div>
-                </div>
-                <img src="{{ asset('img/macbook-sgp-procomercial.webp') }}" alt="Product screenshot"
-                     class="w-[57rem] md:w-[40rem] rounded-xl shadow-xl ring-1 ring-gray-400/10 md:-ml-4 lg:-ml-0"
-                     width="2432" height="1442">
-            </div>
-        </div>
-    </div>
-
-    <div class="text-center font-5xl text-gray-400 font-medium">Em breve, vou colocar todos os projetos aqui...</div>
-
-    {{-- /App Showcase --}}
 
 </x-layout>

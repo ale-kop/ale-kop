@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Download · Ale Kop</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="Conteúdo sobre IA, vendas consultivas, marketing e comunicação eficaz.">
+    <title>Download · Ale Kop</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-cream">
@@ -61,9 +62,7 @@
                 <span class="text-gray-400">Sobre IA, Vendas, Marketing e Comunicação.</span>
             </p>
 
-            <form action="{{ route('newsletter.subscribe') }}" method="POST"
-                  class="flex flex-col gap-3 text-left">
-                @csrf
+            <form id="form-newsletter-subscribe" class="flex flex-col gap-3 text-left">
                 <input type="hidden" name="list" value="newsletter">
                 <input type="hidden" name="source_url" value="{{ url()->current() }}">
                 {{-- Honeypot: bots fill this, humans leave it empty --}}
@@ -83,17 +82,28 @@
                                    placeholder="seu@email.com" required class="w-full" />
                 </div>
 
-                @if(session('success'))
+                {{-- @if(session('success'))
                     <p class="text-sm text-green-600">{{ session('success') }}</p>
                 @endif
                 @error('email')
                     <p class="text-sm text-red-600">{{ $message }}</p>
-                @enderror
+                @enderror --}}
 
                 <div class="flex justify-center mt-1">
-                    <x-forms.glow-button size="md">
+                    <x-forms.button
+                                data-ak-ajax="form-newsletter-subscribe" 
+                                data-ak-action="{{ route('newsletter.subscribe') }}"
+                                    class="bg-teal-600 text-white px-6 py-2 rounded border-b border-teal-700"
+                                    submit-button>
+                                    Entrar
+                                </x-forms.button>
+                    {{-- <x-forms.glow-button size="md" 
+                    submit-button
+                    ak-ajax-click="form-newsletter-subscribe" 
+                    ak-ajax-action="{{ route('newsletter.subscribe') }}">
                         Quero receber os conteúdos →
-                    </x-forms.glow-button>
+                    </x-forms.glow-button> --}}
+                    {{-- <x-forms.button ak-ajax-click="form-newsletter-subscribe">Aha!</x-forms.button> --}}
                 </div>
             </form>
 
@@ -134,6 +144,9 @@
     </div>
 
 </main>
+
+<x-toast/>
+<x-dialogs/>
 
 <script>
     // Dispara o download automaticamente ao carregar a página

@@ -41,8 +41,8 @@
                 <div class="grid grid-cols-2 gap-y-10 pb-6 lg:grid-cols-6 lg:gap-8">
                     <div class="col-span-2 flex">
                         <div class="relative pt-6 lg:pb-6">
-                            <a href="/" class="text-2xl font-bold tracking-tight text-gray-950">
-                                {{ config('app.name', 'App') }}
+                            <a href="/" class="text-xl font-semibold tracking-tight text-gray-700 font-serif italic dark:text-white">
+                                Aleksandr Kopelevitch
                             </a>
                         </div>
                     </div>

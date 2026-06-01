@@ -44,10 +44,11 @@ export default window.Modal = {
 
             let modal = document.getElementById('alert-modal') || null
 
-            modal.classList.remove('transition-all','duration-300','-translate-y-[30px]', 'opacity-0');
             if (modal === null) {
                 return false
             }
+
+            modal.classList.remove('transition-all','duration-300','-translate-y-[30px]', 'opacity-0');
 
             if (params.title === '' || params.title === undefined) {
                 modal.querySelector('[data-title]').classList.add('hidden')

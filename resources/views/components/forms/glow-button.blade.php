@@ -49,9 +49,9 @@
             </a>
         @else
             <button {{ $attributes->merge(['class' => $innerClasses]) }} data-state="{{ $state }}">
-                <span data-label class="{{ $isLoading ? 'opacity-0' : '' }}">{{ $slot }}</span>
-                <span data-spinner class="absolute inset-0 grid place-items-center {{ $isLoading ? '' : 'opacity-0' }}" aria-hidden="true">
-                    <span class="h-4 w-4 animate-spin rounded-full border-2 border-white/25 border-t-white"></span>
+                <span data-label class="transition-opacity whitespace-nowrap {{ $isLoading ? 'opacity-0' : 'opacity-100' }}">{{ $slot }}</span>
+                <span data-spinner class="absolute inset-0 grid place-items-center pointer-events-none transition-opacity {{ $isLoading ? 'opacity-100' : 'opacity-0' }}" aria-hidden="true">
+                    <span class="h-4 w-4 animate-spin overflow-hidden border-2 border-white/25 rounded-full border-t-white"></span>
                 </span>
             </button>
         @endif

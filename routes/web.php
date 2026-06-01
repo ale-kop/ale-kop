@@ -17,9 +17,9 @@ use App\Http\Controllers\TagController;
 use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/', function () {
-//     return view('index-temporary');
-// })->name('index-temporary');
+Route::get('/', function () {
+    return view('index-temporary');
+})->name('index-temporary');
 
 Route::get('/baixar', [DownloadController::class, 'show'])->name('download.show');
 Route::get('/baixar/arquivo', [DownloadController::class, 'stream'])->name('download.stream');

@@ -2,7 +2,7 @@
 import * as toggle from './modules/toggle'
 import * as modal from './modules/modal'
 import * as toast from './modules/toast'
-import * as ajaxPost from './modules/ajax-post.js'
+import './modules/ajax-post.js'
 import * as richEditor from './modules/rich-text-editor.js'
 import * as themeSwitch from './modules/theme-switch.js'
 import * as formSubmit from './modules/form-submit.js'
