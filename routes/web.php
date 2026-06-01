@@ -35,8 +35,8 @@ Route::get('/newsletter/descadastrar/{token}', [NewsletterController::class, 'un
 Route::post('/newsletter/descadastrar/{token}', [NewsletterController::class, 'confirmUnsubscribe'])
     ->name('newsletter.unsubscribe.confirm');
 
-//if (config('app.env') === 'local')
-//  {
+if (config('app.env') === 'local')
+{
 Route::get('/', function () {
     $featuredPost = Post::with('tag')->where('extra->featured', true)->latest()->first()
         ?? Post::with('tag')->latest()->first();
@@ -58,7 +58,7 @@ Route::get('/', function () {
 //     $gridPosts      = Post::with('tag')->whereNotIn('id', $excludeIds)->latest()->skip(0)->limit(9)->get();
 
 //     return view('index2', compact('featuredPost', 'secondaryPosts', 'popularPosts', 'gridPosts'));
-// });
+ });
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'show'])->name('login');
