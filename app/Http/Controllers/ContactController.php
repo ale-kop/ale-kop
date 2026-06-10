@@ -16,10 +16,9 @@ class ContactController extends Controller
     public function send(ContactRequest $request)
     {
         Mail::to(config('mail.contact_address', 'contato@alekop.com'))
-            ->send(new ContactMail(
+            ->queue(new ContactMail(
                 senderName:     $request->input('name'),
                 senderEmail:    $request->input('email'),
-                //contactSubject: $request->input('subject'),
                 contactSubject: 'Contato AleKop.com',
                 body:           $request->input('message'),
             ));
