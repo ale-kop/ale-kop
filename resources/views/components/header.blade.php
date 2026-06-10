@@ -2,6 +2,7 @@
 $navLinks = [
     ['/', 'Home', request()->is('/')],
     //[route('courses.index'), 'Cursos', request()->routeIs('courses.*')],
+    [route('contact.show'), 'Contato', request()->routeIs('contact.*')],
 ];
 @endphp
 
@@ -10,7 +11,7 @@ $navLinks = [
     <div class="sm:px-6 py-6 flex items-center justify-between">
 
         {{-- Brand --}}
-        <a href="/" class="font-serif text-2xl italic font-semibold tracking-tight text-gray-700 dark:text-white shrink-0">
+        <a href="/" class="font-serif text-2xl font-semibold tracking-tight text-gray-700 dark:text-white shrink-0">
             {{ config('app.name', 'App') }}
         </a>
 

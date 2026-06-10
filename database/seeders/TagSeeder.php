@@ -12,10 +12,10 @@ class TagSeeder extends Seeder
     public function run(): void
     {
         $defs = [
-            ['name' => 'Laravel', 'featured' => true],
-            ['name' => 'PHP', 'featured' => true],
-            ['name' => 'Tailwind', 'featured' => true, 'custom_url' => null],
-            ['name' => 'Arquitetura', 'featured' => false],
+            ['name' => 'Propostas Comerciais', 'description' => 'A Proposta Comercial mostra como você resolve o problema do cliente. Veja como estruturar propostas que fecham negócio: diagnóstico da dor, resultados mensuráveis, divisão em fases e diferenciação clara. Sem template genérico.', 'featured' => true],
+            ['name' => 'Comunicação Profissional',  'description' => 'Comunicar bem é a base de tudo. Posts sobre comunicação clara e objetiva com clientes, colegas e parceiros (escrita e falada). Ser entendido sem depender da interpretação é a chave da Comunicação Eficaz.', 'featured' => true],
+            ['name' => 'Vendas Consultivas',  'description' => 'Vendas consultivas de médio e alto ticket para quem domina a técnica mas perde negócio por falta de processo. Posts sobre prospecção, reuniões, follow-up, negociação e fechamento: focando sempre na comunicação.', 'featured' => false, 'custom_url' => null],
+            ['name' => 'Organização e Produtividade',  'description' => 'Como organizar o processo comercial e o trabalho remoto na prática. Posts sobre produtividade para freelancers e pequenas equipes: menos reunião, mais assíncrono, processos que ajudam a vender.', 'featured' => true],
         ];
 
         $tags = collect();
@@ -26,7 +26,7 @@ class TagSeeder extends Seeder
                     [
                         'name' => $data['name'],
                         'slug' => Str::slug($data['name']),
-                        'meta' => ['description' => $data['name'].' — conteúdos relacionados'],
+                        'meta' => ['description' => $data['description']],
                         'extra' => [
                             'featured' => (bool) ($data['featured'] ?? false),
                             'custom_url' => $data['custom_url'] ?? null,
@@ -35,20 +35,5 @@ class TagSeeder extends Seeder
                 )
             );
         }
-
-        // Atribuir tags aos posts existentes conforme o curso
-        Post::with('course')->get()->each(function (Post $post) use ($tags) {
-            $courseSlug = $post->course?->slug ?? '';
-            $tagSlug = match (true) {
-                str_contains($courseSlug, 'tailwind') => 'tailwind',
-                str_contains($courseSlug, 'laravel') => 'laravel',
-                default => 'arquitetura',
-            };
-
-            $tag = $tags->firstWhere('slug', $tagSlug) ?? Tag::where('slug', $tagSlug)->first();
-            if ($tag && ! $post->tag_id) {
-                $post->update(['tag_id' => $tag->id]);
-            }
-        });
     }
 }

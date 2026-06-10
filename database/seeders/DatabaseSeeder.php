@@ -21,11 +21,7 @@ class DatabaseSeeder extends Seeder
         );
 
         $this->call([
-            CourseSeeder::class,
-            SectionSeeder::class,
-            PostSeeder::class,
             TagSeeder::class,
-            ReadPostsSeeder::class,
             NewsletterSeeder::class,
         ]);
     }
