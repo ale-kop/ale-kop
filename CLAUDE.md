@@ -98,6 +98,29 @@ The catch-all `Route::get('{post:slug}', ...)` must remain the **last** route in
 
 A post belongs to a course when `course_id` is set (derived from its `section_id`). The `show()` action routes to `courses.show-post` view for course posts and `posts.show` for standalone posts. The `x-post-index` component adapts its rendering to either context automatically.
 
+### Contact page
+
+Route: `GET /contato` → `contact.show`, `POST /contato` → `contact.send` (throttle 3/5 min).
+
+`ContactController@send` uses `Mail::queue()` — never `Mail::send()` — so the HTTP response returns immediately without blocking on SMTP. The queue worker (already in `composer dev`) processes the send async.
+
+The recipient is driven by `config('mail.contact_address')` → `MAIL_CONTACT_ADDRESS` in `.env`. The `ContactMail` mailable sets `replyTo` to the sender so replies go directly to whoever filled the form.
+
+### Mail: SMTP for Google Workspace
+
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=contato@alekop.com
+MAIL_PASSWORD="app-password-here"   # Google Workspace App Password
+MAIL_FROM_ADDRESS="contato@alekop.com"
+MAIL_FROM_NAME="${APP_NAME}"
+MAIL_CONTACT_ADDRESS="contato@alekop.com"
+```
+
+Do **not** set `MAIL_SCHEME=tls` — port 587 uses STARTTLS, which requires `MAIL_SCHEME` to be absent (null). Setting it to `tls` causes the SMTP connection to hang and results in a 502 from nginx.
+
 ## Blade components
 
 Custom form components are in `resources/views/components/forms/`. Use them instead of raw HTML inputs:

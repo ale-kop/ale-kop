@@ -18,9 +18,9 @@ use App\Http\Controllers\TagController;
 use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('index-temporary');
-})->name('index-temporary');
+// Route::get('/', function () {
+//     return view('index-temporary');
+// })->name('index-temporary');
 
 Route::get('/baixar', [DownloadController::class, 'show'])->name('download.show');
 Route::get('/baixar/arquivo', [DownloadController::class, 'stream'])->name('download.stream');
@@ -36,8 +36,6 @@ Route::get('/newsletter/descadastrar/{token}', [NewsletterController::class, 'un
 Route::post('/newsletter/descadastrar/{token}', [NewsletterController::class, 'confirmUnsubscribe'])
     ->name('newsletter.unsubscribe.confirm');
 
-//if (config('app.env') === 'local')
-//  {
 Route::get('/', function () {
     $featuredPost = Post::with('tag')->where('extra->featured', true)->latest()->first()
         ?? Post::with('tag')->latest()->first();
@@ -135,5 +133,3 @@ Route::post('contato', [ContactController::class, 'send'])->middleware('throttle
 
 // Catch-all post slug must be last
 Route::get('{post:slug}', [PostController::class, 'show'])->name('posts.show');
-
-//}

@@ -32,18 +32,29 @@ php envoy run up            # volta ao ar
 php envoy run deploy --branch=staging
 ```
 
-## Configuração do `supervisorctl`
+## Configuração do Supervisor (produção)
+
+O Supervisor mantém os workers de fila (Horizon e newsletter) sempre rodando, reiniciando-os automaticamente caso caiam ou o servidor reinicie.
+
+### Pré-requisito no `.env`
+
+```env
+QUEUE_CONNECTION=redis
+```
+
+Horizon só funciona com a driver `redis` (veja `config/horizon.php`). Confirme que o Redis está instalado e rodando (`redis-cli ping` → `PONG`).
 
 ### 1. Arquivo de configuração
-```
+```bash
 sudo nano /etc/supervisor/conf.d/laravel-horizon.conf
 ```
 
-### 2. Conteúdo da configuração 
-```
+### 2. Conteúdo da configuração
+
+```ini
 [program:laravel-horizon]
 process_name=%(program_name)s_%(process_num)02d
-command=php /var/www/project-folder/artisan horizon
+command=php /var/www/alekop.com/public_html/artisan horizon
 autostart=true
 autorestart=true
 stopasgroup=true
@@ -51,11 +62,41 @@ killasgroup=true
 user=root
 numprocs=1
 redirect_stderr=true
-stdout_logfile=/var/www/project-folder/storage/logs/horizon.log
+stdout_logfile=/var/www/alekop.com/public_html/storage/logs/horizon.log
+
+[program:laravel-newsletter]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/alekop.com/public_html/artisan queue:work --queue=newsletter --sleep=3 --tries=3 --backoff=60 --max-time=3600
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=root
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/www/alekop.com/public_html/storage/logs/newsletter-worker.log
 ```
 
-Em seguida rodar `sudo supervisorctl reread
-sudo supervisorctl update`
+> `laravel-horizon` processa a fila `default` (inclui o envio do formulário de contato). `laravel-newsletter` processa a fila `newsletter`, separada para controlar a taxa de envio — veja a seção [Newsletter](#newsletter).
+
+### 3. Carregar e iniciar
+
+```bash
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start laravel-horizon:*
+sudo supervisorctl start laravel-newsletter:*
+```
+
+Verificar status:
+
+```bash
+sudo supervisorctl status
+```
+
+### Deploys seguintes
+
+Não é necessário repetir o setup acima. `php envoy run deploy` já executa `php artisan queue:restart`, que sinaliza os workers a reiniciarem com o código novo — o Supervisor (`autorestart=true`) os traz de volta automaticamente.
 
 ## Uso de Blade Heroicons
 
@@ -366,6 +407,29 @@ Aplicado automaticamente a todo `pre > code` dentro de elementos `.html-content`
 
 ---
 
+## Formulário de contato
+
+Página pública em `/contato` com links para redes sociais (LinkedIn, X, Instagram, YouTube) e formulário de envio de mensagem.
+
+- **Rota GET:** `contact.show` → `ContactController@show`
+- **Rota POST:** `contact.send` → `ContactController@send` (throttle: 3 req / 5 min por IP)
+- **Mailable:** `App\Mail\ContactMail` — define `replyTo` com o e-mail do remetente; assunto fixo `"Contato AleKop.com"`
+- **Envio:** `Mail::queue()` — assíncrono via fila `default`, nunca bloqueia o request HTTP
+- **Destinatário:** configurado em `MAIL_CONTACT_ADDRESS` no `.env`
+- **Anti-spam:** campo honeypot `website` (deve chegar vazio)
+
+### Configuração no `.env`
+
+```env
+MAIL_CONTACT_ADDRESS="contato@alekop.com"
+```
+
+### Atenção ao `MAIL_SCHEME`
+
+Para Google Workspace (porta 587 / STARTTLS), **não defina** `MAIL_SCHEME`. Qualquer valor (inclusive `tls`) cria um DSN inválido no Symfony Mailer, fazendo a conexão travar e o nginx retornar 502. Deixe a chave ausente ou com valor `null`.
+
+---
+
 ## Newsletter
 
 Sistema próprio de captura, gerenciamento e envio de newsletters, sem dependência de SendPulse.
@@ -399,42 +463,31 @@ php artisan queue:work --queue=newsletter,default --sleep=3 --tries=3 --backoff=
 
 ### Configuração do Supervisor para newsletter
 
-Adicione este bloco ao lado do processo Horizon existente em `/etc/supervisor/conf.d/`:
-
-```ini
-[program:laravel-newsletter]
-process_name=%(program_name)s_%(process_num)02d
-command=php /var/www/project-folder/artisan queue:work --queue=newsletter --sleep=3 --tries=3 --backoff=60 --max-time=3600
-autostart=true
-autorestart=true
-stopasgroup=true
-killasgroup=true
-user=root
-numprocs=1
-redirect_stderr=true
-stdout_logfile=/var/www/project-folder/storage/logs/newsletter-worker.log
-```
-
-Após criar o arquivo:
-
-```bash
-sudo supervisorctl reread
-sudo supervisorctl update
-sudo supervisorctl start laravel-newsletter:*
-```
+O worker dedicado para a fila `newsletter` já está incluído na configuração do Supervisor — veja [Configuração do Supervisor (produção)](#configuração-do-supervisor-produção).
 
 ### Configuração de e-mail (`.env`)
 
 O sistema é compatível com qualquer driver SMTP. Exemplos:
 
 ```env
+# Google Workspace (Gmail) — porta 587 STARTTLS
+# IMPORTANT: não definir MAIL_SCHEME (deve ficar ausente/null para STARTTLS)
+# Gere uma App Password em: Conta Google → Segurança → Senhas de app
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=contato@alekop.com
+MAIL_PASSWORD="xxxx xxxx xxxx xxxx"
+MAIL_FROM_ADDRESS="contato@alekop.com"
+MAIL_FROM_NAME="${APP_NAME}"
+MAIL_CONTACT_ADDRESS="contato@alekop.com"
+
 # KingHost / Locaweb (SMTP compartilhado)
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.kinghost.net       # ou smtp.locaweb.com.br
 MAIL_PORT=587
 MAIL_USERNAME=seu@dominio.com.br
 MAIL_PASSWORD=sua_senha
-MAIL_ENCRYPTION=tls
 MAIL_FROM_ADDRESS=seu@dominio.com.br
 MAIL_FROM_NAME="Ale Kop"
 
