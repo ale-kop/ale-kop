@@ -205,6 +205,17 @@ Editor WYSIWYG baseado em ProseMirror. O conteúdo é sincronizado em um `<input
 <x-forms.rich-text-editor name="content" :value="$post->content" />
 ```
 
+**Inserir imagem:** o botão de imagem na toolbar abre um diálogo (ALT, TITLE, legenda e link da legenda opcional) e envia o arquivo para `POST /content-images` (rota `content-images.store`, requer autenticação). O upload usa o Spatie MediaLibrary e gera duas conversões: `medium` (700×500, usada inline) e `large` (1100×1100, usada no lightbox). A imagem é inserida no conteúdo como:
+
+```html
+<figure>
+    <img src="…medium…" data-large-src="…large…" alt="…" title="…">
+    <figcaption>legenda opcional</figcaption>
+</figure>
+```
+
+**Lightbox:** ao clicar em qualquer imagem dentro de `.html-content`, o módulo `imageLightbox` abre um overlay com a versão `large` da imagem. Se houver mais de uma imagem no post, botões de navegação (← →) aparecem automaticamente. Teclas `Escape`, `←` e `→` também funcionam. O cursor muda para `zoom-in` ao passar sobre imagens do conteúdo.
+
 ### `x-forms.glow-button`
 
 Botão com borda animada (conic-gradient) e bloom de fundo. Suporta renderização como `<a>` ou `<button>`, estados de carregamento, tamanhos e tema claro/escuro.
@@ -400,6 +411,15 @@ Abre e fecha painéis laterais (mobile menu, índice de posts, etc.) via atribut
 </aside>
 <div id="menu-overlay" class="fixed inset-0 opacity-0 pointer-events-none transition-opacity"></div>
 ```
+
+### `imageLightbox` — lightbox de imagens do conteúdo
+
+Ativado automaticamente em todo `figure img` dentro de `.html-content`. Nenhum atributo HTML necessário.
+
+- Clique na imagem → abre overlay escuro com a versão `large` (`data-large-src`; fallback para `src` em imagens antigas).
+- Múltiplas imagens no post → botões ← / → para navegar entre elas.
+- Fecha com o botão `×`, clicando no backdrop, ou pressionando `Escape`.
+- Cursor `zoom-in` via CSS em todas as imagens de conteúdo.
 
 ### `code-highlight` — syntax highlighting
 

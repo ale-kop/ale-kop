@@ -8,7 +8,7 @@
     $initial = trim($slot) !== '' ? $slot : $value;
 @endphp
 
-<div id="{{ $id }}" data-rich-text-editor class="bg-white border border-gray-300 rounded-md">
+<div id="{{ $id }}" data-rich-text-editor data-image-upload-url="{{ route('content-images.store') }}" class="bg-white border border-gray-300 rounded-md">
     <div class="toolbar flex flex-wrap text-gray-600 bg-gray-50 gap-1.5 p-2">
         <select data-command="heading" class="toolbar-item text-base">
             <option value="0">Parágrafo</option>
@@ -50,6 +50,9 @@
         <button type="button" data-command="link" class="toolbar-item">
             <x-heroicon-s-link class="w-5 h-5 text-gray-600" />
         </button>
+        <button type="button" data-command="image" class="toolbar-item" title="Inserir imagem">
+            <x-heroicon-s-photo class="w-5 h-5 text-gray-600" />
+        </button>
         <button type="button" data-command="align-left" class="toolbar-item">
             <x-heroicon-s-bars-3-bottom-left class="w-5 h-5 text-gray-600" />
         </button>
@@ -84,3 +87,41 @@
 </div>
 <textarea class="hidden" data-editor-initial="{{ $id }}">{!! $initial !!}</textarea>
 <input type="hidden" name="{{ $name }}" value="{{ $value }}" data-editor-target="{{ $id }}">
+
+<dialog id="{{ $id }}-image-dialog" data-image-dialog class="w-full max-w-md mx-auto rounded-lg bg-white p-0 shadow-xl">
+    <div class="space-y-4 p-5">
+        <h3 class="text-lg font-semibold text-gray-800">Inserir imagem</h3>
+
+        <div>
+            <x-forms.label>Imagem</x-forms.label>
+            <x-forms.file id="{{ $id }}-image-file" name="content_image" />
+        </div>
+
+        <div>
+            <x-forms.label for="{{ $id }}-image-alt">Texto alternativo (ALT)</x-forms.label>
+            <x-forms.input id="{{ $id }}-image-alt" data-image-alt />
+        </div>
+
+        <div>
+            <x-forms.label for="{{ $id }}-image-title">Título (TITLE)</x-forms.label>
+            <x-forms.input id="{{ $id }}-image-title" data-image-title />
+        </div>
+
+        <div>
+            <x-forms.label for="{{ $id }}-image-caption">Legenda</x-forms.label>
+            <x-forms.input id="{{ $id }}-image-caption" data-image-caption />
+        </div>
+
+        <div>
+            <x-forms.label for="{{ $id }}-image-caption-link">Link da legenda (opcional)</x-forms.label>
+            <x-forms.input id="{{ $id }}-image-caption-link" type="url" placeholder="https://..." data-image-caption-link />
+        </div>
+
+        <p data-image-error class="hidden text-sm text-red-600"></p>
+
+        <div class="flex justify-end gap-2 pt-2">
+            <button type="button" data-image-cancel class="rounded px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">Cancelar</button>
+            <x-forms.button type="button" data-image-confirm>Inserir</x-forms.button>
+        </div>
+    </div>
+</dialog>

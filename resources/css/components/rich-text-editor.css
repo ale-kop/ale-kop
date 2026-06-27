@@ -93,6 +93,20 @@
     @apply bg-gray-100 text-sm font-mono p-4 rounded overflow-x-auto my-4;
 }
 
+/* ── Imagem com legenda — <figure><img><figcaption> ─── */
+[data-rich-text-editor] .editor figure {
+    @apply my-4;
+}
+[data-rich-text-editor] .editor figure img {
+    @apply rounded-lg shadow-sm max-w-full mx-auto;
+}
+[data-rich-text-editor] .editor figcaption {
+    @apply text-sm text-gray-500 mt-2 text-center;
+}
+[data-rich-text-editor] .editor figcaption a {
+    @apply text-blue-600 underline;
+}
+
 /* ── Modo maximizado ─────────────────────────────── */
 [data-rich-text-editor].is-maximized {
     position: fixed;

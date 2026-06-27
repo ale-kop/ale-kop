@@ -10,7 +10,22 @@
       "WebFetch(domain:packagist.org)",
       "Bash(composer update:*)",
       "Bash(npm run *)",
-      "Bash(php artisan *)"
+      "Bash(php artisan *)",
+      "Bash(sed -n '80,130p')",
+      "Bash(awk '/^\\\\.html-content/{print NR\": \"$0}' resources/css/app.css)",
+      "Bash(./vendor/bin/pint app/Models/ContentImage.php app/Http/Controllers/ContentImageController.php database/migrations/2026_06_13_000001_create_content_images_table.php routes/web.php)",
+      "Bash(php vendor/bin/pest --filter \"Post\")",
+      "Bash(git stash *)",
+      "Skill(run)",
+      "Bash(chromium-cli --help)",
+      "Bash(npx --yes playwright --version)",
+      "Bash(node -e \"const {chromium} = require\\('playwright'\\); chromium.launch\\({headless:true}\\).then\\(b=>{console.log\\('ok'\\); b.close\\(\\)}\\).catch\\(e=>console.error\\('ERR', e.message\\)\\)\")",
+      "Bash(npx --yes playwright install chromium)",
+      "Bash(node *)",
+      "Bash(npm install *)",
+      "Bash(git status *)",
+      "Bash(php vendor/bin/pest)",
+      "Bash(php vendor/bin/pest tests/Feature/WithReadFlagTest.php)"
     ]
   }
 }

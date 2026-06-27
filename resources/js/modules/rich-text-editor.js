@@ -8,6 +8,7 @@ import {keymap} from 'prosemirror-keymap'
 import {Plugin} from 'prosemirror-state'
 import {baseKeymap, toggleMark, setBlockType, wrapIn, chainCommands, exitCode} from 'prosemirror-commands'
 import {inputRules, textblockTypeInputRule, wrappingInputRule, InputRule, smartQuotes, ellipsis, emDash} from 'prosemirror-inputrules'
+import * as ajaxModule from './ajax'
 
 const underline = {
     parseDOM: [{tag: 'u'}, {style: 'text-decoration=underline'}],
@@ -20,6 +21,24 @@ const strike = {
     parseDOM: [{tag: 's'}, {tag: 'del'}, {style: 'text-decoration=line-through'}],
     toDOM() {
         return ['s', 0]
+    },
+}
+
+const figureNodeSpec = {
+    content: 'image caption?',
+    group: 'block',
+    isolating: true,
+    parseDOM: [{tag: 'figure'}],
+    toDOM() {
+        return ['figure', 0]
+    },
+}
+
+const captionNodeSpec = {
+    content: 'inline*',
+    parseDOM: [{tag: 'figcaption'}],
+    toDOM() {
+        return ['figcaption', 0]
     },
 }
 
@@ -52,6 +71,34 @@ export function init() {
 
         const nodeSpecs = addListNodes(basicSchema.spec.nodes, 'paragraph block*', 'block')
             .addToEnd('callout', calloutNodeSpec)
+            .addToEnd('figure', figureNodeSpec)
+            .addToEnd('caption', captionNodeSpec)
+            .update('image', {
+                inline: false,
+                group: 'block',
+                attrs: {
+                    src: {default: ''},
+                    alt: {default: null},
+                    title: {default: null},
+                    largeSrc: {default: null},
+                },
+                draggable: false,
+                parseDOM: [{
+                    tag: 'img[src]',
+                    getAttrs: dom => ({
+                        src: dom.getAttribute('src'),
+                        alt: dom.getAttribute('alt'),
+                        title: dom.getAttribute('title'),
+                        largeSrc: dom.getAttribute('data-large-src'),
+                    }),
+                }],
+                toDOM(node) {
+                    const {src, alt, title, largeSrc} = node.attrs
+                    const attrs = {src, alt, title}
+                    if (largeSrc) attrs['data-large-src'] = largeSrc
+                    return ['img', attrs]
+                },
+            })
             .update('paragraph', {
                 content: 'inline*',
                 group: 'block',
@@ -180,6 +227,10 @@ function setupToolbar(container, schema, view, hidden) {
                 dispatch(state.tr.insert(after, node))
                 view.focus()
             })
+        } else if (cmd === 'image') {
+            btn.addEventListener('click', () => {
+                openImageDialog(container, schema, view)
+            })
         } else if (cmd === 'code') {
             btn.addEventListener('click', () => {
                 setBlockType(schema.nodes.code_block)(view.state, view.dispatch)
@@ -280,6 +331,115 @@ function setupToolbar(container, schema, view, hidden) {
             })
         }
     })
+}
+
+function openImageDialog(container, schema, view) {
+    const dialog = document.getElementById(`${container.id}-image-dialog`)
+    if (!dialog) return
+
+    const errorEl = dialog.querySelector('[data-image-error]')
+    errorEl.classList.add('hidden')
+
+    if (!dialog.dataset.bound) {
+        dialog.dataset.bound = '1'
+
+        const fileUpload = dialog.querySelector('[data-file-upload]')
+        const fileInput = fileUpload.querySelector('[data-input]')
+        const altInput = dialog.querySelector('[data-image-alt]')
+        const titleInput = dialog.querySelector('[data-image-title]')
+        const captionInput = dialog.querySelector('[data-image-caption]')
+        const captionLinkInput = dialog.querySelector('[data-image-caption-link]')
+        const confirmBtn = dialog.querySelector('[data-image-confirm]')
+        const cancelBtn = dialog.querySelector('[data-image-cancel]')
+
+        cancelBtn.addEventListener('click', () => window.Modal.close(dialog.id))
+
+        confirmBtn.addEventListener('click', async () => {
+            const file = fileInput.files && fileInput.files[0]
+            if (!file) {
+                errorEl.textContent = 'Selecione uma imagem.'
+                errorEl.classList.remove('hidden')
+                return
+            }
+
+            setButtonLoading(confirmBtn, true)
+
+            try {
+                const formData = new FormData()
+                formData.append('image', file)
+
+                const response = await ajaxModule.init('POST', container.dataset.imageUploadUrl, formData)
+                const {url, largeSrc} = await response.json()
+
+                insertFigure(view, schema, {
+                    src: url,
+                    alt: altInput.value.trim(),
+                    title: titleInput.value.trim(),
+                    caption: captionInput.value.trim(),
+                    captionLink: captionLinkInput.value.trim(),
+                    largeSrc: largeSrc || null,
+                })
+
+                resetImageDialog(dialog)
+                window.Modal.close(dialog.id)
+            } catch (err) {
+                errorEl.textContent = 'Erro ao enviar a imagem. Tente novamente.'
+                errorEl.classList.remove('hidden')
+            } finally {
+                setButtonLoading(confirmBtn, false)
+            }
+        })
+    }
+
+    window.Modal.open(dialog.id)
+}
+
+function setButtonLoading(btn, loading) {
+    btn.disabled = loading
+    btn.dataset.state = loading ? 'loading' : 'idle'
+    const label = btn.querySelector('[data-label]')
+    const spinner = btn.querySelector('[data-spinner]')
+    label?.classList.toggle('opacity-0', loading)
+    label?.classList.toggle('opacity-100', !loading)
+    spinner?.classList.toggle('opacity-100', loading)
+    spinner?.classList.toggle('opacity-0', !loading)
+}
+
+function resetImageDialog(dialog) {
+    const fileUpload = dialog.querySelector('[data-file-upload]')
+    const fileInput = fileUpload?.querySelector('[data-input]')
+    const img = fileUpload?.querySelector('[data-preview-img]')
+
+    if (fileInput) fileInput.value = ''
+    if (img?.dataset.objectUrl) {
+        URL.revokeObjectURL(img.dataset.objectUrl)
+        delete img.dataset.objectUrl
+    }
+    img?.removeAttribute('src')
+    fileUpload?.querySelector('[data-preview]')?.classList.add('hidden')
+    fileUpload?.querySelector('[data-placeholder]')?.classList.remove('hidden')
+
+    dialog.querySelectorAll('[data-image-alt], [data-image-title], [data-image-caption], [data-image-caption-link]')
+        .forEach(input => input.value = '')
+}
+
+function insertFigure(view, schema, {src, alt, title, caption, captionLink, largeSrc}) {
+    const imageNode = schema.nodes.image.create({src, alt: alt || null, title: title || null, largeSrc: largeSrc || null})
+
+    const content = [imageNode]
+    if (caption) {
+        let textNode = schema.text(caption)
+        if (captionLink) {
+            textNode = textNode.mark([schema.marks.link.create({href: captionLink})])
+        }
+        content.push(schema.nodes.caption.create(null, textNode))
+    }
+
+    const figureNode = schema.nodes.figure.create(null, content)
+    const {state, dispatch} = view
+    const after = state.selection.$anchor.after(1)
+    dispatch(state.tr.insert(after, figureNode))
+    view.focus()
 }
 
 function getCurrentBlockType(view, schema) {

@@ -11,6 +11,7 @@ import * as postIndex from './modules/post-index.js'
 import * as sidePanel from './modules/side-panel.js'
 import * as topNav from './modules/top-nav.js'
 import * as fileUpload from './modules/file-upload.js'
+import * as imageLightbox from './modules/image-lightbox.js'
 
 import.meta.glob([
     '../img/**',
@@ -25,7 +26,8 @@ window.globalModules = {
     "postIndex"    : postIndex,
     "sidePanel"    : sidePanel,
     "topNav"       : topNav,
-    "fileUpload"   : fileUpload,
+    "fileUpload"     : fileUpload,
+    "imageLightbox"  : imageLightbox,
 }
 
 /*------------------------------------------------

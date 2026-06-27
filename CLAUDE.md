@@ -86,6 +86,28 @@ Controllers return JSON automatically when the request includes `Accept: applica
 
 Each model has a single-file collection (e.g., `post-image`, `course-image`). Three conversions are registered: `thumb` (180×180), `medium` (497×290), `large` (1100×500). Access via `$post->image('medium')`.
 
+### Rich text editor — inline images
+
+The "Inserir imagem" toolbar button in `x-forms.rich-text-editor` opens a `<dialog>` (ALT, TITLE, legenda, link da legenda) and uploads the file to `POST /content-images` (`content-images.store`, auth-only). Each upload creates a `ContentImage` model (own `content_images` table, `content-image` media collection, two conversions: `medium` 700×500 and `large` 1100×1100) via the same `addMediaFromRequest()->toMediaCollection()` pattern as posts/courses — kept separate from `Post`/`Course` media because an editor image isn't tied to a single owning record.
+
+The upload endpoint returns `{ url: medium_url, largeSrc: large_url }`. The editor stores the medium URL as `src` and the large URL as `data-large-src` on the `<img>` element, producing:
+
+```html
+<figure><img src="…medium…" data-large-src="…large…" alt title><figcaption>…</figcaption></figure>
+```
+
+Styling for both the editor preview and the rendered `.html-content` lives in `resources/css/components/rich-text-editor.css` and `resources/css/app.css` respectively — keep the two in sync if you change figure/figcaption markup.
+
+### Image lightbox
+
+The `imageLightbox` module (`resources/js/modules/image-lightbox.js`) activates on all `.html-content figure img` elements:
+
+- Click opens a full-screen overlay showing the `data-large-src` URL (falls back to `src` for images without `data-large-src`).
+- When the page contains multiple images, left/right arrow buttons appear for navigation between them.
+- Close via the `×` button, clicking the backdrop, or pressing `Escape`. Arrow keys also navigate.
+- Cursor changes to `zoom-in` via CSS (`.html-content figure img { cursor: zoom-in }`).
+- Lightbox and cursor styles live in the `#image-lightbox` / `#lb-*` rules in `resources/css/app.css`.
+
 ### JavaScript modules
 
 `app.js` registers modules in `window.globalModules`. After AJAX partial updates, call `window.initListOfModules(['toggle', 'fileUpload'])` to re-initialize only the needed modules. Every module exposes an `init()` function that is idempotent.

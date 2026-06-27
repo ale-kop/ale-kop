@@ -455,7 +455,90 @@ dialog::backdrop {
 
 .html-content img { @apply my-4 rounded-lg shadow-sm; }
 .html-content figure { @apply my-6; }
-.html-content figcaption { @apply text-sm text-gray-500 dark:text-gray-400 mt-2 text-center; }
+.html-content figure img { @apply my-0 mx-auto; cursor: zoom-in; }
+.html-content figcaption a { @apply text-blue-600 hover:underline; }
+.html-content figcaption { @apply text-sm font-sans text-gray-500 dark:text-gray-400 mt-2 text-center; }
+
+/* ── Image lightbox ──────────────────────────────────── */
+#image-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+#image-lightbox.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+#lb-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(3px);
+}
+#lb-wrap {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    max-width: 98vw;
+    max-height: 98vh;
+}
+#lb-frame {
+    position: relative;
+}
+#lb-img {
+    max-width: min(88vw, calc(98vw - 8rem));
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 0.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    display: block;
+}
+#lb-close {
+    position: absolute;
+    top: -2.75rem;
+    right: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+}
+#lb-close:hover { background: rgba(255, 255, 255, 0.3); }
+#lb-close svg { width: 1rem; height: 1rem; }
+#lb-prev,
+#lb-next {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+}
+#lb-prev:hover,
+#lb-next:hover { background: rgba(255, 255, 255, 0.3); }
+#lb-prev svg,
+#lb-next svg { width: 1.25rem; height: 1.25rem; }
 
 .html-content hr { @apply my-8 border-gray-200 dark:border-gray-700; }
 

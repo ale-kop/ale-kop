@@ -7,13 +7,14 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ContentImageController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SectionController;
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\TagController;
 use App\Models\Post;
 use Illuminate\Support\Facades\Route;
@@ -41,7 +42,7 @@ Route::get('/', function () {
         ?? Post::with('tag')->latest()->first();
 
     $excludeIds = $featuredPost ? [$featuredPost->id] : [];
-    $gridPosts  = Post::with('tag')->whereNotIn('id', $excludeIds)->latest()->limit(9)->get();
+    $gridPosts = Post::with('tag')->whereNotIn('id', $excludeIds)->latest()->limit(9)->get();
 
     return view('index', compact('featuredPost', 'gridPosts'));
 })->name('index');
@@ -107,6 +108,11 @@ Route::resource('sections', SectionController::class)->except(['index', 'show'])
 
 // Tags CRUD (no public listing)
 Route::resource('tags', TagController::class)->except(['index', 'show']);
+
+// Content images (inline uploads for the rich text editor)
+Route::post('content-images', [ContentImageController::class, 'store'])
+    ->middleware('auth')
+    ->name('content-images.store');
 
 // Posts
 Route::get('posts/create', [PostController::class, 'create'])->name('posts.create');
