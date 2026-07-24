@@ -72,11 +72,30 @@ class Course extends Model implements HasMedia
 
     public function isFree(): bool
     {
-        return data_get($this->extra, 'access') === 'free';
+        return data_get($this->extra, 'access') !== 'paid';
     }
 
     public function requiresAccess(): bool
     {
         return ! $this->isFree();
+    }
+
+    public function price(): ?float
+    {
+        $price = data_get($this->extra, 'price');
+
+        return is_numeric($price) ? (float) $price : null;
+    }
+
+    public function hasPrice(): bool
+    {
+        return $this->price() !== null && $this->price() > 0;
+    }
+
+    public function formattedPrice(): ?string
+    {
+        return $this->hasPrice()
+            ? 'R$ '.number_format($this->price(), 2, ',', '.')
+            : null;
     }
 }

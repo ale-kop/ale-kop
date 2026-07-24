@@ -2,18 +2,19 @@
 
 use App\Models\Course;
 use App\Models\CourseAccess;
+use App\Models\Plan;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-function courseWithLesson(string $slug = 'curso-pago'): array
+function courseWithLesson(string $slug = 'curso-pago', string $access = 'paid'): array
 {
     $course = Course::query()->create([
         'name' => str($slug)->replace('-', ' ')->title()->toString(),
         'slug' => $slug,
-        'extra' => ['access' => 'paid'],
+        'extra' => ['access' => $access, 'price' => 97.00],
     ]);
 
     $post = Post::query()->create([
@@ -26,6 +27,40 @@ function courseWithLesson(string $slug = 'curso-pago'): array
     return [$course, $post];
 }
 
+it('treats courses as free unless explicitly marked paid', function () {
+    $course = Course::query()->create(['name' => 'Curso Livre', 'slug' => 'curso-livre']);
+    $post = Post::query()->create([
+        'course_id' => $course->id,
+        'name' => 'Aula aberta',
+        'slug' => 'curso-livre-aula-aberta',
+        'content' => 'Conteúdo livre.',
+    ]);
+    $student = User::factory()->create(['role' => 'student']);
+
+    expect($course->isFree())->toBeTrue();
+    expect($student->canAccessCourse($course))->toBeTrue();
+
+    // Registered user reads the free lesson.
+    $this->actingAs($student)->get(route('posts.show', $post->slug))
+        ->assertOk()
+        ->assertSee('Conteúdo livre.');
+});
+
+it('locks a free lesson behind registration for guests', function () {
+    $course = Course::query()->create(['name' => 'Curso Livre', 'slug' => 'curso-livre']);
+    $post = Post::query()->create([
+        'course_id' => $course->id,
+        'name' => 'Aula aberta',
+        'slug' => 'curso-livre-aula-aberta',
+        'content' => 'Conteúdo livre.',
+    ]);
+
+    $this->get(route('posts.show', $post->slug))
+        ->assertOk()
+        ->assertSee('Criar conta e assistir')
+        ->assertDontSee('Conteúdo livre.');
+});
+
 it('keeps students out of the admin panel', function () {
     $student = User::factory()->create(['role' => 'student']);
 
@@ -34,13 +69,16 @@ it('keeps students out of the admin panel', function () {
         ->assertForbidden();
 });
 
-it('redirects paid course lessons when the user has no access', function () {
+it('shows the paid lock page instead of the lesson when the user has no access', function () {
     [$course, $post] = courseWithLesson();
     $student = User::factory()->create(['role' => 'student']);
 
     $this->actingAs($student)
         ->get(route('posts.show', $post->slug))
-        ->assertRedirect(route('courses.show', $course->slug));
+        ->assertOk()
+        ->assertSee('Curso com acesso pago')
+        ->assertSee('Comprar este curso')
+        ->assertDontSee('Conteúdo restrito.');
 });
 
 it('grants access to one purchased course', function () {
@@ -55,8 +93,8 @@ it('grants access to one purchased course', function () {
     expect($student->fresh()->canAccessCourse($course))->toBeTrue();
     expect($student->fresh()->canAccessCourse($otherCourse))->toBeFalse();
 
-    $this->actingAs($student)->get(route('posts.show', $post->slug))->assertOk();
-    $this->actingAs($student)->get(route('posts.show', $otherPost->slug))->assertRedirect(route('courses.show', $otherCourse->slug));
+    $this->actingAs($student)->get(route('posts.show', $post->slug))->assertOk()->assertSee('Conteúdo restrito.');
+    $this->actingAs($student)->get(route('posts.show', $otherPost->slug))->assertOk()->assertSee('Curso com acesso pago');
 });
 
 it('grants full access to all paid courses', function () {
@@ -71,8 +109,46 @@ it('grants full access to all paid courses', function () {
     expect($student->fresh()->canAccessCourse($course))->toBeTrue();
     expect($student->fresh()->canAccessCourse($otherCourse))->toBeTrue();
 
-    $this->actingAs($student)->get(route('posts.show', $post->slug))->assertOk();
-    $this->actingAs($student)->get(route('posts.show', $otherPost->slug))->assertOk();
+    $this->actingAs($student)->get(route('posts.show', $post->slug))->assertOk()->assertSee('Conteúdo restrito.');
+    $this->actingAs($student)->get(route('posts.show', $otherPost->slug))->assertOk()->assertSee('Conteúdo restrito.');
+});
+
+it('grants full access when subscribing to an active plan', function () {
+    [$course, $post] = courseWithLesson();
+    $plan = Plan::query()->create([
+        'name' => 'Full Mensal',
+        'price' => 49.00,
+        'interval' => 'month',
+        'scope' => 'full',
+        'is_active' => true,
+    ]);
+    $student = User::factory()->create(['role' => 'student']);
+
+    $this->actingAs($student)
+        ->post(route('plans.subscribe', $plan))
+        ->assertRedirect(route('dashboard'));
+
+    expect($student->fresh()->canAccessCourse($course))->toBeTrue();
+});
+
+it('registering from the lock page returns the user to the lesson', function () {
+    $course = Course::query()->create(['name' => 'Curso Livre', 'slug' => 'curso-livre']);
+    $post = Post::query()->create([
+        'course_id' => $course->id,
+        'name' => 'Aula aberta',
+        'slug' => 'curso-livre-aula-aberta',
+        'content' => 'Conteúdo livre.',
+    ]);
+
+    $this->post('/register', [
+        'name' => 'Nova Pessoa',
+        'email' => 'nova@example.com',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+        'redirect' => route('posts.show', $post->slug),
+    ])->assertRedirect(route('posts.show', $post->slug));
+
+    $this->assertAuthenticated();
 });
 
 it('does not allow expired course access', function () {
@@ -93,7 +169,9 @@ it('does not allow expired course access', function () {
 
     $this->actingAs($student)
         ->get(route('posts.show', $post->slug))
-        ->assertRedirect(route('courses.show', $course->slug));
+        ->assertOk()
+        ->assertSee('Curso com acesso pago')
+        ->assertDontSee('Conteúdo restrito.');
 });
 
 it('does not allow cancelled full access', function () {
@@ -113,5 +191,7 @@ it('does not allow cancelled full access', function () {
 
     $this->actingAs($student)
         ->get(route('posts.show', $post->slug))
-        ->assertRedirect(route('courses.show', $course->slug));
+        ->assertOk()
+        ->assertSee('Curso com acesso pago')
+        ->assertDontSee('Conteúdo restrito.');
 });

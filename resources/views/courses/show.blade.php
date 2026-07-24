@@ -1,4 +1,4 @@
-<x-layout :title="$course->name">
+<x-layout :title="$course->name" :description="data_get($course->meta, 'description')">
 
     {{-- ═══ HERO ════════════════════════════════════════════════════════ --}}
     @php
@@ -42,34 +42,30 @@
         @endif
 
         @unless($hasAccess)
+            @php $firstLesson = $course->posts->first(); @endphp
             <div class="mx-auto mt-8 max-w-xl rounded-2xl border border-gray-200 bg-white p-5 text-left shadow-sm">
                 <div class="flex items-start gap-3">
                     <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand/10">
                         <x-heroicon-o-lock-closed class="h-5 w-5 text-brand"/>
                     </div>
                     <div class="min-w-0">
-                        <h2 class="font-semibold text-gray-950">Curso com acesso pago</h2>
-                        <p class="mt-1 text-sm text-gray-500">Compre este curso individualmente ou libere todos os cursos com o acesso full.</p>
-                        <div class="mt-4 flex flex-wrap gap-2">
-                            @auth
-                                <form method="POST" action="{{ route('courses.purchase', $course) }}">
-                                    @csrf
-                                    <x-forms.button type="submit" class="!bg-brand hover:!bg-brand/90">
-                                        Comprar este curso
-                                    </x-forms.button>
-                                </form>
-                                <form method="POST" action="{{ route('courses.full-access.purchase') }}">
-                                    @csrf
-                                    <x-forms.button type="submit" class="!border !border-gray-200 !bg-white !text-gray-700 hover:!border-brand hover:!text-brand">
-                                        Comprar acesso full
-                                    </x-forms.button>
-                                </form>
-                            @else
-                                <a href="{{ route('login') }}" class="inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90">
-                                    Entrar para comprar
+                        @if($course->isFree())
+                            <h2 class="font-semibold text-gray-950">Conteúdo exclusivo</h2>
+                            <p class="mt-1 text-sm text-gray-500">Cadastre-se grátis para assistir às aulas deste curso.</p>
+                        @else
+                            <h2 class="font-semibold text-gray-950">Curso com acesso pago</h2>
+                            <p class="mt-1 text-sm text-gray-500">
+                                Acesso anual a este curso{{ $course->formattedPrice() ? ' por '.$course->formattedPrice().'/ano' : '' }} ou libere todos os cursos por um valor único.
+                            </p>
+                        @endif
+                        @if($firstLesson)
+                            <div class="mt-4">
+                                <a href="{{ route('posts.show', $firstLesson->slug) }}"
+                                   class="inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90">
+                                    {{ $course->isFree() ? 'Cadastrar e assistir' : 'Ver opções de acesso' }}
                                 </a>
-                            @endauth
-                        </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -91,7 +87,7 @@
                         @php
                             $isRead = (bool) ($post->is_read ?? false);
                         @endphp
-                        <a href="{{ $hasAccess ? route('posts.show', $post->slug) : '#' }}"
+                        <a href="{{ route('posts.show', $post->slug) }}"
                            class="flex items-center gap-5 px-6 py-5 border-b border-gray-100 last:border-0 hover:bg-brand/5 transition-colors group">
 
                             {{-- Número / check --}}

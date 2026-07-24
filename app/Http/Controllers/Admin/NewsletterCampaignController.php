@@ -7,7 +7,6 @@ use App\Http\Requests\NewsletterCampaignRequest;
 use App\Jobs\ProcessNewsletterCampaign;
 use App\Models\NewsletterCampaign;
 use App\Models\NewsletterList;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class NewsletterCampaignController extends Controller

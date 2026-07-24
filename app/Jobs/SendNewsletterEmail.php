@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Mail\NewsletterMail;
+use App\Models\NewsletterCampaign;
 use App\Models\NewsletterSendLog;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -67,7 +68,7 @@ class SendNewsletterEmail implements ShouldQueue
 
     private function checkCompletion(int $campaignId): void
     {
-        $campaign = \App\Models\NewsletterCampaign::find($campaignId);
+        $campaign = NewsletterCampaign::find($campaignId);
         if (! $campaign || $campaign->status !== 'processing') {
             return;
         }
@@ -80,7 +81,7 @@ class SendNewsletterEmail implements ShouldQueue
 
     private function decrementPending(int $campaignId): void
     {
-        \App\Models\NewsletterCampaign::where('id', $campaignId)->decrement('total_recipients');
+        NewsletterCampaign::where('id', $campaignId)->decrement('total_recipients');
         $this->checkCompletion($campaignId);
     }
 }

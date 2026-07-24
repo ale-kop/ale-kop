@@ -4,10 +4,11 @@ namespace App\Actions\Courses;
 
 use App\Models\CourseAccess;
 use App\Models\User;
+use Carbon\CarbonInterface;
 
 class GrantFullCourseAccess
 {
-    public function handle(User $user, string $source = 'manual'): CourseAccess
+    public function handle(User $user, string $source = 'manual', ?CarbonInterface $expiresAt = null): CourseAccess
     {
         return $user->courseAccesses()->updateOrCreate(
             [
@@ -18,7 +19,7 @@ class GrantFullCourseAccess
                 'status' => 'active',
                 'source' => $source,
                 'purchased_at' => now(),
-                'expires_at' => null,
+                'expires_at' => $expiresAt,
             ]
         );
     }

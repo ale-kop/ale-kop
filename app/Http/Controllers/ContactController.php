@@ -17,17 +17,17 @@ class ContactController extends Controller
     {
         Mail::to(config('mail.contact_address', 'contato@alekop.com'))
             ->queue(new ContactMail(
-                senderName:     $request->input('name'),
-                senderEmail:    $request->input('email'),
+                senderName: $request->input('name'),
+                senderEmail: $request->input('email'),
                 contactSubject: 'Contato AleKop.com',
-                body:           $request->input('message'),
+                body: $request->input('message'),
             ));
 
         return response()->json([
             'message' => 'Mensagem enviada! Retornarei em breve.',
-            'title'   => 'Obrigado',
-            'type'    => 'success',
-            'reload' => 1
+            'title' => 'Obrigado',
+            'type' => 'success',
+            'reload' => 1,
         ]);
     }
 }

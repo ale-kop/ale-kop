@@ -80,6 +80,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
     Route::post('/cursos/acesso-full/comprar', [CourseAccessController::class, 'storeFull'])->name('courses.full-access.purchase');
     Route::post('/cursos/{course}/comprar', [CourseAccessController::class, 'storeCourse'])->name('courses.purchase');
+    Route::post('/planos/{plan}/assinar', [CourseAccessController::class, 'storePlan'])->name('plans.subscribe');
     Route::post('/logout', [LoginController::class, 'logout']);
 });
 

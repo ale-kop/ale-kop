@@ -13,6 +13,14 @@ use Illuminate\View\View;
 class CourseController extends Controller
 {
     /**
+     * Normalize a price form input to a float or null (empty/invalid → null).
+     */
+    private function normalizePrice(mixed $price): ?float
+    {
+        return is_numeric($price) ? (float) $price : null;
+    }
+
+    /**
      * Admin listing of all courses.
      */
     public function index(Request $request)
@@ -52,6 +60,8 @@ class CourseController extends Controller
         $course = Course::create([
             'name' => $request->name,
             'slug' => $request->slug ?? Str::slug($request->name),
+            'extra->access' => isset($request->extra['paid']) ? 'paid' : 'free',
+            'extra->price' => $this->normalizePrice(data_get($request->extra, 'price')),
             'extra->custom_url' => data_get($request->extra, 'custom_url'),
             'meta->description' => data_get($request->meta, 'description'),
         ]);
@@ -87,7 +97,9 @@ class CourseController extends Controller
             ->with('media')
             ->firstOrFail();
 
-        $hasAccess = $user?->canAccessCourse($course) ?? $course->isFree();
+        // Content is gated: free courses still require a registered user; paid
+        // courses require an entitlement. Guests can browse the syllabus only.
+        $hasAccess = (bool) $user?->canAccessCourse($course);
 
         return view('courses.show', compact('course', 'hasAccess'));
     }
@@ -109,6 +121,8 @@ class CourseController extends Controller
             'name' => $request->name,
             'slug' => $request->slug ?? Str::slug($request->name),
             'extra->featured' => isset($request->extra['featured']),
+            'extra->access' => isset($request->extra['paid']) ? 'paid' : 'free',
+            'extra->price' => $this->normalizePrice(data_get($request->extra, 'price')),
             'extra->custom_url' => data_get($request->extra, 'custom_url'),
             'meta->description' => data_get($request->meta, 'description'),
         ]);

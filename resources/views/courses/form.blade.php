@@ -21,6 +21,16 @@
         <x-forms.label for="featured">Destacar</x-forms.label>
     </div>
 
+    <div class="flex items-center gap-2">
+        <input id="paid" name="extra[paid]" type="checkbox" value="1" @checked(old('extra.paid', data_get($course?->extra, 'access') === 'paid')) />
+        <x-forms.label for="paid">Acesso pago</x-forms.label>
+    </div>
+
+    <div>
+        <x-forms.label for="price">Preço do curso por ano (R$)</x-forms.label>
+        <x-forms.input id="price" name="extra[price]" type="number" step="0.01" min="0" placeholder="Ex.: 97.00" :value="old('extra.price', data_get($course?->extra, 'price'))" />
+    </div>
+
     <div>
         <x-forms.label for="custom_url">URL personalizada</x-forms.label>
         <x-forms.input id="custom_url" name="extra[custom_url]" type="text" :value="old('extra.custom_url', data_get($course?->extra, 'custom_url'))" />

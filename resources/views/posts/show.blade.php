@@ -1,4 +1,5 @@
-<x-layout :title="$post->name . ($post->course ? ' — ' . $post->course->name : '')">
+<x-layout :title="$post->name . ($post->course ? ' — ' . $post->course->name : '')"
+          :description="data_get($post->meta, 'description')">
 
     @if($post->course)
         {{-- ─── Aula de curso: layout com sidebar lateral ─────────── --}}
@@ -34,7 +35,7 @@
                     @endif
 
                     {{-- ── Conteúdo ────────────────────────────────── --}}
-                    <div class="html-content max-w-none text-gray-700">{!! $post->content !!}</div>
+                    <div class="html-content max-w-none text-gray-800">{!! $post->content !!}</div>
 
                     {{-- ── Marcar como lido ───────────────────────── --}}
                     @if($isRead !== null)
@@ -114,7 +115,7 @@
                     sidebar...
                 </div> --}}
 
-                <div class="text-gray-700">
+                <div class="text-gray-800">
                     <div class="max-w-3xl lg:px-4 md:mx-auto">
 
                         @if($url = $post->image('large'))

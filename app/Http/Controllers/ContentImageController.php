@@ -21,7 +21,7 @@ class ContentImageController extends Controller
         $contentImage->addMediaFromRequest('image')->toMediaCollection('content-image');
 
         return response()->json([
-            'url'      => $contentImage->url('medium'),
+            'url' => $contentImage->url('medium'),
             'largeSrc' => $contentImage->url('large'),
         ]);
     }

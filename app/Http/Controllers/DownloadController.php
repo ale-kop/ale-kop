@@ -27,7 +27,7 @@ class DownloadController extends Controller
         abort_unless($this->validateUrl($url), 400);
 
         // Build stream URL manually to avoid double-encoding
-        $streamUrl = url('/baixar/arquivo') . '?url=' . rawurlencode($url);
+        $streamUrl = url('/baixar/arquivo').'?url='.rawurlencode($url);
 
         return view('download', compact('url', 'streamUrl'));
     }

@@ -41,6 +41,32 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
+        if ($to = $this->safeRedirect($request->input('redirect'))) {
+            return redirect()->to($to);
+        }
+
         return redirect()->intended('/dashboard');
+    }
+
+    /**
+     * Only allow relative, same-site paths as a post-auth redirect target.
+     */
+    private function safeRedirect(mixed $target): ?string
+    {
+        if (! is_string($target) || $target === '') {
+            return null;
+        }
+
+        // Relative same-site path (reject protocol-relative "//host").
+        if (str_starts_with($target, '/') && ! str_starts_with($target, '//')) {
+            return $target;
+        }
+
+        // Absolute URL, but only on this application's host.
+        if (parse_url($target, PHP_URL_HOST) === parse_url(config('app.url'), PHP_URL_HOST)) {
+            return $target;
+        }
+
+        return null;
     }
 }

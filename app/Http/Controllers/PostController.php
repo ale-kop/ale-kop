@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PostRequest;
+use App\Models\Plan;
 use App\Models\Post;
 use App\Models\Section;
 use App\Models\Tag;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -102,7 +102,7 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request): View|RedirectResponse
+    public function show(Request $request): View
     {
         $userId = Auth::id();
 
@@ -119,10 +119,16 @@ class PostController extends Controller
             ->with('media')
             ->firstOrFail();
 
-        if ($post->course && ! (Auth::user()?->canAccessCourse($post->course) ?? $post->course->isFree())) {
-            return redirect()
-                ->route('courses.show', $post->course->slug)
-                ->withErrors(['course_access' => 'Compre este curso ou o acesso full para assistir esta aula.']);
+        if ($post->course && ! (Auth::user()?->canAccessCourse($post->course) ?? false)) {
+            // Free course → just needs an account; paid course → needs a purchase.
+            $reason = $post->course->isFree() ? 'auth' : 'purchase';
+
+            return view('posts.locked', [
+                'post' => $post,
+                'course' => $post->course,
+                'reason' => $reason,
+                'plans' => $reason === 'purchase' ? Plan::active()->ordered()->get() : collect(),
+            ]);
         }
 
         $isRead = $post->course && Auth::check() ? (bool) ($post->is_read ?? false) : null;
