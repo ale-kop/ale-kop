@@ -47,8 +47,8 @@
                     @php
                         $allPosts     = $post->course->sections->flatMap(fn ($s) => $s->posts);
                         $currentIndex = $allPosts->search(fn ($p) => $p->slug === $post->slug);
-                        $prevPost     = $currentIndex > 0 ? $allPosts[$currentIndex - 1] : null;
-                        $nextPost     = $currentIndex < $allPosts->count() - 1 ? $allPosts[$currentIndex + 1] : null;
+                        $prevPost     = $currentIndex !== false && $currentIndex > 0 ? $allPosts[$currentIndex - 1] : null;
+                        $nextPost     = $currentIndex !== false && $currentIndex < $allPosts->count() - 1 ? $allPosts[$currentIndex + 1] : null;
                     @endphp
 
                     <div class="mt-10 grid grid-cols-2 gap-3">
