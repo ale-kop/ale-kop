@@ -31,9 +31,9 @@
                 @else
                     <form method="POST" action="{{ route('courses.full-access.purchase') }}">
                         @csrf
-                        <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90">
+                        <x-forms.button type="submit" class="!bg-brand hover:!bg-brand/90">
                             Comprar acesso full
-                        </button>
+                        </x-forms.button>
                     </form>
                 @endif
             </div>
@@ -70,9 +70,9 @@
                         @unless($canAccess)
                             <form method="POST" action="{{ route('courses.purchase', $course) }}">
                                 @csrf
-                                <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-brand px-3 py-2 text-sm font-semibold text-white hover:bg-brand/90">
+                                <x-forms.button type="submit" class="!bg-brand hover:!bg-brand/90">
                                     Comprar curso
-                                </button>
+                                </x-forms.button>
                             </form>
                         @endunless
                     </div>

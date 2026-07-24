@@ -54,15 +54,15 @@
                             @auth
                                 <form method="POST" action="{{ route('courses.purchase', $course) }}">
                                     @csrf
-                                    <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90">
+                                    <x-forms.button type="submit" class="!bg-brand hover:!bg-brand/90">
                                         Comprar este curso
-                                    </button>
+                                    </x-forms.button>
                                 </form>
                                 <form method="POST" action="{{ route('courses.full-access.purchase') }}">
                                     @csrf
-                                    <button type="submit" class="inline-flex items-center justify-center rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:border-brand hover:text-brand">
+                                    <x-forms.button type="submit" class="!border !border-gray-200 !bg-white !text-gray-700 hover:!border-brand hover:!text-brand">
                                         Comprar acesso full
-                                    </button>
+                                    </x-forms.button>
                                 </form>
                             @else
                                 <a href="{{ route('login') }}" class="inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90">

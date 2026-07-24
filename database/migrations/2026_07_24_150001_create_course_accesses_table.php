@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -22,10 +23,16 @@ return new class extends Migration
             $table->index(['user_id', 'scope', 'status']);
             $table->index(['user_id', 'course_id', 'status']);
         });
+
+        DB::statement("CREATE UNIQUE INDEX course_accesses_unique_full_access ON course_accesses (user_id) WHERE scope = 'full' AND course_id IS NULL");
+        DB::statement("CREATE UNIQUE INDEX course_accesses_unique_course_access ON course_accesses (user_id, course_id) WHERE scope = 'course' AND course_id IS NOT NULL");
     }
 
     public function down(): void
     {
+        DB::statement('DROP INDEX IF EXISTS course_accesses_unique_course_access');
+        DB::statement('DROP INDEX IF EXISTS course_accesses_unique_full_access');
+
         Schema::dropIfExists('course_accesses');
     }
 };
