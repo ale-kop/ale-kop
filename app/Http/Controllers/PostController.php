@@ -6,6 +6,7 @@ use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use App\Models\Section;
 use App\Models\Tag;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -15,7 +16,8 @@ class PostController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth')->only(['create', 'store', 'edit', 'update', 'destroy', 'manage', 'markRead']);
+        $this->middleware(['auth', 'admin'])->only(['create', 'store', 'edit', 'update', 'destroy', 'manage']);
+        $this->middleware('auth')->only(['markRead', 'markUnread']);
     }
 
     /**
@@ -61,8 +63,8 @@ class PostController extends Controller
      */
     public function create()
     {
-        $tags = \App\Models\Tag::orderBy('name')->get(['id', 'name']);
-        $sections = \App\Models\Section::with('course:id,name')->orderBy('name')->get(['id', 'name', 'course_id']);
+        $tags = Tag::orderBy('name')->get(['id', 'name']);
+        $sections = Section::with('course:id,name')->orderBy('name')->get(['id', 'name', 'course_id']);
 
         return view('posts.create', compact('tags', 'sections'));
     }
@@ -100,7 +102,7 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request): View
+    public function show(Request $request): View|RedirectResponse
     {
         $userId = Auth::id();
 
@@ -117,6 +119,12 @@ class PostController extends Controller
             ->with('media')
             ->firstOrFail();
 
+        if ($post->course && ! (Auth::user()?->canAccessCourse($post->course) ?? $post->course->isFree())) {
+            return redirect()
+                ->route('courses.show', $post->course->slug)
+                ->withErrors(['course_access' => 'Compre este curso ou o acesso full para assistir esta aula.']);
+        }
+
         $isRead = $post->course && Auth::check() ? (bool) ($post->is_read ?? false) : null;
 
         return view('posts.show', compact('post', 'isRead'));
@@ -127,8 +135,8 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        $tags = \App\Models\Tag::orderBy('name')->get(['id', 'name']);
-        $sections = \App\Models\Section::with('course:id,name')->orderBy('name')->get(['id', 'name', 'course_id']);
+        $tags = Tag::orderBy('name')->get(['id', 'name']);
+        $sections = Section::with('course:id,name')->orderBy('name')->get(['id', 'name', 'course_id']);
 
         return view('posts.edit', compact('post', 'tags', 'sections'));
     }
@@ -185,6 +193,10 @@ class PostController extends Controller
             return back();
         }
 
+        if (! Auth::user()->canAccessCourse($post->course)) {
+            abort(403);
+        }
+
         $userId = Auth::id();
         if ($userId && ! $post->readers()->where('user_id', $userId)->exists()) {
             $post->readers()->attach($userId);
@@ -197,6 +209,10 @@ class PostController extends Controller
     {
         if (! $post->course_id) {
             return back();
+        }
+
+        if (! Auth::user()->canAccessCourse($post->course)) {
+            abort(403);
         }
 
         $userId = Auth::id();

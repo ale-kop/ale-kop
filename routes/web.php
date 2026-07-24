@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\NewsletterCampaignController;
 use App\Http\Controllers\Admin\NewsletterListController;
 use App\Http\Controllers\Admin\NewsletterSubscriberController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ContentImageController;
+use App\Http\Controllers\CourseAccessController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DownloadController;
@@ -76,12 +78,16 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::post('/cursos/acesso-full/comprar', [CourseAccessController::class, 'storeFull'])->name('courses.full-access.purchase');
+    Route::post('/cursos/{course}/comprar', [CourseAccessController::class, 'storeCourse'])->name('courses.purchase');
     Route::post('/logout', [LoginController::class, 'logout']);
 });
 
 // Admin panel (auth required)
-Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', AdminController::class)->name('index');
+    Route::get('/conta', [AccountController::class, 'edit'])->name('account.edit');
+    Route::patch('/conta/senha', [AccountController::class, 'updatePassword'])->name('account.password.update');
     Route::get('/posts', [PostController::class, 'manage'])->name('posts');
     Route::get('/tags', [TagController::class, 'index'])->name('tags');
     Route::get('/sections', [SectionController::class, 'index'])->name('sections');
@@ -104,33 +110,37 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 });
 
 // Sections CRUD (no public listing)
-Route::resource('sections', SectionController::class)->except(['index', 'show']);
+Route::resource('sections', SectionController::class)->except(['index', 'show'])->middleware(['auth', 'admin']);
 
 // Tags CRUD (no public listing)
-Route::resource('tags', TagController::class)->except(['index', 'show']);
+Route::resource('tags', TagController::class)->except(['index', 'show'])->middleware(['auth', 'admin']);
 
 // Content images (inline uploads for the rich text editor)
 Route::post('content-images', [ContentImageController::class, 'store'])
-    ->middleware('auth')
+    ->middleware(['auth', 'admin'])
     ->name('content-images.store');
 
 // Posts
-Route::get('posts/create', [PostController::class, 'create'])->name('posts.create');
-Route::post('posts', [PostController::class, 'store'])->name('posts.store');
-Route::get('posts/edit/{post}', [PostController::class, 'edit'])->name('posts.edit');
-Route::patch('posts/{post}', [PostController::class, 'update'])->name('posts.update');
-Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
-Route::post('posts/{post}/read', [PostController::class, 'markRead'])->name('posts.read');
-Route::post('posts/{post}/unread', [PostController::class, 'markUnread'])->name('posts.unread');
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('posts/create', [PostController::class, 'create'])->name('posts.create');
+    Route::post('posts', [PostController::class, 'store'])->name('posts.store');
+    Route::get('posts/edit/{post}', [PostController::class, 'edit'])->name('posts.edit');
+    Route::patch('posts/{post}', [PostController::class, 'update'])->name('posts.update');
+    Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+});
+Route::post('posts/{post}/read', [PostController::class, 'markRead'])->middleware('auth')->name('posts.read');
+Route::post('posts/{post}/unread', [PostController::class, 'markUnread'])->middleware('auth')->name('posts.unread');
 Route::get('posts-{tagSlug}', [PostController::class, 'index'])->name('posts.index');
 
 // Courses - public listing + CRUD + show
 Route::get('cursos', [CourseController::class, 'publicIndex'])->name('courses.index');
-Route::get('cursos/create', [CourseController::class, 'create'])->name('courses.create');
-Route::post('cursos', [CourseController::class, 'store'])->name('courses.store');
-Route::get('cursos/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
-Route::patch('cursos/{course}', [CourseController::class, 'update'])->name('courses.update');
-Route::delete('cursos/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('cursos/create', [CourseController::class, 'create'])->name('courses.create');
+    Route::post('cursos', [CourseController::class, 'store'])->name('courses.store');
+    Route::get('cursos/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
+    Route::patch('cursos/{course}', [CourseController::class, 'update'])->name('courses.update');
+    Route::delete('cursos/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');
+});
 Route::get('cursos/{courseSlug}', [CourseController::class, 'show'])->name('courses.show');
 
 // Contact

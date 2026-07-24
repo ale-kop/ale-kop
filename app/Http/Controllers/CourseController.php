@@ -74,6 +74,7 @@ class CourseController extends Controller
     {
         $courseSlug = $request->courseSlug ?? null;
         $userId = Auth::id();
+        $user = Auth::user();
         $course = Course::where('slug', $courseSlug)
             ->with([
                 'posts' => fn ($q) => $q
@@ -86,7 +87,9 @@ class CourseController extends Controller
             ->with('media')
             ->firstOrFail();
 
-        return view('courses.show', compact('course'));
+        $hasAccess = $user?->canAccessCourse($course) ?? $course->isFree();
+
+        return view('courses.show', compact('course', 'hasAccess'));
     }
 
     /**

@@ -31,7 +31,9 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended('/dashboard');
+        $target = Auth::user()->isAdmin() ? route('admin.index') : route('dashboard');
+
+        return redirect()->intended($target);
     }
 
     public function logout(Request $request): RedirectResponse

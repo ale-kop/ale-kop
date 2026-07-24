@@ -73,12 +73,12 @@ $navLinks = [
 
             {{-- ── Avatar (desktop) ──────────────────────────────── --}}
             @auth
-                <a href="{{ route('admin.index') }}"
+                <a href="{{ auth()->user()->isAdmin() ? route('admin.index') : route('dashboard') }}"
                    class="hidden md:flex w-8 h-8 rounded-full bg-teal-50 dark:bg-zinc-800 items-center justify-center
                           text-[11px] font-bold text-teal-600 dark:text-teal-400 select-none
                           ring-1 ring-teal-200 dark:ring-teal-700
                           hover:ring-2 hover:ring-teal-400/60 transition-all"
-                   title="Painel admin">
+                   title="{{ auth()->user()->isAdmin() ? 'Painel admin' : 'Minha área' }}">
                     {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 2)) }}
                 </a>
             @endauth
@@ -124,7 +124,11 @@ $navLinks = [
         </li> --}}
 
         @auth
-            <li><a href="{{ route('admin.index') }}" class="block py-2 text-sm text-gray-500">Admin</a></li>
+            <li>
+                <a href="{{ auth()->user()->isAdmin() ? route('admin.index') : route('dashboard') }}" class="block py-2 text-sm text-gray-500">
+                    {{ auth()->user()->isAdmin() ? 'Admin' : 'Minha área' }}
+                </a>
+            </li>
         @endauth
 
     </ul>

@@ -21,8 +21,9 @@ class DatabaseSeeder extends Seeder
 
         $user = User::query()->firstOrCreate(
             ['email' => 'contato@alekop.com'],
-            ['name' => 'Aleksandr', 'password' => 'password']
+            ['name' => 'Aleksandr', 'password' => 'password', 'role' => 'admin']
         );
+        $user->forceFill(['role' => 'admin'])->save();
 
         $this->call(TagSeeder::class);
 

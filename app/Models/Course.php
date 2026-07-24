@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Spatie\Image\Enums\Fit;
 
 class Course extends Model implements HasMedia
 {
@@ -63,5 +63,20 @@ class Course extends Model implements HasMedia
     public function sections(): HasMany
     {
         return $this->hasMany(Section::class);
+    }
+
+    public function accesses(): HasMany
+    {
+        return $this->hasMany(CourseAccess::class);
+    }
+
+    public function isFree(): bool
+    {
+        return data_get($this->extra, 'access') === 'free';
+    }
+
+    public function requiresAccess(): bool
+    {
+        return ! $this->isFree();
     }
 }

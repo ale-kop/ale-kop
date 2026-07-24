@@ -10,10 +10,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class RegisterController extends Controller
 {
-    public function show(): \Illuminate\View\View
+    public function show(): View
     {
         return view('auth.register');
     }
@@ -34,6 +35,7 @@ class RegisterController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'role' => 'student',
             'api_token' => Str::random(60),
         ]);
 
