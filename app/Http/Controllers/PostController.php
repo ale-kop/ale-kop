@@ -33,6 +33,7 @@ class PostController extends Controller
                 ->select(['posts.id', 'posts.slug', 'posts.name', 'posts.course_id', 'posts.tag_id', 'posts.meta', 'posts.created_at'])
                 ->withReadFlag($userId)
                 ->where('tag_id', $tag->id)
+                ->latest()
                 ->get()
             : collect();
 

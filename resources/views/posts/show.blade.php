@@ -94,9 +94,13 @@
         {{-- ─── Post avulso: layout radiant blog post ────────────── --}}
         <x-container>
             <div class="text-center">
-                <p class="font-mono text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">
-                    {{ optional($post->created_at)->translatedFormat('l, j \\d\\e F \\d\\e Y') }}
-                </p>
+                @if($post->tag)
+                    <p class="font-mono text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">
+                        <a href="{{ route('posts.index', $post->tag->slug) }}" class="hover:text-gray-950 transition-colors">
+                            {{ $post->tag->name }}
+                        </a>
+                    </p>
+                @endif
                 <h1 class="mt-6 text-4xl font-serif font-medium tracking-tighter text-pretty text-gray-950 sm:text-5xl">
                     {{ $post->name }}
                 </h1>
@@ -129,7 +133,7 @@
                             <a href="{{ $post->tag ? route('posts.index', $post->tag->slug) : url()->previous() }}"
                                class="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-1.5 text-sm font-medium text-gray-950 hover:bg-gray-50 transition-colors">
                                 <x-heroicon-s-chevron-left class="size-4"/>
-                                Voltar
+                                {{ $post->tag ? 'Mais sobre esse assunto' : 'Voltar' }}
                             </a>
                         </div>
 
