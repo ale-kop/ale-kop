@@ -287,7 +287,7 @@ Texto em serifa precisa de entrelinha maior que o sem serifa (ex.: `text-lg/8`, 
 
 Todos os posts (avulsos e aulas de curso) seguem o padrão de leitura estilo Substack em `resources/views/posts/show.blade.php`:
 
-- **Coluna de 680px** (`.article-measure`), fundo branco, sem a decoração em gradiente do layout (`<x-layout :decoration="false">`).
+- **Coluna de 780px** (`.article-measure`), fundo branco, sem a decoração em gradiente do layout (`<x-layout :decoration="false">`).
 - **Trilha** (`<x-article.breadcrumb>`): uma linha só, "Artigos › Assunto" (aulas: "Cursos › Curso"). "Artigos" leva à lista completa da home (`/#posts`); o item atual usa apenas a cor do tema, sem ponto.
 - **Cabeçalho** (`<x-article.header>`): título em Schibsted Grotesk (700, `clamp(34px, 5vw, 48px)`, `letter-spacing: -.035em`), linha fina em serifa (vem de `meta.description`) e linha do autor com data, tempo de leitura (`Post::readingMinutes()`, ≈ 200 palavras/min) e botão "Copiar link".
 - **Corpo** (`.html-content.article-prose`): Source Serif 4, 20px (19px no celular), entrelinha 1.7, parágrafos com 1.25em de espaço, subtítulos em serifa 600, citação com borda na cor do tema, separador `* * *`, **sem hifenização automática**.

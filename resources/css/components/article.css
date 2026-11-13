@@ -24,7 +24,7 @@
 .article-progress i { display: block; height: 100%; width: 0; background: var(--topic); }
 
 /* Coluna de leitura */
-.article-measure { max-width: 680px; margin: 0 auto; padding: 0 24px; }
+.article-measure { max-width: 780px; margin: 0 auto; padding: 0 24px; }
 @media (max-width: 640px) { .article-measure { padding: 0 20px; } }
 
 /* Trilha "Artigos › Assunto" em uma linha; o item atual leva só a cor do tema */
@@ -61,7 +61,7 @@
 .article-btn-ghost { background: #fff; border-color: var(--line); color: var(--ink); }
 .article-btn-ghost:hover { border-color: #C9CFC3; }
 
-/* ── Corpo: ~20px serif, entrelinha 1.7, ~65 caracteres por linha ──
+/* ── Corpo: ~20px serif, entrelinha 1.7, ~70 caracteres por linha (coluna de 780px) ──
    Sobrescreve .html-content (app.css) só dentro do post. */
 .html-content.article-prose {
     font: 400 20px/1.7 var(--font-serif);
