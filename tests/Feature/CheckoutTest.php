@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Checkout\SyncOrderWithPayment;
+use App\Actions\Courses\GrantCourseAccess;
 use App\Mail\OrderApprovedMail;
 use App\Models\Course;
 use App\Models\CourseAccess;
@@ -70,6 +71,20 @@ it('shows the checkout for a paid course and 404s for a free one', function () {
 
     Course::query()->create(['name' => 'Grátis', 'slug' => 'gratis']);
     $this->get(route('checkout.show', 'gratis'))->assertNotFound();
+});
+
+it('sends a student who already has the course to it, but lets an admin preview the checkout', function () {
+    $student = User::factory()->create(['role' => 'student']);
+    app(GrantCourseAccess::class)->handle($student, $this->course);
+
+    $this->actingAs($student)->get(route('checkout.show', $this->course->slug))
+        ->assertRedirect(route('courses.show', $this->course->slug));
+
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    $this->actingAs($admin)->get(route('checkout.show', $this->course->slug))
+        ->assertOk()
+        ->assertSee('Pagar R$ 197,00');
 });
 
 it('approves a card payment, creates the account and grants the course', function () {
