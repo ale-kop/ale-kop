@@ -4,55 +4,95 @@ namespace App\Services;
 
 use App\Models\NewsletterList;
 use App\Models\NewsletterSubscriber;
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Inscrição em duas etapas: subscribe() registra o e-mail como "pending" e envia o código;
+ * verify() confere o código, ativa o inscrito e o coloca na lista.
+ */
 class NewsletterSubscribeService
 {
-    public function subscribe(array $data, ?string $listSlug = 'newsletter'): NewsletterSubscriber
+    public function __construct(private readonly NewsletterVerificationService $verification) {}
+
+    public function subscribe(array $data): NewsletterSubscriber
     {
-        return DB::transaction(function () use ($data, $listSlug) {
-            $existing = NewsletterSubscriber::where('email', $data['email'])->first();
+        $subscriber = DB::transaction(function () use ($data) {
+            $existing = NewsletterSubscriber::where('email', $data['email'])->lockForUpdate()->first();
 
             if ($existing) {
-                $this->updateMetadata($existing, $data);
-                $subscriber = $existing;
-            } else {
-                $subscriber = NewsletterSubscriber::create([
-                    'name' => $data['name'] ?? null,
-                    'email' => $data['email'],
-                    'ip_address' => $data['ip_address'] ?? null,
-                    'status' => 'active',
-                    'metadata' => $this->buildMetadata($data),
-                ]);
+                $this->refreshExisting($existing, $data);
+
+                return $existing;
             }
 
-            if ($listSlug) {
-                $list = NewsletterList::where('slug', $listSlug)->first();
-                if ($list && ! $subscriber->lists()->where('list_id', $list->id)->exists()) {
-                    $subscriber->lists()->attach($list->id);
-                }
+            return NewsletterSubscriber::create([
+                'name' => $data['name'] ?? null,
+                'email' => $data['email'],
+                'ip_address' => $data['ip_address'] ?? null,
+                'status' => 'pending',
+                'source_path' => $data['source_path'] ?? null,
+                'source_form' => $data['source_form'] ?? null,
+                'source_post_id' => $data['source_post_id'] ?? null,
+                'metadata' => $this->buildMetadata($data),
+            ]);
+        });
+
+        // Pode lançar NewsletterCodeCooldownException (reenvio rápido demais).
+        $this->verification->sendCode($subscriber);
+
+        return $subscriber;
+    }
+
+    /** Confere o código; em caso de acerto ativa o inscrito e o coloca na lista. */
+    public function verify(string $email, string $code, ?string $listSlug = 'newsletter'): bool
+    {
+        return DB::transaction(function () use ($email, $code, $listSlug) {
+            $subscriber = NewsletterSubscriber::where('email', $email)->lockForUpdate()->first();
+
+            if (! $subscriber || ! $this->verification->check($subscriber, $code)) {
+                return false;
             }
 
-            return $subscriber;
+            $attributes = ['email_verified_at' => now()];
+            if ($subscriber->status !== 'active') {
+                // pending, descadastrado ou bounced: a confirmação (re)ativa
+                $attributes += ['status' => 'active', 'subscribed_at' => now(), 'unsubscribed_at' => null];
+            }
+            $subscriber->update($attributes);
+
+            $list = $listSlug ? NewsletterList::where('slug', $listSlug)->first() : null;
+            if ($list && ! $subscriber->lists()->where('list_id', $list->id)->exists()) {
+                $subscriber->lists()->attach($list->id);
+            }
+
+            return true;
         });
     }
 
-    private function updateMetadata(NewsletterSubscriber $subscriber, array $data): void
+    /** Quem já está inscrito mantém o status; a origem do cadastro é a primeira (first-touch). */
+    private function refreshExisting(NewsletterSubscriber $subscriber, array $data): void
     {
         $existing = $subscriber->metadata ?? [];
         $new = $this->buildMetadata($data);
 
-        $merged = array_merge($existing, array_filter($new, fn ($v) => $v !== null));
-
-        $subscriber->update([
-            'metadata' => $merged,
-            'name' => $data['name'] ?? $subscriber->name,
-        ]);
-
-        if ($subscriber->status !== 'active') {
-            $subscriber->update(['status' => 'active', 'subscribed_at' => now(), 'unsubscribed_at' => null]);
+        $metadata = array_merge($existing, $new);
+        if (isset($existing['source_url'])) {
+            $metadata['source_url'] = $existing['source_url'];
         }
+
+        $attributes = ['metadata' => $metadata, 'name' => $data['name'] ?? $subscriber->name];
+
+        if ($subscriber->source_path === null) {
+            $attributes += [
+                'source_path' => $data['source_path'] ?? null,
+                'source_form' => $data['source_form'] ?? null,
+                'source_post_id' => $data['source_post_id'] ?? null,
+            ];
+        }
+
+        $subscriber->update($attributes);
     }
 
     private function buildMetadata(array $data): array
@@ -70,9 +110,15 @@ class NewsletterSubscribeService
 
     public static function extractFromRequest(Request $request): array
     {
+        $sourceUrl = $request->input('source_url', $request->headers->get('referer'));
+        $sourcePath = self::pathOf($sourceUrl, $request);
+
         return [
             'ip_address' => $request->ip(),
-            'source_url' => $request->input('source_url', $request->headers->get('referer')),
+            'source_url' => $sourceUrl,
+            'source_path' => $sourcePath,
+            'source_form' => $request->input('source_form'),
+            'source_post_id' => self::postIdOf($sourcePath),
             'user_agent' => $request->userAgent(),
             'utm_source' => $request->input('utm_source'),
             'utm_medium' => $request->input('utm_medium'),
@@ -80,5 +126,31 @@ class NewsletterSubscribeService
             'utm_content' => $request->input('utm_content'),
             'utm_term' => $request->input('utm_term'),
         ];
+    }
+
+    /** Caminho normalizado da página ("/slug", sem host, query ou barra final). Outro domínio é ignorado. */
+    private static function pathOf(?string $url, Request $request): ?string
+    {
+        $parts = $url ? parse_url($url) : false;
+
+        if (! $parts || (isset($parts['host']) && strcasecmp($parts['host'], $request->getHost()) !== 0)) {
+            return null;
+        }
+
+        $path = '/'.trim($parts['path'] ?? '', '/');
+
+        return mb_substr($path, 0, 255);
+    }
+
+    /** Posts (avulsos e aulas) vivem em "/{slug}"; as demais páginas não têm post. */
+    private static function postIdOf(?string $path): ?int
+    {
+        $slug = $path !== null ? ltrim($path, '/') : '';
+
+        if ($slug === '' || str_contains($slug, '/')) {
+            return null;
+        }
+
+        return Post::where('slug', $slug)->value('id');
     }
 }

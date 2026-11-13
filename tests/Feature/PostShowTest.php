@@ -88,6 +88,10 @@ it('renders the scroll-triggered subscribe popup on standalone posts', function 
     $this->get(route('posts.show', $post->slug))
         ->assertOk()
         ->assertSee('data-article-popup', false)
-        ->assertSee('name="modal_id" value="article-subscribe-popup"', false)
-        ->assertSee('id="form-article-subscribe"', false);
+        ->assertSee('id="form-article-subscribe"', false)
+        ->assertSee('id="form-article-popup"', false)
+        // cada formulário informa de onde veio o cadastro
+        ->assertSee('name="source_form" value="post-end"', false)
+        ->assertSee('name="source_form" value="post-popup"', false)
+        ->assertSee('data-verify-url="'.route('newsletter.verify').'"', false);
 });

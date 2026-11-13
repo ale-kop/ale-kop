@@ -62,50 +62,7 @@
                 <span class="text-gray-400">Sobre IA, Vendas, Marketing e Comunicação.</span>
             </p>
 
-            <form id="form-newsletter-subscribe" class="flex flex-col gap-3 text-left">
-                <input type="hidden" name="list" value="newsletter">
-                <input type="hidden" name="source_url" value="{{ url()->current() }}">
-                {{-- Honeypot: bots fill this, humans leave it empty --}}
-                <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off">
-
-                <div>
-                    <x-forms.label for="nl_name_dl">Nome</x-forms.label>
-                    <x-forms.input type="text" name="name" id="nl_name_dl"
-                                   placeholder="Seu nome" class="w-full" />
-                </div>
-
-                <div>
-                    <x-forms.label for="nl_email_dl">
-                        E-mail <span class="text-accent font-bold">*</span>
-                    </x-forms.label>
-                    <x-forms.input type="email" name="email" id="nl_email_dl"
-                                   placeholder="seu@email.com" required class="w-full" />
-                </div>
-
-                {{-- @if(session('success'))
-                    <p class="text-sm text-green-600">{{ session('success') }}</p>
-                @endif
-                @error('email')
-                    <p class="text-sm text-red-600">{{ $message }}</p>
-                @enderror --}}
-
-                <div class="flex justify-center mt-1">
-                    <x-forms.button
-                                data-ak-ajax="form-newsletter-subscribe" 
-                                data-ak-action="{{ route('newsletter.subscribe') }}"
-                                    class="bg-teal-600 text-white px-6 py-2 rounded border-b border-teal-700"
-                                    submit-button>
-                                    Entrar
-                                </x-forms.button>
-                    {{-- <x-forms.glow-button size="md" 
-                    submit-button
-                    ak-ajax-click="form-newsletter-subscribe" 
-                    ak-ajax-action="{{ route('newsletter.subscribe') }}">
-                        Quero receber os conteúdos →
-                    </x-forms.glow-button> --}}
-                    {{-- <x-forms.button ak-ajax-click="form-newsletter-subscribe">Aha!</x-forms.button> --}}
-                </div>
-            </form>
+            <x-newsletter.form id="newsletter-download" form="download" :with-name="true" />
 
         </div>
 

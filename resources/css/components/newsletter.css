@@ -1,0 +1,85 @@
+/* ──────────────────────────────────────────────────────────
+   Formulário de newsletter em duas etapas (<x-newsletter.form>)
+   e-mail → código de 6 dígitos. Módulo JS: newsletter.
+   Usa a cor do tema do post (--topic) quando existir; senão, a da marca.
+   Títulos em Schibsted Grotesk 700; nada de terceira família.
+────────────────────────────────────────────────────────── */
+
+.nl {
+    --nl-ink: var(--ink, #1F2433);
+    --nl-ink-2: var(--ink-2, #4A5163);
+    --nl-ink-3: var(--ink-3, #737A8C);
+    --nl-line: var(--line, #E2E6DE);
+    --nl-accent: var(--topic, var(--color-brand));
+    --nl-accent-ink: var(--topic-ink, var(--color-brand-deep));
+    max-width: 440px;
+    margin: 0 auto;
+}
+.nl [hidden] { display: none !important; }
+
+.nl-form { display: flex; flex-direction: column; gap: 8px; }
+.nl-row { display: flex; gap: 8px; }
+.nl input[type="email"],
+.nl input[type="text"]:not([name="website"]) {
+    flex: 1; min-width: 0; font: 400 16px var(--font-sans); padding: 12px 16px;
+    border: 1px solid var(--nl-line); border-radius: 999px; background: #fff; color: var(--nl-ink);
+}
+.nl input:focus { outline: 2px solid var(--nl-accent); outline-offset: 0; border-color: transparent; }
+/* campo do código: dígitos grandes e espaçados */
+.nl input[data-nl-code] { text-align: center; font: 600 20px var(--font-sans); letter-spacing: .35em; padding-left: calc(16px + .35em); }
+
+.nl-btn {
+    flex: none; font: 600 15px/1 var(--font-sans); padding: 12px 20px; border-radius: 999px;
+    background: var(--nl-ink); color: #fff; cursor: pointer; white-space: nowrap;
+    transition: background .15s, opacity .15s;
+}
+.nl-btn:hover:not(:disabled) { background: color-mix(in srgb, var(--nl-ink) 85%, white); }
+.nl-btn:disabled { cursor: default; }
+.nl-btn:disabled:not([data-state="loading"]) { opacity: .6; }
+@media (max-width: 520px) { .nl-row { flex-direction: column; } }
+
+/* Mensagem abaixo do campo e do botão */
+.nl-feedback { display: flex; align-items: flex-start; gap: 12px; margin-top: 14px; padding: 14px 16px; border-radius: 14px; text-align: left; }
+.nl-feedback p { margin: 0; font-family: var(--font-sans); }
+.nl-feedback strong { display: block; font-weight: 700; letter-spacing: -.02em; line-height: 1.25; }
+.nl-feedback span { display: block; font-size: 15px; line-height: 1.45; }
+.nl-feedback strong:empty { display: none; }
+.nl-icon { flex: none; width: 24px; height: 24px; display: none; margin-top: 1px; }
+.nl-feedback[data-tone="info"] [data-icon="info"],
+.nl-feedback[data-tone="success"] [data-icon="success"],
+.nl-feedback[data-tone="error"] [data-icon="error"] { display: block; }
+
+.nl-feedback[data-tone="info"] { background: var(--paper, #F6F8F4); color: var(--nl-ink-2); }
+.nl-feedback[data-tone="info"] strong { font-size: 16px; color: var(--nl-ink); }
+.nl-feedback[data-tone="info"] .nl-icon { color: var(--nl-accent-ink); }
+
+.nl-feedback[data-tone="error"] { background: #FDF1EE; color: #8A3320; }
+.nl-feedback[data-tone="error"] strong { font-size: 16px; }
+.nl-feedback[data-tone="error"] .nl-icon { color: #C2462D; }
+
+/* Sucesso: o destaque da página: maior, na cor do tema, com entrada animada */
+.nl-feedback[data-tone="success"] {
+    align-items: center; gap: 14px; padding: 18px 20px;
+    background: color-mix(in srgb, var(--nl-accent) 14%, white);
+    border: 1px solid color-mix(in srgb, var(--nl-accent) 40%, white);
+    color: var(--nl-accent-ink);
+    animation: nl-pop .5s cubic-bezier(.2, 1.4, .4, 1) both;
+}
+.nl-feedback[data-tone="success"] strong { font-size: 24px; color: var(--nl-accent-ink); }
+.nl-feedback[data-tone="success"] span { margin-top: 2px; color: var(--nl-ink-2); }
+.nl-feedback[data-tone="success"] .nl-icon { width: 40px; height: 40px; margin: 0; color: var(--nl-accent); }
+@keyframes nl-pop { from { opacity: 0; transform: translateY(8px) scale(.94); } to { opacity: 1; transform: none; } }
+
+.nl-actions { display: flex; justify-content: center; gap: 18px; margin: 10px 0 0; font: 500 14px var(--font-sans); }
+.nl-actions button { color: var(--nl-ink-3); cursor: pointer; }
+.nl-actions button:hover:not(:disabled) { color: var(--nl-ink); text-decoration: underline; text-underline-offset: 4px; }
+.nl-actions button:disabled { opacity: .6; cursor: default; }
+
+@media (prefers-reduced-motion: reduce) { .nl-feedback[data-tone="success"] { animation: none; } .nl-btn { transition: none; } }
+
+/* Confete (módulo JS: confetti). Vai para o top-layer (popover) para ficar acima de <dialog>. */
+.confetti-canvas {
+    position: fixed; inset: 0; width: 100vw; height: 100vh; max-width: none; max-height: none;
+    margin: 0; padding: 0; border: 0; background: transparent; overflow: visible;
+    pointer-events: none; z-index: 2147483647;
+}

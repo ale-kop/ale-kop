@@ -585,15 +585,35 @@ MAILGUN_SECRET=key-xxxxxxxxxxxx
 
 Cada e-mail enviado contém um link de descadastro único no rodapé (`/newsletter/descadastrar/{token}`). O inscrito confirma clicando em um botão e o status é marcado como `unsubscribed` — o registro nunca é removido do banco.
 
-### Formulários de captura
+### Formulários de captura e confirmação por código
 
-Os formulários nas páginas públicas (download e página temporária) enviam para `POST /newsletter/subscribe` com:
+Todo formulário usa o componente `<x-newsletter.form id="…" form="…">` (módulo JS `newsletter`, estilos em `resources/css/components/newsletter.css`). Está no fim do post, no pop-up do post e na página de download. **A inscrição só vale depois de confirmar o e-mail com um código de 6 dígitos:**
 
-- `name` — nome (opcional)
-- `email` — obrigatório
-- `list` — slug da lista de destino (padrão: `newsletter`)
-- Parâmetros UTM capturados automaticamente e salvos no campo `metadata`
-- Campo honeypot `website` (oculto) para bloqueio básico de bots
-- Rate limit de 5 requisições por minuto por IP
+1. `POST /newsletter/subscribe` (`newsletter.subscribe`, 5 req/min por IP): registra o e-mail como `pending` e envia o código por e-mail (`NewsletterVerificationMail`, pela fila `default`, não pela fila `newsletter` das campanhas).
+2. `POST /newsletter/verificar` (`newsletter.verify`, 10 req/min por IP): confere o código. Se estiver certo, o inscrito vira `active`, recebe `email_verified_at` e entra na lista. Só nesse momento ele passa a receber campanhas.
 
-Se o e-mail já existir, o cadastro **não é duplicado**: os metadados são atualizados e o inscrito é adicionado à lista caso ainda não esteja nela.
+Regras do código (`NewsletterVerificationService`): vale 15 minutos, é guardado só como hash, aceita 5 tentativas erradas (depois é preciso pedir outro) e só pode ser reenviado depois de 60 segundos. Pedir um código novo invalida o anterior. Quem já está `active` e preenche o formulário de novo continua ativo; descadastrados só voltam a `active` depois de confirmar. A lista só é associada na confirmação, nunca no primeiro envio.
+
+Campos do `POST /newsletter/subscribe`: `email` (obrigatório), `name`, `list` (padrão `newsletter`), `source_url`, `source_form`, UTMs (em `metadata`) e o honeypot `website`.
+
+Depois de confirmar, o site mostra a mensagem de sucesso abaixo do campo e do botão e solta confete na tela toda (`resources/js/modules/confetti.js`, sem dependências; respeita `prefers-reduced-motion`).
+
+Inscritos criados antes da confirmação por código continuam `active` com `email_verified_at` vazio.
+
+#### De qual página veio o inscrito
+
+Cada inscrito guarda a origem do cadastro em colunas próprias de `newsletter_subscribers`, prontas para agregar:
+
+| Coluna | Conteúdo |
+|---|---|
+| `source_path` | Página onde o formulário foi enviado, normalizada: `/slug`, sem domínio, query ou barra final. URL de outro domínio é ignorada. |
+| `source_form` | Qual formulário: `post-end`, `post-popup`, `download`… |
+| `source_post_id` | Post ou aula dessa página (`/{slug}`), quando existe. Vira `null` se o post for apagado. |
+
+A origem é a **primeira** (first-touch): se a mesma pessoa se inscrever de novo por outra página, ela não é sobrescrita. UTMs ficam em `metadata`. Exemplo de ranking (só inscritos confirmados):
+
+```php
+NewsletterSubscriber::where('status', 'active')->whereNotNull('source_path')
+    ->groupBy('source_path')->selectRaw('source_path, count(*) as total')
+    ->orderByDesc('total')->get();
+```

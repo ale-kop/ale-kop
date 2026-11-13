@@ -3,5 +3,5 @@
     <h2 id="article-subscribe-title">Receba os próximos posts</h2>
     <p>Um e-mail quando sair conteúdo novo. Sem spam.</p>
 
-    <x-article.subscribe-form id="article-subscribe" />
+    <x-newsletter.form id="article-subscribe" form="post-end" />
 </section>

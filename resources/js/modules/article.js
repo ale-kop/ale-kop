@@ -5,12 +5,15 @@
     - [data-copy-link]: copia a URL da página.
     - [data-article-popup]: convite de inscrição aberto ao rolar
       POPUP_TRIGGER do texto (estilo Substack). Ao fechar, fica
-      oculto por POPUP_SNOOZE_DAYS (localStorage).
+      oculto por POPUP_SNOOZE_DAYS (localStorage). Quem já se
+      inscreveu (SUBSCRIBED_KEY, gravado pelo módulo newsletter)
+      nunca mais vê o pop-up.
     init() é idempotente.
 -------------------------------------------------*/
 const POPUP_TRIGGER = 0.4
 const POPUP_SNOOZE_DAYS = 30
 const POPUP_STORAGE_KEY = 'article-popup-dismissed-at'
+const SUBSCRIBED_KEY = 'newsletter-subscribed'
 
 export function init() {
     initProgress()
@@ -72,7 +75,13 @@ function initSubscribePopup() {
     // Fechou de qualquer jeito (X, Esc, fundo, inscrição concluída): não insiste por um tempo.
     popup.addEventListener('close', () => storageSet(POPUP_STORAGE_KEY, String(Date.now())))
 
-    if (wasDismissedRecently()) return
+    // Inscrição feita aqui mesmo: o pop-up continua aberto mostrando a confirmação.
+    popup.addEventListener('newsletter:subscribed', () => {
+        const skip = popup.querySelector('.article-popup-skip')
+        if (skip) skip.textContent = 'Fechar'
+    })
+
+    if (storageGet(SUBSCRIBED_KEY) === '1' || wasDismissedRecently()) return
 
     const check = () => {
         const rect = body.getBoundingClientRect()

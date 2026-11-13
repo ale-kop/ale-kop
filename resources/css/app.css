@@ -4,6 +4,7 @@
 @import './components/scrollbar.css';
 @import './components/rich-text-editor.css';
 @import './components/article.css';
+@import './components/newsletter.css';
 
 @source not "../../radiant-js";
 @source not "../../spotlight-js";

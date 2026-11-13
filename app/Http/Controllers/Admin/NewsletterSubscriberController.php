@@ -35,6 +35,7 @@ class NewsletterSubscriberController extends Controller
 
         $counts = [
             'total' => NewsletterSubscriber::count(),
+            'pending' => NewsletterSubscriber::where('status', 'pending')->count(),
             'active' => NewsletterSubscriber::where('status', 'active')->count(),
             'unsubscribed' => NewsletterSubscriber::where('status', 'unsubscribed')->count(),
             'bounced' => NewsletterSubscriber::where('status', 'bounced')->count(),
