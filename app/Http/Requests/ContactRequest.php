@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ReceivableEmailDomain;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ContactRequest extends FormRequest
@@ -15,7 +16,7 @@ class ContactRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:100'],
-            'email' => ['required', 'email:rfc,dns', 'max:254'],
+            'email' => ['bail', 'required', 'email:rfc', 'max:254', new ReceivableEmailDomain],
             // 'subject' => ['required', 'string', 'max:150'],
             'message' => ['required', 'string', 'min:10', 'max:3000'],
             'website' => ['nullable', 'max:0'],

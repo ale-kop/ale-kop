@@ -81,7 +81,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (ValidationException $e, Request $request) {
             if ($request->expectsJson()) {
                 return response()->json([
-                    'message' => 'Validation failed',
+                    // a primeira mensagem de erro de verdade, em vez de um texto genérico
+                    'message' => collect($e->errors())->flatten()->first() ?? 'Erro de validação.',
                     'errors' => $e->errors(),
                 ], 422);
             }
