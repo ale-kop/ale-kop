@@ -128,6 +128,14 @@ Route: `GET /contato` → `contact.show`, `POST /contato` → `contact.send` (th
 
 The recipient is driven by `config('mail.contact_address')` → `MAIL_CONTACT_ADDRESS` in `.env`. The `ContactMail` mailable sets `replyTo` to the sender so replies go directly to whoever filled the form.
 
+### Offer page + checkout (Mercado Pago)
+
+Offer page: `GET /orcamentos-pelo-whatsapp` → `offers.whatsapp`. Name/price come from the `Course` whose slug is in `config/offers.php`; missing course → 404 (seed it with `WhatsappOfferCourseSeeder`). Copy lives in `resources/views/offers/whatsapp.blade.php`.
+
+Checkout works for any course with `extra.access = paid` and a price: `checkout.show` → `checkout.pay` (JSON) → `checkout.order` (`/pedidos/{order:uuid}`), plus `checkout.status` (Pix polling) and `webhooks.mercadopago`. Flow: `PayOrder` → `MercadoPagoClient::createPayment()` → `SyncOrderWithPayment` → `FulfillOrder` (find/create user by e-mail, grant course for 1 year with `source = mercadopago`, queue `OrderApprovedMail`). Refunds set the course access to `refunded`.
+
+Rules: grant access only via `FulfillOrder`; change order status only via `SyncOrderWithPayment` with data fetched from the API; card data is tokenized in the browser (Secure Fields); the webhook is CSRF-exempt and validated by `x-signature`. In `local`/`testing` no `notification_url` is sent, so Pix status comes from `checkout.status`. Env vars: `MERCADOPAGO_*` (see `.env.example` and README › Pagamentos).
+
 ### Mail: SMTP for Google Workspace
 
 ```env
