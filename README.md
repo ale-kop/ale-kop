@@ -250,11 +250,62 @@ O atributo `state` controla o spinner interno. O módulo `ajax-post.js` alterna 
 
 ---
 
+## Tipografia
+
+O site usa **duas famílias, e só duas**. Os arquivos ficam em `resources/fonts` (variáveis, subconjunto latin, que cobre o pt-BR) e são declarados em `resources/css/app.css` (`@font-face` + tokens `--font-sans` e `--font-serif` no `@theme`).
+
+| Família | Classe Tailwind | Papel |
+|---|---|---|
+| **Schibsted Grotesk** (sem serifa) | `font-sans` (padrão) | Interface e títulos |
+| **Source Serif 4** (serifada, com tamanho óptico) | `font-serif` | Tudo que é leitura |
+
+Georgia e a fonte do sistema só aparecem se as fontes não carregarem.
+
+### Schibsted Grotesk: interface e títulos
+
+- Cabeçalho, menu, botões e rodapé.
+- Títulos da home: a frase principal, os títulos de seção, o título do Sobre, os títulos dos posts na lista e os nomes dos cursos.
+- Títulos de página (cursos, contato, área do aluno) e o **título principal do post**.
+- Textos pequenos: etiquetas de tema, datas, filtros, preços, número de aulas, quadros laterais e campos de e-mail.
+- No post: trilha "Artigos › Assunto", linha do autor, etiquetas finais, quadros (callouts, diálogo, curso) e o título "Continue lendo".
+
+Títulos grandes usam peso forte e letras próximas: `font-bold tracking-[-0.035em]` (700; não usar `font-extrabold`).
+
+### Source Serif 4: leitura
+
+- Na home: texto de apresentação, resumos dos posts, descrições dos cursos, texto do Sobre e citações.
+- No post: linha fina, todo o corpo do artigo (incluindo subtítulos e citações), título da newsletter e títulos em "Continue lendo".
+
+Texto em serifa precisa de entrelinha maior que o sem serifa (ex.: `text-lg/8`, `text-3xl/10`).
+
+### Não fazer
+
+- Não adicionar uma terceira família. `font-mono` fica restrito a código (`pre`/`code`) e slugs no painel admin.
+- Não usar `font-serif` em botões, menus ou rótulos, nem `font-sans` em parágrafos de leitura.
+
+## Página de post (padrão "post-b")
+
+Todos os posts (avulsos e aulas de curso) seguem o padrão de leitura estilo Substack em `resources/views/posts/show.blade.php`:
+
+- **Coluna de 680px** (`.article-measure`), fundo branco, sem a decoração em gradiente do layout (`<x-layout :decoration="false">`).
+- **Trilha** (`<x-article.breadcrumb>`): uma linha só, "Artigos › Assunto" (aulas: "Cursos › Curso"). "Artigos" leva à lista completa da home (`/#posts`); o item atual usa apenas a cor do tema, sem ponto.
+- **Cabeçalho** (`<x-article.header>`): título em Schibsted Grotesk (700, `clamp(34px, 5vw, 48px)`, `letter-spacing: -.035em`), linha fina em serifa (vem de `meta.description`) e linha do autor com data, tempo de leitura (`Post::readingMinutes()`, ≈ 200 palavras/min) e botão "Copiar link".
+- **Corpo** (`.html-content.article-prose`): Source Serif 4, 20px (19px no celular), entrelinha 1.7, parágrafos com 1.25em de espaço, subtítulos em serifa 600, citação com borda na cor do tema, separador `* * *`, **sem hifenização automática**.
+- **Final do post avulso**: link "Mais sobre {tema}", inscrição na newsletter (`<x-article.subscribe>`), o mesmo convite em pop-up ao rolar 40% do texto (`<x-article.subscribe-popup>`, estilo Substack; ao fechar, some por 30 dias via `localStorage`) e "Continue lendo" com os 3 posts avulsos mais recentes (`<x-article.continue-reading>`).
+- **Aulas de curso**: mesmo cabeçalho e corpo, com o índice do curso ao lado, "Marcar como lido" e navegação entre aulas.
+- **Barra de leitura** no topo e "Copiar link": módulo JS `article` (`resources/js/modules/article.js`).
+
+Estilos em `resources/css/components/article.css`. Os estilos de `.article-prose` sobrescrevem `.html-content` só dentro do post. O preview do editor (`rich-text-editor.css`) continua com o estilo antigo.
+
+### Cor do tema
+
+Cada tag pode ter uma cor (Tags › Editar › **Cor do tema**, salva em `tags.extra.color`). Ela vira a variável CSS `--topic` do post e colore o ponto da etiqueta, os marcadores de lista, a borda das citações, os links e a barra de leitura. `--topic-soft` e `--topic-ink` são derivadas com `color-mix()`. Sem cor definida, vale `Tag::DEFAULT_COLOR` (`#4087C2`, azul do logo).
+
 ## Layouts
 
 ### `x-layout`
 
-Layout principal com header, footer, dark mode e Vite. Aceita `title` opcional.
+Layout principal com header, footer, dark mode e Vite. Aceita `title` e `description` opcionais, e `:decoration="false"` para esconder o gradiente decorativo do topo (usado nos posts).
 
 ```blade
 <x-layout title="Título da página">
@@ -420,6 +471,10 @@ Ativado automaticamente em todo `figure img` dentro de `.html-content`. Nenhum a
 - Múltiplas imagens no post → botões ← / → para navegar entre elas.
 - Fecha com o botão `×`, clicando no backdrop, ou pressionando `Escape`.
 - Cursor `zoom-in` via CSS em todas as imagens de conteúdo.
+
+### `article` — barra de leitura e "Copiar link"
+
+Usado na página de post. `[data-article-progress]` é a barra fixa no topo, calculada sobre `[data-article-body]`. `[data-copy-link]` copia a URL atual e mostra "Link copiado" por 2 segundos.
 
 ### `code-highlight` — syntax highlighting
 

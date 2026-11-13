@@ -12,6 +12,7 @@ import * as sidePanel from './modules/side-panel.js'
 import * as topNav from './modules/top-nav.js'
 import * as fileUpload from './modules/file-upload.js'
 import * as imageLightbox from './modules/image-lightbox.js'
+import * as article from './modules/article.js'
 
 import.meta.glob([
     '../img/**',
@@ -28,6 +29,7 @@ window.globalModules = {
     "topNav"       : topNav,
     "fileUpload"     : fileUpload,
     "imageLightbox"  : imageLightbox,
+    "article"        : article,
 }
 
 /*------------------------------------------------

@@ -10,7 +10,7 @@
 
             {{-- ── Call to action ─────────────────────────────────────── --}}
             {{-- <div class="relative pt-20 pb-16 text-center sm:py-24">
-                <p class="font-mono text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">
+                <p class="font-sans text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">
                     Comece agora
                 </p>
                 <p class="mt-6 font-serif text-3xl font-medium tracking-tight text-gray-900 sm:text-5xl">
@@ -41,7 +41,7 @@
                 <div class="grid grid-cols-2 gap-y-10 pb-6 lg:grid-cols-6 lg:gap-8">
                     <div class="col-span-2 flex">
                         <div class="relative pt-6 lg:pb-6">
-                            <a href="/" class="text-xl font-semibold tracking-tight text-gray-700 font-serif italic dark:text-white">
+                            <a href="/" class="text-xl font-bold tracking-[-0.02em] text-gray-700 font-sans dark:text-white">
                                 Aleksandr Kopelevitch
                             </a>
                         </div>

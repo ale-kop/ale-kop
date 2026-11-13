@@ -5,12 +5,12 @@
 
     <x-container class="pb-24">
         {{-- Breadcrumb --}}
-        <p class="font-mono text-xs/5 font-semibold tracking-widest text-gray-500 uppercase text-center">
+        <p class="font-sans text-xs/5 font-semibold tracking-widest text-gray-500 uppercase text-center">
             <a href="{{ route('courses.index') }}" class="hover:text-gray-950 transition-colors">Cursos</a>
             <span class="mx-1 text-gray-300">/</span>
             <a href="{{ route('courses.show', $course->slug) }}" class="hover:text-gray-950 transition-colors">{{ $course->name }}</a>
         </p>
-        <h1 class="mt-2 text-center font-serif text-3xl font-medium tracking-tighter text-gray-900 sm:text-4xl">
+        <h1 class="mt-2 text-center text-3xl font-sans font-bold tracking-[-0.035em] text-gray-900 sm:text-4xl">
             {{ $post->name }}
         </h1>
 
@@ -93,7 +93,7 @@
 
                 {{-- Planos de acesso full --}}
                 @if($plans->isNotEmpty())
-                    <p class="mt-6 font-mono text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">Todos os cursos</p>
+                    <p class="mt-6 font-sans text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">Todos os cursos</p>
                     <div class="mt-3 space-y-3">
                         @foreach($plans as $plan)
                             <div class="rounded-xl border border-gray-200 p-4">

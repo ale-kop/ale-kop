@@ -110,6 +110,7 @@ class PostController extends Controller
         $post = Post::whereSlug($request->post)
             ->with([
                 'tag',
+                'user:id,name',
                 'course',
                 'course.sections',
                 'course.sections.posts' => fn ($q) => $q
@@ -134,7 +135,16 @@ class PostController extends Controller
 
         $isRead = $post->course && Auth::check() ? (bool) ($post->is_read ?? false) : null;
 
-        return view('posts.show', compact('post', 'isRead'));
+        $recentPosts = $post->course
+            ? collect()
+            : Post::with('tag')
+                ->whereNull('course_id')
+                ->whereKeyNot($post->id)
+                ->latest()
+                ->limit(3)
+                ->get(['id', 'slug', 'name', 'tag_id', 'created_at']);
+
+        return view('posts.show', compact('post', 'isRead', 'recentPosts'));
     }
 
     /**

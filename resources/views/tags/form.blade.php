@@ -30,6 +30,14 @@
     </div>
 
     <div>
+        <x-forms.label for="color">Cor do tema</x-forms.label>
+        <input id="color" name="extra[color]" type="color"
+               value="{{ old('extra.color', data_get($tag?->extra, 'color') ?: \App\Models\Tag::DEFAULT_COLOR) }}"
+               class="h-10 w-16 cursor-pointer rounded border border-gray-200 bg-white p-1" />
+        <p class="mt-1 text-sm text-gray-500">Usada nos posts deste tema: etiqueta, marcadores, citações e barra de leitura.</p>
+    </div>
+
+    <div>
         <x-forms.label for="featured_image">Imagem</x-forms.label>
         <x-forms.file id="featured_image" name="featured_image" accept="image/*" :initial-url="$tag?->image('large')" />
     </div>

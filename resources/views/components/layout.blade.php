@@ -1,4 +1,4 @@
-@props(['title' => null, 'description' => null])
+@props(['title' => null, 'description' => null, 'decoration' => true])
 <!DOCTYPE html>
 <html lang="pt-BR" class="h-full bg-white scroll-smooth">
     <head>
@@ -17,12 +17,14 @@
         <x-header/>
 
         <main class="relative flex-1 overflow-hidden">
-            {{-- AKOP gradient blob (top-right decoration) --}}
+            {{-- AKOP gradient blob (top-right decoration). Posts usam :decoration="false". --}}
+            @if($decoration)
             <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 mx-auto max-w-7xl">
                 <div class="z-1 absolute -top-44 -right-60 h-60 w-2xl transform-gpu md:right-0
                             bg-linear-115 from-accent-light from-28% via-brand-light via-70% to-brand
                             rotate-[-10deg] rounded-full blur-3xl opacity-70"></div>
             </div>
+            @endif
 
             <div class="relative mt-30">
                 {{ $slot }}

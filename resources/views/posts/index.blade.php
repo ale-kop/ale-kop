@@ -8,14 +8,11 @@
 
     {{-- ═══ HERO ════════════════════════════════════════════════════════ --}}
     <x-container>
-        <p class="font-mono text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">
-            Assunto
-        </p>
-        <h1 class="mt-2 text-4xl font-medium tracking-tighter text-pretty text-gray-950 sm:text-6xl">
+        <h1 class="text-4xl font-sans font-bold tracking-[-0.035em] text-pretty text-gray-950 sm:text-6xl">
             {{ $tagName }}
         </h1>
         @if($tagDesc)
-            <p class="mt-4 max-w-3xl text-2xl font-medium text-gray-500">
+            <p class="mt-4 max-w-3xl font-serif text-xl/8 text-gray-600 sm:text-2xl/10">
                 {{ $tagDesc }}
             </p>
         @endif
@@ -51,9 +48,9 @@
                             
                         
                         <div class="sm:max-w-2xl">
-                            <h2 class="text-3xl font-serif font-semibold text-gray-800 group-hover:text-brand">{{ $post->name }}</h2>
+                            <h2 class="text-3xl font-sans font-bold tracking-[-0.025em] text-gray-800 group-hover:text-brand">{{ $post->name }}</h2>
                             @if($desc)
-                                <p class="mt-2 text-base text-gray-500">{{ $desc }}</p>
+                                <p class="mt-2 font-serif text-lg/8 text-gray-600">{{ $desc }}</p>
                             @endif
                             <div class="mt-4">
                                 <a href="{{ route('posts.show', $post->slug) }}"

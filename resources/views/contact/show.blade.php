@@ -5,8 +5,7 @@
 
             {{-- Header --}}
             <div class="mb-12 max-w-2xl">
-                <p class="font-mono text-xs font-semibold tracking-widest text-gray-400 uppercase mb-3">Fale comigo</p>
-                <h1 class="font-serif text-4xl font-medium tracking-tight text-gray-950 sm:text-5xl">
+                <h1 class="text-4xl font-sans font-bold tracking-[-0.035em] text-gray-950 sm:text-5xl">
                     Entre em contato
                 </h1>
                 <p class="mt-4 text-base text-gray-600">
