@@ -115,6 +115,8 @@
                         <div class="hidden" aria-hidden="true">
                             <input type="text" name="website" tabindex="-1" autocomplete="off">
                         </div>
+                        {{-- Trava de tempo: token com a hora em que o formulário foi gerado --}}
+                        <input type="hidden" name="form_token" value="{{ $formToken }}">
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             <div>
