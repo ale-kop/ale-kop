@@ -26,6 +26,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,
         ]);
+
+        // Notificações do Mercado Pago chegam sem token CSRF (validadas por x-signature).
+        $middleware->validateCsrfTokens(except: ['webhooks/mercadopago']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
 

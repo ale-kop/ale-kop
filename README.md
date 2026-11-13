@@ -15,13 +15,14 @@ O arquivo `Envoy.blade.php` na raiz do projeto automatiza o deploy via SSH.
 php envoy run deploy
 ```
 
-Executa em sequência: `pull` → `composer` → `npm` → `artisan` (migrations + caches + queues).
+Executa em sequência: `pull` → `composer` → `npm` → `artisan` (migrations + caches + `queue:restart` + `horizon:terminate`). Seeders não rodam no deploy: use a task `seed`.
 
 ### Tasks avulsas
 
 ```bash
 php envoy run cache:clear   # limpa todos os caches sem derrubar o site
-php envoy run rollback      # reverte o último commit e refaz tudo
+php envoy run rollback      # reverte o código do último commit (o banco fica como está — ver nota no Envoy)
+php envoy run seed --class=WhatsappOfferCourseSeeder   # roda um seeder específico
 php envoy run down          # coloca em manutenção
 php envoy run up            # volta ao ar
 ```
@@ -44,59 +45,28 @@ QUEUE_CONNECTION=redis
 
 Horizon só funciona com a driver `redis` (veja `config/horizon.php`). Confirme que o Redis está instalado e rodando (`redis-cli ping` → `PONG`).
 
-### 1. Arquivo de configuração
-```bash
-sudo nano /etc/supervisor/conf.d/laravel-horizon.conf
-```
+### Configuração versionada
 
-### 2. Conteúdo da configuração
+A configuração fica no repositório, em `deploy/supervisor/alekop.conf`: `laravel-horizon` (fila `default`, que inclui o formulário de contato e o e-mail de pedido aprovado) e `laravel-newsletter` (fila `newsletter`, separada para controlar a taxa de envio — veja a seção [Newsletter](#newsletter)), no grupo `alekop`. Os dois rodam como **www-data**, o mesmo usuário do php-fpm e do artisan no deploy.
 
-```ini
-[program:laravel-horizon]
-process_name=%(program_name)s_%(process_num)02d
-command=php /var/www/alekop.com/public_html/artisan horizon
-autostart=true
-autorestart=true
-stopasgroup=true
-killasgroup=true
-user=root
-numprocs=1
-redirect_stderr=true
-stdout_logfile=/var/www/alekop.com/public_html/storage/logs/horizon.log
-
-[program:laravel-newsletter]
-process_name=%(program_name)s_%(process_num)02d
-command=php /var/www/alekop.com/public_html/artisan queue:work --queue=newsletter --sleep=3 --tries=3 --backoff=60 --max-time=3600
-autostart=true
-autorestart=true
-stopasgroup=true
-killasgroup=true
-user=root
-numprocs=1
-redirect_stderr=true
-stdout_logfile=/var/www/alekop.com/public_html/storage/logs/newsletter-worker.log
-```
-
-> `laravel-horizon` processa a fila `default` (inclui o envio do formulário de contato). `laravel-newsletter` processa a fila `newsletter`, separada para controlar a taxa de envio — veja a seção [Newsletter](#newsletter).
-
-### 3. Carregar e iniciar
+Para publicar (na primeira vez e sempre que o arquivo mudar; o deploy avisa quando mudou):
 
 ```bash
-sudo supervisorctl reread
-sudo supervisorctl update
-sudo supervisorctl start laravel-horizon:*
-sudo supervisorctl start laravel-newsletter:*
+php envoy run supervisor
 ```
 
-Verificar status:
-
-```bash
-sudo supervisorctl status
-```
+A task copia o arquivo para `/etc/supervisor/conf.d/laravel-horizon.conf` (substituindo o setup manual antigo), roda `reread` + `update` e reinicia o grupo. Status: `sudo supervisorctl status alekop:*`.
 
 ### Deploys seguintes
 
-Não é necessário repetir o setup acima. `php envoy run deploy` já executa `php artisan queue:restart`, que sinaliza os workers a reiniciarem com o código novo — o Supervisor (`autorestart=true`) os traz de volta automaticamente.
+`php envoy run deploy` executa `queue:restart` (worker da newsletter) e `horizon:terminate` (Horizon); o Supervisor (`autorestart=true`) os traz de volta com o código novo. O `horizon:terminate` manda SIGTERM ao processo, então só funciona com o Horizon rodando como www-data — o mesmo usuário do deploy.
+
+### Migração de root para www-data (uma vez)
+
+Até novembro de 2026, o deploy e os workers rodavam como root. Na primeira vez, nesta ordem:
+
+1. `php envoy run deploy` — devolve `storage/` e `bootstrap/cache/` ao www-data e roda o artisan como www-data. O `horizon:terminate` deste deploy ainda falha (o Horizon antigo é root); é esperado.
+2. `php envoy run supervisor` — sobe Horizon e newsletter como www-data, já com o código novo.
 
 ## Uso de Blade Heroicons
 
@@ -619,3 +589,33 @@ NewsletterSubscriber::where('status', 'active')->whereNotNull('source_path')
     ->groupBy('source_path')->selectRaw('source_path, count(*) as total')
     ->orderByDesc('total')->get();
 ```
+
+## Pagamentos (Mercado Pago) e página de oferta
+
+### Página de oferta
+
+`GET /orcamentos-pelo-whatsapp` → `offers.whatsapp` (`OfferController@whatsapp`, view `offers/whatsapp.blade.php`, estilos em `resources/css/components/offer.css`). Nome e preço vêm do curso cujo slug está em `config/offers.php` (`OFFER_WHATSAPP_COURSE_SLUG`); sem esse curso cadastrado a página responde 404. Para criar/atualizar o curso: `php artisan db:seed --class=WhatsappOfferCourseSeeder` (preço inicial de placeholder, ajuste no admin). Trechos de copy marcados com `PLACEHOLDER` na view ainda precisam de revisão.
+
+### Checkout
+
+| Rota | Nome | O que faz |
+|---|---|---|
+| `GET /checkout/{courseSlug}` | `checkout.show` | Formulário no formato do Stripe: produto à esquerda, pagamento à direita |
+| `POST /checkout/{courseSlug}/pagar` | `checkout.pay` | Cria o `Order` e o pagamento no Mercado Pago (JSON) |
+| `GET /pedidos/{order:uuid}` | `checkout.order` | Aprovado, Pix aguardando (QR Code), em análise ou recusado |
+| `GET /pedidos/{order:uuid}/status` | `checkout.status` | Consulta usada pelo Pix; reconsulta o Mercado Pago a cada 5s no máximo |
+| `POST /webhooks/mercadopago` | `webhooks.mercadopago` | Notificações (sem CSRF, validadas por `x-signature`) |
+
+Qualquer curso com `extra.access = paid` e preço tem checkout. Cartão usa os **Secure Fields** do MercadoPago.js: número, validade e CVV são iframes do Mercado Pago e o servidor só recebe o token. Pix devolve QR Code + copia e cola, válido por `MERCADOPAGO_PIX_EXPIRATION_MINUTES`.
+
+Fluxo no servidor: `PayOrder` (monta o payload e chama `MercadoPagoClient`, com `X-Idempotency-Key` = uuid do pedido) → `SyncOrderWithPayment` (copia o status; aprovado → `FulfillOrder`; estornado → acesso `refunded`) → `FulfillOrder` (idempotente: acha ou cria o usuário pelo e-mail, libera o curso por 1 ano com `source = mercadopago` e enfileira `OrderApprovedMail`, que traz o link de "criar senha" quando a conta é nova).
+
+### Configuração
+
+```env
+MERCADOPAGO_PUBLIC_KEY=APP_USR-...      # Suas integrações → Credenciais de produção
+MERCADOPAGO_ACCESS_TOKEN=APP_USR-...
+MERCADOPAGO_WEBHOOK_SECRET=...           # Suas integrações → Webhooks → Assinatura secreta
+```
+
+No painel do Mercado Pago, cadastre o webhook `https://alekop.com/webhooks/mercadopago` com o evento **Pagamentos**. Em `local`/`testing` o `notification_url` não é enviado (o Mercado Pago não alcança `.test`); o status do Pix vem pela consulta da página do pedido. Para testar sem cobrar, use as credenciais de teste e os [cartões de teste](https://www.mercadopago.com.br/developers/pt/docs/checkout-api/integration-test/test-cards).

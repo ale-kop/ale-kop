@@ -5,6 +5,8 @@
 @import './components/rich-text-editor.css';
 @import './components/article.css';
 @import './components/newsletter.css';
+@import './components/offer.css';
+@import './components/checkout.css';
 
 @source not "../../radiant-js";
 @source not "../../spotlight-js";

@@ -28,6 +28,16 @@ return [
         'key' => env('RESEND_KEY'),
     ],
 
+    // Checkout transparente (cartão + Pix) — ver README › Pagamentos
+    'mercadopago' => [
+        'public_key' => env('MERCADOPAGO_PUBLIC_KEY'),
+        'access_token' => env('MERCADOPAGO_ACCESS_TOKEN'),
+        'webhook_secret' => env('MERCADOPAGO_WEBHOOK_SECRET'),
+        'statement_descriptor' => env('MERCADOPAGO_STATEMENT_DESCRIPTOR', 'ALEKOP'),
+        'max_installments' => (int) env('MERCADOPAGO_MAX_INSTALLMENTS', 12),
+        'pix_expiration_minutes' => (int) env('MERCADOPAGO_PIX_EXPIRATION_MINUTES', 30),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

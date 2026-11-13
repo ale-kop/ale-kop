@@ -8,13 +8,16 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ContentImageController;
 use App\Http\Controllers\CourseAccessController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DownloadController;
+use App\Http\Controllers\MercadoPagoWebhookController;
 use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\OfferController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\TagController;
@@ -151,6 +154,18 @@ Route::get('cursos/{courseSlug}', [CourseController::class, 'show'])->name('cour
 // Contact
 Route::get('contato', [ContactController::class, 'show'])->name('contact.show');
 Route::post('contato', [ContactController::class, 'send'])->middleware('throttle:3,5')->name('contact.send');
+
+// Oferta + checkout (Mercado Pago: cartão e Pix)
+Route::get('orcamentos-pelo-whatsapp', [OfferController::class, 'whatsapp'])->name('offers.whatsapp');
+Route::get('checkout/{courseSlug}', [CheckoutController::class, 'show'])->name('checkout.show');
+Route::post('checkout/{courseSlug}/pagar', [CheckoutController::class, 'pay'])
+    ->middleware('throttle:10,1')
+    ->name('checkout.pay');
+Route::get('pedidos/{order}', [CheckoutController::class, 'order'])->name('checkout.order');
+Route::get('pedidos/{order}/status', [CheckoutController::class, 'status'])
+    ->middleware('throttle:40,1')
+    ->name('checkout.status');
+Route::post('webhooks/mercadopago', MercadoPagoWebhookController::class)->name('webhooks.mercadopago');
 
 // Catch-all post slug must be last
 Route::get('{post:slug}', [PostController::class, 'show'])->name('posts.show');

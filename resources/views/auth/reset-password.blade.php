@@ -8,7 +8,7 @@
         <input type="hidden" name="token" value="{{ $token }}">
         <div>
             <x-forms.label for="email">Email</x-forms.label>
-            <x-forms.input id="email" name="email" type="email" value="{{ old('email') }}" class="mt-2" />
+            <x-forms.input id="email" name="email" type="email" value="{{ old('email', request('email')) }}" class="mt-2" />
         </div>
         <div>
             <x-forms.label for="password">Password</x-forms.label>
