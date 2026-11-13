@@ -45,59 +45,28 @@ QUEUE_CONNECTION=redis
 
 Horizon só funciona com a driver `redis` (veja `config/horizon.php`). Confirme que o Redis está instalado e rodando (`redis-cli ping` → `PONG`).
 
-### 1. Arquivo de configuração
-```bash
-sudo nano /etc/supervisor/conf.d/laravel-horizon.conf
-```
+### Configuração versionada
 
-### 2. Conteúdo da configuração
+A configuração fica no repositório, em `deploy/supervisor/alekop.conf`: `laravel-horizon` (fila `default`, que inclui o formulário de contato e o e-mail de pedido aprovado) e `laravel-newsletter` (fila `newsletter`, separada para controlar a taxa de envio — veja a seção [Newsletter](#newsletter)), no grupo `alekop`. Os dois rodam como **www-data**, o mesmo usuário do php-fpm e do artisan no deploy.
 
-```ini
-[program:laravel-horizon]
-process_name=%(program_name)s_%(process_num)02d
-command=php /var/www/alekop.com/public_html/artisan horizon
-autostart=true
-autorestart=true
-stopasgroup=true
-killasgroup=true
-user=root
-numprocs=1
-redirect_stderr=true
-stdout_logfile=/var/www/alekop.com/public_html/storage/logs/horizon.log
-
-[program:laravel-newsletter]
-process_name=%(program_name)s_%(process_num)02d
-command=php /var/www/alekop.com/public_html/artisan queue:work --queue=newsletter --sleep=3 --tries=3 --backoff=60 --max-time=3600
-autostart=true
-autorestart=true
-stopasgroup=true
-killasgroup=true
-user=root
-numprocs=1
-redirect_stderr=true
-stdout_logfile=/var/www/alekop.com/public_html/storage/logs/newsletter-worker.log
-```
-
-> `laravel-horizon` processa a fila `default` (inclui o envio do formulário de contato). `laravel-newsletter` processa a fila `newsletter`, separada para controlar a taxa de envio — veja a seção [Newsletter](#newsletter).
-
-### 3. Carregar e iniciar
+Para publicar (na primeira vez e sempre que o arquivo mudar; o deploy avisa quando mudou):
 
 ```bash
-sudo supervisorctl reread
-sudo supervisorctl update
-sudo supervisorctl start laravel-horizon:*
-sudo supervisorctl start laravel-newsletter:*
+php envoy run supervisor
 ```
 
-Verificar status:
-
-```bash
-sudo supervisorctl status
-```
+A task copia o arquivo para `/etc/supervisor/conf.d/laravel-horizon.conf` (substituindo o setup manual antigo), roda `reread` + `update` e reinicia o grupo. Status: `sudo supervisorctl status alekop:*`.
 
 ### Deploys seguintes
 
-Não é necessário repetir o setup acima. `php envoy run deploy` já executa `php artisan queue:restart`, que sinaliza os workers a reiniciarem com o código novo — o Supervisor (`autorestart=true`) os traz de volta automaticamente.
+`php envoy run deploy` executa `queue:restart` (worker da newsletter) e `horizon:terminate` (Horizon); o Supervisor (`autorestart=true`) os traz de volta com o código novo. O `horizon:terminate` manda SIGTERM ao processo, então só funciona com o Horizon rodando como www-data — o mesmo usuário do deploy.
+
+### Migração de root para www-data (uma vez)
+
+Até novembro de 2026, o deploy e os workers rodavam como root. Na primeira vez, nesta ordem:
+
+1. `php envoy run deploy` — devolve `storage/` e `bootstrap/cache/` ao www-data e roda o artisan como www-data. O `horizon:terminate` deste deploy ainda falha (o Horizon antigo é root); é esperado.
+2. `php envoy run supervisor` — sobe Horizon e newsletter como www-data, já com o código novo.
 
 ## Uso de Blade Heroicons
 
