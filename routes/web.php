@@ -33,6 +33,10 @@ Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
     ->middleware('throttle:5,1')
     ->name('newsletter.subscribe');
 
+Route::post('/newsletter/verificar', [NewsletterController::class, 'verify'])
+    ->middleware('throttle:10,1')
+    ->name('newsletter.verify');
+
 Route::get('/newsletter/descadastrar/{token}', [NewsletterController::class, 'unsubscribe'])
     ->name('newsletter.unsubscribe');
 

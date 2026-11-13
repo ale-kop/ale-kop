@@ -9,9 +9,10 @@
         </div>
 
         {{-- Contadores --}}
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
             @foreach([
                 ['label' => 'Total', 'value' => $counts['total'], 'color' => 'text-gray-700', 'filter' => null],
+                ['label' => 'Aguardando código', 'value' => $counts['pending'], 'color' => 'text-sky-600', 'filter' => 'pending'],
                 ['label' => 'Ativos', 'value' => $counts['active'], 'color' => 'text-green-600', 'filter' => 'active'],
                 ['label' => 'Descadastrados', 'value' => $counts['unsubscribed'], 'color' => 'text-red-500', 'filter' => 'unsubscribed'],
                 ['label' => 'Bounced', 'value' => $counts['bounced'], 'color' => 'text-yellow-600', 'filter' => 'bounced'],
@@ -49,6 +50,7 @@
                            text-sm px-3 py-2 text-gray-700 dark:text-gray-300
                            focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand">
                 <option value="">Todos os status</option>
+                <option value="pending" @selected(request('status') === 'pending')>Aguardando código</option>
                 <option value="active" @selected(request('status') === 'active')>Ativo</option>
                 <option value="unsubscribed" @selected(request('status') === 'unsubscribed')>Descadastrado</option>
                 <option value="bounced" @selected(request('status') === 'bounced')>Bounced</option>
@@ -85,12 +87,14 @@
                         @foreach($subscribers as $subscriber)
                             @php
                                 $statusColor = match($subscriber->status) {
+                                    'pending' => 'bg-sky-100 text-sky-700',
                                     'active' => 'bg-green-100 text-green-700',
                                     'unsubscribed' => 'bg-red-100 text-red-600',
                                     'bounced' => 'bg-yellow-100 text-yellow-700',
                                     default => 'bg-gray-100 text-gray-600',
                                 };
                                 $statusLabel = match($subscriber->status) {
+                                    'pending' => 'Aguardando código',
                                     'active' => 'Ativo',
                                     'unsubscribed' => 'Descadastrado',
                                     'bounced' => 'Bounced',

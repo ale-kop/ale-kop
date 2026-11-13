@@ -3,12 +3,20 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 
 class NewsletterSubscribeRequest extends FormRequest
 {
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if (is_string($this->email)) {
+            $this->merge(['email' => Str::lower(trim($this->email))]);
+        }
     }
 
     public function rules(): array
@@ -18,8 +26,8 @@ class NewsletterSubscribeRequest extends FormRequest
             'email' => ['required', 'email:rfc,dns', 'max:254'],
             'list' => ['nullable', 'string', 'max:100'],
             'source_url' => ['nullable', 'string', 'max:500'],
-            // Diálogo que o front fecha após o sucesso (ex.: pop-up do post)
-            'modal_id' => ['nullable', 'string', 'max:60', 'regex:/^[a-z0-9-]+$/'],
+            // Qual formulário enviou (ex.: post-end, post-popup): ajuda a medir o que converte
+            'source_form' => ['nullable', 'string', 'max:40', 'regex:/^[a-z0-9-]+$/'],
             'utm_source' => ['nullable', 'string', 'max:100'],
             'utm_medium' => ['nullable', 'string', 'max:100'],
             'utm_campaign' => ['nullable', 'string', 'max:100'],
