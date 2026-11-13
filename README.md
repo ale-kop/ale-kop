@@ -594,6 +594,8 @@ Todo formulário usa o componente `<x-newsletter.form id="…" form="…">` (mó
 
 Regras do código (`NewsletterVerificationService`): vale 15 minutos, é guardado só como hash, aceita 5 tentativas erradas (depois é preciso pedir outro) e só pode ser reenviado depois de 60 segundos. Pedir um código novo invalida o anterior. Quem já está `active` e preenche o formulário de novo continua ativo; descadastrados só voltam a `active` depois de confirmar. A lista só é associada na confirmação, nunca no primeiro envio.
 
+Validação do e-mail (newsletter e contato): formato `email:rfc` + regra `ReceivableEmailDomain`, no lugar do `email:rfc,dns`. O `dns` do Laravel reprova o endereço inteiro quando a *consulta* de DNS falha (timeout ou cache frio do resolvedor na primeira tentativa), então um e-mail válido podia dar erro e passar na segunda vez. Agora o domínio só é reprovado se não existir de fato: acertos ficam 1 dia em cache, há uma nova tentativa, e se nem `gmail.com` resolver o problema é o DNS e o e-mail é aceito (um endereço errado seria barrado pelo código). Respostas 422 em JSON trazem a primeira mensagem de erro real em `message`, em vez de um texto genérico.
+
 Campos do `POST /newsletter/subscribe`: `email` (obrigatório), `name`, `list` (padrão `newsletter`), `source_url`, `source_form`, UTMs (em `metadata`) e o honeypot `website`.
 
 Depois de confirmar, o site mostra a mensagem de sucesso abaixo do campo e do botão e solta confete na tela toda (`resources/js/modules/confetti.js`, sem dependências; respeita `prefers-reduced-motion`).

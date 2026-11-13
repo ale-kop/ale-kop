@@ -5,6 +5,7 @@ use App\Models\NewsletterList;
 use App\Models\NewsletterSubscriber;
 use App\Models\Post;
 use App\Models\Tag;
+use App\Services\EmailDomainChecker;
 use App\Services\NewsletterVerificationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -14,6 +15,14 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     Mail::fake();
+    // Sem rede nos testes: só "dominio-inexistente.test" é reprovado
+    app()->instance(EmailDomainChecker::class, new class extends EmailDomainChecker
+    {
+        public function isAcceptable(string $domain): bool
+        {
+            return $domain !== 'dominio-inexistente.test';
+        }
+    });
     NewsletterList::create(['name' => 'Newsletter', 'slug' => 'newsletter']);
 });
 
@@ -197,4 +206,31 @@ it('rejects the honeypot and invalid e-mails', function () {
     $this->postJson(route('newsletter.subscribe'), ['email' => 'isso-nao-e-email'])->assertStatus(422);
 
     expect(NewsletterSubscriber::count())->toBe(0);
+});
+
+it('explains which rule failed instead of a generic validation message', function () {
+    $this->postJson(route('newsletter.subscribe'), ['email' => 'alguem@dominio-inexistente.test'])
+        ->assertStatus(422)
+        ->assertJsonPath('errors.email.0', 'Não encontramos o domínio dominio-inexistente.test. Confira se o e-mail está certo.')
+        ->assertJsonPath('message', 'Não encontramos o domínio dominio-inexistente.test. Confira se o e-mail está certo.');
+
+    $this->postJson(route('newsletter.subscribe'), ['email' => 'leitor@gmail.com', 'website' => 'http://spam'])
+        ->assertStatus(422)
+        ->assertJsonPath('message', 'Submission inválida.');
+});
+
+it('accepts a valid e-mail with stray spaces and capitals', function () {
+    $this->postJson(route('newsletter.subscribe'), ['email' => '  Leitor@Gmail.COM '])->assertOk();
+
+    expect(NewsletterSubscriber::firstOrFail()->email)->toBe('leitor@gmail.com');
+});
+
+it('applies the same domain rule to the contact form', function () {
+    $payload = ['name' => 'Fulano', 'message' => 'Uma mensagem com mais de dez caracteres.'];
+
+    $this->postJson(route('contact.send'), $payload + ['email' => 'alguem@dominio-inexistente.test'])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors('email');
+
+    $this->postJson(route('contact.send'), $payload + ['email' => 'alguem@gmail.com'])->assertSuccessful();
 });

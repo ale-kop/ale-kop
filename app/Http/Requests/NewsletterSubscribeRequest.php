@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ReceivableEmailDomain;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 
@@ -23,7 +24,7 @@ class NewsletterSubscribeRequest extends FormRequest
     {
         return [
             'name' => ['nullable', 'string', 'max:100'],
-            'email' => ['required', 'email:rfc,dns', 'max:254'],
+            'email' => ['bail', 'required', 'email:rfc', 'max:254', new ReceivableEmailDomain],
             'list' => ['nullable', 'string', 'max:100'],
             'source_url' => ['nullable', 'string', 'max:500'],
             // Qual formulário enviou (ex.: post-end, post-popup): ajuda a medir o que converte
