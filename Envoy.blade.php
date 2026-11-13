@@ -193,5 +193,5 @@
     supervisorctl restart alekop:
 
     echo "==> Supervisor atualizado"
-    supervisorctl status alekop:*
+    supervisorctl status 'alekop:*'
 @endtask

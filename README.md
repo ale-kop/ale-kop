@@ -55,7 +55,7 @@ Para publicar (na primeira vez e sempre que o arquivo mudar; o deploy avisa quan
 php envoy run supervisor
 ```
 
-A task copia o arquivo para `/etc/supervisor/conf.d/laravel-horizon.conf` (substituindo o setup manual antigo), roda `reread` + `update` e reinicia o grupo. Status: `sudo supervisorctl status alekop:*`.
+A task copia o arquivo para `/etc/supervisor/conf.d/laravel-horizon.conf` (substituindo o setup manual antigo), roda `reread` + `update` e reinicia o grupo. Status, no servidor: `sudo supervisorctl status 'alekop:*'`; do Mac: `ssh akop "supervisorctl status 'alekop:*'"` (sem as aspas o zsh tenta expandir o `*` e responde "no matches found").
 
 ### Deploys seguintes
 
