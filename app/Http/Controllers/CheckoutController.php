@@ -24,7 +24,9 @@ class CheckoutController extends Controller
         $course = $this->sellableCourse($courseSlug);
         $user = $request->user();
 
-        if ($user?->canAccessCourse($course)) {
+        // Quem já tem o curso não paga de novo. Admins têm acesso a tudo, mas precisam
+        // ver o checkout para revisar a página e testar compras.
+        if ($user && ! $user->isAdmin() && $user->canAccessCourse($course)) {
             return redirect()
                 ->route('courses.show', $course->slug)
                 ->with('status', 'Você já tem acesso a este curso.');
