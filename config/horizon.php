@@ -189,7 +189,9 @@ return [
             'maxTime' => 0,
             'maxJobs' => 0,
             'memory' => 128,
-            'tries' => 1,
+            // 3 tentativas com pausa: uma falha passageira do SMTP não descarta o e-mail
+            'tries' => 3,
+            'backoff' => 30,
             'timeout' => 60,
             'nice' => 0,
         ],
