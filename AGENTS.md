@@ -57,7 +57,15 @@ You are Codex, collaborating on a Laravel 12+ app with Vite + Tailwind, Pest tes
 - Prefer DTOs when passing complex data.
 - Write feature tests for new endpoints and critical flows.
 
-## Payments (Mercado Pago) — mandatory rules
+## Payments (Mercado Pago)
+
+### How it fits together
+- Offer page: `GET /orcamentos-pelo-whatsapp` → `offers.whatsapp`. Name/price come from the `Course` whose slug is in `config/offers.php`; a missing course is a 404 (create it with `php artisan db:seed --class=WhatsappOfferCourseSeeder`). Copy lives in `resources/views/offers/whatsapp.blade.php`.
+- Checkout works for any course with `extra.access = paid` and a price: `checkout.show` → `checkout.pay` (JSON) → `checkout.order` (`/pedidos/{order:uuid}`), plus `checkout.status` (Pix polling) and `webhooks.mercadopago`.
+- Flow: `PayOrder` → `MercadoPagoClient::createPayment()` → `SyncOrderWithPayment` → `FulfillOrder` (find/create the user by e-mail, grant the course for 1 year with `source = mercadopago`, queue `OrderApprovedMail`). Refunds set the course access to `refunded`.
+- In `local`/`testing` no `notification_url` is sent (Mercado Pago cannot reach `.test`), so Pix status comes from `checkout.status`. Env vars: `MERCADOPAGO_*` (see `.env.example` and README › Pagamentos).
+
+### Mandatory rules
 - Course access from a purchase is granted **only** by `App\Actions\Checkout\FulfillOrder` (idempotent, locks the order row). Never call `GrantCourseAccess` from controllers or webhooks directly.
 - An order's status changes **only** through `SyncOrderWithPayment`, fed by a payment fetched from the Mercado Pago API (create response, `getPayment()`). Never trust status or amounts from a webhook body or from the browser.
 - Card data never reaches the server: the browser tokenizes it with MercadoPago.js Secure Fields and only the token is posted.

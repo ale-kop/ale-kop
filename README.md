@@ -15,13 +15,14 @@ O arquivo `Envoy.blade.php` na raiz do projeto automatiza o deploy via SSH.
 php envoy run deploy
 ```
 
-Executa em sequência: `pull` → `composer` → `npm` → `artisan` (migrations + caches + queues).
+Executa em sequência: `pull` → `composer` → `npm` → `artisan` (migrations + caches + `queue:restart` + `horizon:terminate`). Seeders não rodam no deploy: use a task `seed`.
 
 ### Tasks avulsas
 
 ```bash
 php envoy run cache:clear   # limpa todos os caches sem derrubar o site
-php envoy run rollback      # reverte o último commit e refaz tudo
+php envoy run rollback      # reverte o código do último commit (o banco fica como está — ver nota no Envoy)
+php envoy run seed --class=WhatsappOfferCourseSeeder   # roda um seeder específico
 php envoy run down          # coloca em manutenção
 php envoy run up            # volta ao ar
 ```
