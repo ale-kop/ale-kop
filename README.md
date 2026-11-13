@@ -619,3 +619,33 @@ NewsletterSubscriber::where('status', 'active')->whereNotNull('source_path')
     ->groupBy('source_path')->selectRaw('source_path, count(*) as total')
     ->orderByDesc('total')->get();
 ```
+
+## Pagamentos (Mercado Pago) e página de oferta
+
+### Página de oferta
+
+`GET /orcamentos-pelo-whatsapp` → `offers.whatsapp` (`OfferController@whatsapp`, view `offers/whatsapp.blade.php`, estilos em `resources/css/components/offer.css`). Nome e preço vêm do curso cujo slug está em `config/offers.php` (`OFFER_WHATSAPP_COURSE_SLUG`); sem esse curso cadastrado a página responde 404. Para criar/atualizar o curso: `php artisan db:seed --class=WhatsappOfferCourseSeeder` (preço inicial de placeholder, ajuste no admin). Trechos de copy marcados com `PLACEHOLDER` na view ainda precisam de revisão.
+
+### Checkout
+
+| Rota | Nome | O que faz |
+|---|---|---|
+| `GET /checkout/{courseSlug}` | `checkout.show` | Formulário no formato do Stripe: produto à esquerda, pagamento à direita |
+| `POST /checkout/{courseSlug}/pagar` | `checkout.pay` | Cria o `Order` e o pagamento no Mercado Pago (JSON) |
+| `GET /pedidos/{order:uuid}` | `checkout.order` | Aprovado, Pix aguardando (QR Code), em análise ou recusado |
+| `GET /pedidos/{order:uuid}/status` | `checkout.status` | Consulta usada pelo Pix; reconsulta o Mercado Pago a cada 5s no máximo |
+| `POST /webhooks/mercadopago` | `webhooks.mercadopago` | Notificações (sem CSRF, validadas por `x-signature`) |
+
+Qualquer curso com `extra.access = paid` e preço tem checkout. Cartão usa os **Secure Fields** do MercadoPago.js: número, validade e CVV são iframes do Mercado Pago e o servidor só recebe o token. Pix devolve QR Code + copia e cola, válido por `MERCADOPAGO_PIX_EXPIRATION_MINUTES`.
+
+Fluxo no servidor: `PayOrder` (monta o payload e chama `MercadoPagoClient`, com `X-Idempotency-Key` = uuid do pedido) → `SyncOrderWithPayment` (copia o status; aprovado → `FulfillOrder`; estornado → acesso `refunded`) → `FulfillOrder` (idempotente: acha ou cria o usuário pelo e-mail, libera o curso por 1 ano com `source = mercadopago` e enfileira `OrderApprovedMail`, que traz o link de "criar senha" quando a conta é nova).
+
+### Configuração
+
+```env
+MERCADOPAGO_PUBLIC_KEY=APP_USR-...      # Suas integrações → Credenciais de produção
+MERCADOPAGO_ACCESS_TOKEN=APP_USR-...
+MERCADOPAGO_WEBHOOK_SECRET=...           # Suas integrações → Webhooks → Assinatura secreta
+```
+
+No painel do Mercado Pago, cadastre o webhook `https://alekop.com/webhooks/mercadopago` com o evento **Pagamentos**. Em `local`/`testing` o `notification_url` não é enviado (o Mercado Pago não alcança `.test`); o status do Pix vem pela consulta da página do pedido. Para testar sem cobrar, use as credenciais de teste e os [cartões de teste](https://www.mercadopago.com.br/developers/pt/docs/checkout-api/integration-test/test-cards).

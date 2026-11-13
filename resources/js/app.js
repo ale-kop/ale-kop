@@ -14,6 +14,7 @@ import * as fileUpload from './modules/file-upload.js'
 import * as imageLightbox from './modules/image-lightbox.js'
 import * as article from './modules/article.js'
 import * as newsletter from './modules/newsletter.js'
+import * as checkout from './modules/checkout.js'
 
 import.meta.glob([
     '../img/**',
@@ -32,6 +33,7 @@ window.globalModules = {
     "imageLightbox"  : imageLightbox,
     "article"        : article,
     "newsletter"     : newsletter,
+    "checkout"       : checkout,
 }
 
 /*------------------------------------------------
