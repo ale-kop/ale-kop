@@ -9,16 +9,16 @@
     @endphp
 
     <x-container class="text-center">
-        <p class="font-mono text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">
+        <p class="font-sans text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">
             <a href="{{ route('courses.index') }}" class="hover:text-gray-950 transition-colors">Cursos</a>
             <span class="mx-1 text-gray-300">/</span>
             <span class="text-gray-700">{{ $course->name }}</span>
         </p>
-        <h1 class="mt-2 font-serif text-4xl font-medium tracking-tighter text-pretty text-gray-900 sm:text-6xl">
+        <h1 class="mt-2 text-4xl font-sans font-bold tracking-[-0.035em] text-pretty text-gray-900 sm:text-6xl">
             {{ $course->name }}
         </h1>
         @if($desc)
-            <p class="mt-6 text-center mx-auto max-w-2xl text-xl font-medium text-gray-500">{{ $desc }}</p>
+            <p class="mt-6 text-center mx-auto max-w-2xl font-serif text-xl/relaxed text-gray-600">{{ $desc }}</p>
         @endif
 
         @if($total > 0)
@@ -78,7 +78,7 @@
         @if($course->posts && $course->posts->count())
 
             <div class="max-w-2xl mx-auto">
-                <p class="font-mono text-xs/5 font-semibold tracking-widest text-gray-500 uppercase mb-5">
+                <p class="font-sans text-xs/5 font-semibold tracking-widest text-gray-500 uppercase mb-5">
                     Conteúdo do curso
                 </p>
 
@@ -116,11 +116,11 @@
 
                             {{-- Info --}}
                             <div class="flex-1 min-w-0">
-                                <div class="text-lg font-serif font-semibold text-gray-950 leading-snug">
+                                <div class="text-lg font-sans font-semibold tracking-[-0.01em] text-gray-950 leading-snug">
                                     {{ $post->name }}
                                 </div>
                                 @if($d = data_get($post->meta, 'description'))
-                                    <div class="text-sm text-gray-500 mt-1 line-clamp-1">{{ $d }}</div>
+                                    <div class="font-serif text-base text-gray-600 mt-1 line-clamp-1">{{ $d }}</div>
                                 @endif
                             </div>
 

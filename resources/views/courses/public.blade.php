@@ -2,10 +2,10 @@
 
     {{-- ═══ HERO ════════════════════════════════════════════════════════ --}}
     <x-container>
-        <p class="font-mono text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">
+        <p class="font-sans text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">
             Cursos
         </p>
-        <h1 class="mt-2 font-serif tracking-tighter font-medium text-4xl text-pretty text-gray-900 sm:text-6xl">
+        <h1 class="mt-2 font-sans font-bold tracking-[-0.035em] text-4xl text-pretty text-gray-900 sm:text-6xl">
             Aprenda no seu ritmo
         </h1>
         <p class="mt-6 max-w-5xl text-2xl font-medium text-gray-500">
@@ -34,13 +34,13 @@
                              style="background-image: url('{{ $bg }}')"></div>
 
                         <div class="flex flex-1 flex-col p-6">
-                            <div class="text-2xl/7 font-bold font-serif tracking-tighter text-gray-800 group-hover:text-gray-700 transition-colors">
+                            <div class="text-2xl/7 font-bold font-sans tracking-[-0.025em] text-gray-800 group-hover:text-gray-700 transition-colors">
                                 {{ $course->name }}
                             </div>
                             @if($desc)
-                                <p class="mt-2 flex-1 tracking-tighter text-base text-gray-500 line-clamp-3">{{ $desc }}</p>
+                                <p class="mt-2 flex-1 font-serif text-base/relaxed text-gray-600 line-clamp-3">{{ $desc }}</p>
                             @endif
-                            <div class="mt-6 flex font-serif italic items-center gap-2 text-lg/5 font-bold text-gray-950">
+                            <div class="mt-6 flex font-sans items-center gap-2 text-base/5 font-semibold text-gray-950">
                                 Ver curso →
                             </div>
                         </div>

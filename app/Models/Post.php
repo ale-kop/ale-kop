@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -71,9 +72,20 @@ class Post extends Model implements HasMedia
             ->optimize();
     }
 
+    /**
+     * Minutos estimados de leitura (≈ 200 palavras por minuto).
+     */
+    public function readingMinutes(): int
+    {
+        $text = trim(html_entity_decode(strip_tags((string) $this->content)));
+        $words = $text === '' ? 0 : count(preg_split('/\s+/u', $text));
+
+        return max(1, (int) ceil($words / 200));
+    }
+
     public function getCacheKeyForPost(): string
     {
-        return 'posts.' . $this->id;
+        return 'posts.'.$this->id;
     }
 
     public function registerMediaCollections(): void
@@ -100,14 +112,14 @@ class Post extends Model implements HasMedia
      * Attach an efficient boolean "is_read" flag using withExists.
      * Does not override the caller's select.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder|QueryBuilder  $query
+     * @param  Builder|QueryBuilder  $query
      * @return mixed
      */
     public function scopeWithReadFlag($query, ?int $userId)
     {
         if ($userId) {
             return $query->withExists([
-                'readers as is_read' => fn($q) => $q->whereKey($userId),
+                'readers as is_read' => fn ($q) => $q->whereKey($userId),
             ]);
         }
 

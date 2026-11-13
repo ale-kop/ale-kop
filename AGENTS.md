@@ -25,6 +25,11 @@ You are Codex, collaborating on a Laravel 12+ app with Vite + Tailwind, Pest tes
 5. **Frontend**:
     - Tailwind via Vite. Put components in `resources/js` and styles in `resources/css`.
     - Keep `tailwind.config.js` minimal and documented.
+    - **Typography (mandatory, see README › Tipografia):** exactly two families, self-hosted in `resources/fonts`.
+        - `font-sans` = **Schibsted Grotesk**: interface (header, nav, buttons, footer, labels, tags, dates, prices, form fields) and **all titles**, including the post title. Large titles: `font-bold tracking-[-0.035em]` (700; never `font-extrabold`).
+        - `font-serif` = **Source Serif 4**: everything meant to be read: intros, post excerpts, course descriptions, About text, quotes, post dek/body/subheadings, "Continue lendo" titles. Give serif text more line-height than sans.
+        - Never add a third family. `font-mono` only for code and admin slugs. Do not swap the two roles.
+    - **Post page (mandatory, "post-b" pattern, see README › Página de post):** every post (standalone and course lesson) uses `posts/show.blade.php` with `<x-article.header>`, `.html-content.article-prose` (Source Serif 4, 20px/1.7, 680px column, no auto-hyphenation) and `resources/css/components/article.css`. Topic color comes from `Tag::accentColor()` as the CSS variable `--topic`. New post-related UI must reuse these classes instead of creating new typography.
 6. **Migrations & Seeders**:
     - Backfill using `php artisan migrate --path=` for scoped runs.
     - Provide seeders for new features when useful.

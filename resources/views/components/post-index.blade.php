@@ -15,7 +15,7 @@
         <div class="module-section {{ $i > 0 ? 'pt-6 border-t border-gray-100 dark:border-gray-800' : '' }}">
 
             @if($post->course->sections->count() > 1)
-                <p class="font-mono text-[0.7rem] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-3 px-1">
+                <p class="font-sans text-[0.7rem] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-3 px-1">
                     {{ $section->name }}
                 </p>
             @endif

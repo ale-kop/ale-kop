@@ -42,6 +42,7 @@ class TagController extends Controller
             'slug' => $request->slug ?? Str::slug($request->name),
             'extra->featured' => isset($request->extra['featured']),
             'extra->custom_url' => data_get($request->extra, 'custom_url'),
+            'extra->color' => data_get($request->extra, 'color'),
             'meta->description' => data_get($request->meta, 'description'),
         ]);
 
@@ -82,6 +83,7 @@ class TagController extends Controller
             'slug' => $request->slug ?? Str::slug($request->name),
             'extra->featured' => isset($request->extra['featured']),
             'extra->custom_url' => data_get($request->extra, 'custom_url'),
+            'extra->color' => data_get($request->extra, 'color'),
             'meta->description' => data_get($request->meta, 'description'),
         ]);
 

@@ -23,10 +23,11 @@ class NewsletterController extends Controller
         $this->subscribeService->subscribe($data, $listSlug);
 
         if ($request->wantsJson()) {
-            return response()->json([
+            return response()->json(array_filter([
                 'message' => 'Inscrição realizada com sucesso!',
                 'type' => 'success',
-            ]);
+                'modalIdToClose' => $request->validated('modal_id'),
+            ]));
         }
 
         return back()->with('success', 'Inscrição realizada com sucesso!');

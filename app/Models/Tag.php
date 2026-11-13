@@ -14,6 +14,9 @@ class Tag extends Model implements HasMedia
 {
     use InteractsWithMedia, SoftDeletes;
 
+    /** Azul do logo: cor dos posts sem tema ou de temas sem cor definida. */
+    public const DEFAULT_COLOR = '#4087C2';
+
     protected $guarded = [];
 
     protected function casts(): array
@@ -22,6 +25,15 @@ class Tag extends Model implements HasMedia
             'meta' => 'array',
             'extra' => 'array',
         ];
+    }
+
+    /**
+     * Cor do tema (hex), usada nos posts: ponto da etiqueta, marcadores de lista,
+     * borda da citação e barra de leitura. Configurável em Tags › Editar.
+     */
+    public function accentColor(): string
+    {
+        return data_get($this->extra, 'color') ?: self::DEFAULT_COLOR;
     }
 
     public function posts(): HasMany

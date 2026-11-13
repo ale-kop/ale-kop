@@ -19,10 +19,10 @@
                             
                             <div class="mx-auto flex max-w-4xl flex-col gap-6 max-lg:text-center">
                                 <h1
-                                    class="font-serif text-5xl/[0.9] font-medium tracking-tight text-balance text-gray-950 sm:text-7xl/[0.8] md:text-7xl/[1]">
+                                    class="font-sans text-5xl/[0.95] font-bold tracking-[-0.035em] text-balance text-gray-950 sm:text-7xl/[0.8] md:text-7xl/[1]">
                                     Comunicar é garantir que a mensagem foi entendida
                                 </h1>
-                                <p class="text-xl/7 font-serif font-medium text-gray-950/75 sm:text-3xl/8">
+                                <p class="text-xl/8 font-serif text-gray-950/75 sm:text-3xl/10">
                                     Estudo e compartilho o que aprendi em mais de 20 anos comunicando profissionalmente.
                                 
                                 </p>
@@ -95,11 +95,11 @@
                         </div>
                         <div class="text-center">
                             <h2
-                                class="font-serif text-2xl font-black text-gray-900 leading-tight group-hover:text-brand transition-colors mb-2">
+                                class="font-sans text-2xl font-bold tracking-[-0.02em] text-gray-900 leading-tight group-hover:text-brand transition-colors mb-2">
                                 {{ $featuredPost->name }}
                             </h2>
                             @if ($desc = data_get($featuredPost->meta, 'description'))
-                                <p class="text-sm text-gray-500 leading-relaxed max-w-md mx-auto mb-3">
+                                <p class="font-serif text-lg text-gray-600 leading-relaxed max-w-md mx-auto mb-3">
                                     {{ $desc }}</p>
                             @endif
                             <p class="text-xs text-gray-400 uppercase tracking-widest">
@@ -122,7 +122,7 @@
                                class="group flex items-start gap-4 py-5 first:pt-0 last:pb-0">
                                 <div class="flex-1 min-w-0">
                                     <h3
-                                        class="font-serif font-bold text-gray-900 leading-snug group-hover:text-brand transition-colors text-base lg:text-xl line-clamp-3">
+                                        class="font-sans font-bold tracking-[-0.015em] text-gray-900 leading-snug group-hover:text-brand transition-colors text-base lg:text-xl line-clamp-3">
                                         {{ $post->name }}
                                     </h3>
                                     <p class="text-xs text-gray-400 mt-1.5 uppercase tracking-widest">
@@ -170,7 +170,7 @@
                                 {{ $post->name }}
                             </h3>
                             @if ($desc = data_get($post->meta, 'description'))
-                                <p class="text-sm text-gray-500 line-clamp-2 leading-relaxed">{{ $desc }}</p>
+                                <p class="font-serif text-base text-gray-600 line-clamp-2 leading-relaxed">{{ $desc }}</p>
                             @endif
                             <p class="text-xs text-gray-400 mt-2 uppercase tracking-wide">
                                 {{ $post->created_at->translatedFormat('d M') }}
@@ -202,10 +202,10 @@
                              class="h-96 w-full flex-none rounded-2xl object-cover shadow-xl lg:aspect-square lg:h-auto lg:max-w-sm"
                              src="{{ asset('img/avatar-akop-4.webp') }}">
                         <div class="w-full flex-auto">
-                            <h2 class="text-3xl font-semibold tracking-tight font-serif text-white sm:text-3xl">
+                            <h2 class="text-3xl font-bold tracking-[-0.03em] font-sans text-white sm:text-3xl">
                                 Sobre mim, Aleksandr Kopelevitch
                             </h2>
-                            <p class="mt-6 text-base/7 text-white">
+                            <p class="mt-6 font-serif text-lg/8 text-white">
                                 Há mais de 20 anos, atendo empresas e 
                                 pessoas focando em planos de comunicação entre equipes, lideranças, campanhas de SEO, 
                                 posicionamento e desenvolvimento de produtos.
@@ -313,7 +313,7 @@
 
     <div class="bg-white py-12" id="clients">
         <div class="mx-auto max-w-7xl px-6 lg:px-8 mb-10">
-            <h2 class="text-3xl font-serif font-bold tracking-tight text-gray-900">Clientes atendidos</h2>
+            <h2 class="text-3xl font-sans font-bold tracking-[-0.03em] text-gray-900">Clientes atendidos</h2>
         </div>
 
         <div class="relative overflow-hidden">

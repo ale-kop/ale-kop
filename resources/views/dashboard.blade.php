@@ -2,8 +2,8 @@
     <x-container>
         <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-                <p class="font-mono text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">Minha área</p>
-                <h1 class="mt-2 text-4xl font-serif font-medium tracking-tighter text-gray-950">Olá, {{ $user->name }}</h1>
+                <p class="font-sans text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">Minha área</p>
+                <h1 class="mt-2 text-4xl font-sans font-bold tracking-[-0.035em] text-gray-950">Olá, {{ $user->name }}</h1>
                 <p class="mt-2 text-gray-500">Acompanhe seus cursos e continue de onde parou.</p>
             </div>
 
