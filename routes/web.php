@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ConsultingLeadController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ContentImageController;
 use App\Http\Controllers\CourseAccessController;
@@ -166,6 +167,12 @@ Route::get('pedidos/{order}/status', [CheckoutController::class, 'status'])
     ->middleware('throttle:40,1')
     ->name('checkout.status');
 Route::post('webhooks/mercadopago', MercadoPagoWebhookController::class)->name('webhooks.mercadopago');
+
+// Consultoria: página de oferta + formulário de triagem
+Route::get('consultoria', [OfferController::class, 'consulting'])->name('offers.consulting');
+Route::post('consultoria/caso', [ConsultingLeadController::class, 'store'])
+    ->middleware('throttle:3,5')
+    ->name('offers.consulting.send');
 
 // Catch-all post slug must be last
 Route::get('{post:slug}', [PostController::class, 'show'])->name('posts.show');
