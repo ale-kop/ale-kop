@@ -596,6 +596,10 @@ NewsletterSubscriber::where('status', 'active')->whereNotNull('source_path')
 
 `GET /orcamentos-pelo-whatsapp` → `offers.whatsapp` (`OfferController@whatsapp`, view `offers/whatsapp.blade.php`, estilos em `resources/css/components/offer.css`). Nome e preço vêm do curso cujo slug está em `config/offers.php` (`OFFER_WHATSAPP_COURSE_SLUG`); sem esse curso cadastrado a página responde 404. Para criar/atualizar o curso: `php artisan db:seed --class=WhatsappOfferCourseSeeder` (preço inicial de placeholder, ajuste no admin). Trechos de copy marcados com `PLACEHOLDER` na view ainda precisam de revisão.
 
+### Página da consultoria
+
+`GET /consultoria` → `offers.consulting` (`OfferController@consulting`, view `offers/consultoria.blade.php`, estilos no bloco "Consultoria" de `offer.css`). A copy vem do doc "Estratégia AKOP" › Ofertas e funil › Página de oferta. Não tem curso nem checkout: termina no formulário de triagem, que posta em `POST /consultoria/caso` (`offers.consulting.send`, throttle 3 a cada 5 min, honeypot + `FormTimeTrap`) e enfileira `ConsultingLeadMail` para `MAIL_CONTACT_ADDRESS`, com reply-to em quem preencheu e botão para responder no WhatsApp. A opção "mande um áudio" só aparece com `CONSULTING_WHATSAPP_NUMBER` preenchido (só dígitos, com DDI).
+
 ### Checkout
 
 | Rota | Nome | O que faz |

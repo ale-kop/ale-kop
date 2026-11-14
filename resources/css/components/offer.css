@@ -261,3 +261,126 @@
 .faq summary .faq-icon { transition: transform .2s ease; }
 .faq details[open] summary .faq-icon { transform: rotate(45deg); }
 .faq summary:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 4px; border-radius: 4px; }
+
+/* ══════════════════════════════════════════════════════════════════
+   Consultoria — resources/views/offers/consultoria.blade.php
+   Peça central: fragmentos espalhados (.spread-scatter) que viram itens
+   resolvidos (.spread-done), que entram uma vez no load (.spread-play).
+   ══════════════════════════════════════════════════════════════════ */
+
+.spread {
+    padding: 28px 24px 24px;
+    border-radius: 32px;
+    background: var(--tint);
+}
+.spread-scatter {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px 12px;
+}
+.frag {
+    transform: rotate(var(--r, 0deg));
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.4;
+    color: #111B21;
+    box-shadow: 0 1px 2px rgb(31 36 51 / .08), 0 6px 16px -6px rgb(31 36 51 / .18);
+}
+.frag-chat {
+    flex-basis: 100%;
+    max-width: 82%;
+    padding: 8px 12px 6px;
+    border-radius: 10px;
+    border-top-left-radius: 3px;
+    background: #fff;
+}
+.frag-meta { display: block; margin-top: 2px; text-align: right; font-size: 11px; color: var(--chat-meta); }
+.frag-file {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 500;
+}
+.frag-icon {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    flex: none;
+    border-radius: 6px;
+    color: #fff;
+}
+.frag-note {
+    margin-left: auto;
+    max-width: 62%;
+    padding: 12px 14px;
+    border-radius: 2px;
+    background: #FFE98A;
+    color: #4A3B00;
+    font-weight: 500;
+}
+
+.spread-arrow { display: grid; place-items: center; margin: 14px 0 10px; color: #9CA3AF; }
+
+.spread-done {
+    overflow: hidden;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgb(31 36 51 / .06), 0 18px 36px -18px rgb(20 74 110 / .35);
+}
+.spread-done li {
+    display: grid;
+    grid-template-columns: 4.75rem 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.35;
+    color: var(--ink);
+}
+.spread-done li + li { border-top: 1px solid #EEF1F4; }
+.spread-kind { font-size: 13px; font-weight: 600; color: var(--color-brand-deep); }
+
+.spread-play > li {
+    animation: spread-in .5s cubic-bezier(.22, 1, .36, 1) both;
+    animation-delay: var(--at, 0s);
+}
+@keyframes spread-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .spread-play > li { animation: none; }
+}
+
+/* Passos numerados de "Como funciona": linha que liga os números no desktop */
+.steps-number {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background: var(--color-brand-deep);
+    color: #fff;
+    font-family: var(--font-sans);
+    font-weight: 700;
+}
+@media (min-width: 1024px) {
+    .steps-item { position: relative; }
+    .steps-item:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: 20px;
+        left: 52px;
+        right: -20px;
+        height: 1px;
+        background: #C9D5E0;
+    }
+}
