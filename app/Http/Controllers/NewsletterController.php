@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\NewsletterSubscribeRequest;
 use App\Http\Requests\NewsletterVerifyRequest;
+use App\Models\NewsletterList;
 use App\Models\NewsletterSubscriber;
 use App\Services\NewsletterSubscribeService;
 use App\Services\NewsletterVerificationService;
@@ -45,7 +46,7 @@ class NewsletterController extends Controller
         $confirmed = $this->subscribeService->verify(
             $request->validated('email'),
             $request->validated('code'),
-            $request->input('list', 'newsletter'),
+            $request->validated('list') ?? NewsletterList::DEFAULT_SLUG,
         );
 
         if (! $confirmed) {

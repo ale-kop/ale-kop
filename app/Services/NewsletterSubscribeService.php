@@ -45,8 +45,11 @@ class NewsletterSubscribeService
         return $subscriber;
     }
 
-    /** Confere o código; em caso de acerto ativa o inscrito e o coloca na lista. */
-    public function verify(string $email, string $code, ?string $listSlug = 'newsletter'): bool
+    /**
+     * Confere o código; em caso de acerto ativa o inscrito e o coloca na lista pedida
+     * e também na lista geral (quem se interessa por um assunto recebe a newsletter).
+     */
+    public function verify(string $email, string $code, ?string $listSlug = NewsletterList::DEFAULT_SLUG): bool
     {
         return DB::transaction(function () use ($email, $code, $listSlug) {
             $subscriber = NewsletterSubscriber::where('email', $email)->lockForUpdate()->first();
@@ -62,10 +65,8 @@ class NewsletterSubscribeService
             }
             $subscriber->update($attributes);
 
-            $list = $listSlug ? NewsletterList::where('slug', $listSlug)->first() : null;
-            if ($list && ! $subscriber->lists()->where('list_id', $list->id)->exists()) {
-                $subscriber->lists()->attach($list->id);
-            }
+            $listIds = NewsletterList::whereIn('slug', array_filter([$listSlug, NewsletterList::DEFAULT_SLUG]))->pluck('id');
+            $subscriber->lists()->syncWithoutDetaching($listIds);
 
             return true;
         });

@@ -30,10 +30,7 @@ class ProcessNewsletterCampaign implements ShouldQueue
 
         $this->campaign->update(['status' => 'processing', 'sent_at' => now()]);
 
-        $subscriberIds = NewsletterSubscriber::active()
-            ->whereHas('lists', fn ($q) => $q->whereIn('newsletter_lists.id', $this->campaign->lists->pluck('id')))
-            ->pluck('id')
-            ->unique();
+        $subscriberIds = NewsletterSubscriber::inAnyList($this->campaign->lists->pluck('id'))->pluck('id');
 
         DB::transaction(function () use ($subscriberIds) {
             $logs = $subscriberIds->map(fn ($id) => [

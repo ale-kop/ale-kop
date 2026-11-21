@@ -484,9 +484,16 @@ Sistema próprio de captura, gerenciamento e envio de newsletters, sem dependên
 | URL | Descrição |
 |-----|-----------|
 | `/admin/newsletter/subscribers` | Lista de inscritos com filtro por status e lista |
-| `/admin/newsletter/lists` | CRUD de listas de inscritos |
+| `/admin/newsletter/lists` | CRUD de listas de inscritos (ativos / total por lista) |
 | `/admin/newsletter/campaigns` | CRUD de campanhas |
 | `/admin/newsletter/campaigns/{id}` | Status de envio da campanha (total / enviados / falhas / pendentes) |
+
+### Segmentação por interesse (listas)
+
+Cada assunto é uma lista (ex.: `skill-design`, `propostas-comerciais`), criada em `/admin/newsletter/lists`. A lista geral é a de slug `newsletter` (`NewsletterList::DEFAULT_SLUG`): **toda inscrição confirmada entra nela**, venha de qual formulário vier, então quem pede um assunto também recebe a newsletter geral. Uma pessoa pode estar em várias listas; inscrever-se em outro assunto soma, não troca.
+
+- **Captura:** `<x-newsletter.form id="…" form="…" list="skill-design" />`. Sem `list`, vai só para a geral. A lista precisa existir antes de o formulário ir ao ar: uma lista inexistente é recusada (422) em vez de confirmar a pessoa sem lista.
+- **Envio:** na campanha, marque as listas. Só a geral = todo mundo; só um assunto = quem pediu aquele assunto. Ao lado aparece "Vai para N pessoas", que conta cada pessoa ativa uma vez, mesmo estando em várias listas marcadas (`GET /admin/newsletter/campaigns/audience`, mesma regra do envio: `NewsletterSubscriber::inAnyList()`). A página da campanha repete o alcance e o confirma antes de enviar.
 
 ### Queue dedicada
 

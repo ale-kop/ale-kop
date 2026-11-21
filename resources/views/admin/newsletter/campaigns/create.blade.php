@@ -17,21 +17,7 @@
                                placeholder="Aparece no cliente de e-mail do destinatário" required />
             </div>
 
-            <div>
-                <x-forms.label>Listas</x-forms.label>
-                <div class="mt-2 space-y-2">
-                    @foreach($lists as $list)
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            <x-forms.checkbox name="list_ids[]" :value="$list->id"
-                                              :checked="in_array($list->id, old('list_ids', []))" />
-                            <span class="text-sm text-gray-700 dark:text-gray-300">
-                                {{ $list->name }}
-                                <span class="text-gray-400 text-xs">({{ number_format($list->subscribers_count) }} ativos)</span>
-                            </span>
-                        </label>
-                    @endforeach
-                </div>
-            </div>
+            <x-newsletter.list-picker :lists="$lists" :selected="old('list_ids', [])" />
 
             <div>
                 <x-forms.label for="scheduled_at">Agendar envio (opcional)</x-forms.label>

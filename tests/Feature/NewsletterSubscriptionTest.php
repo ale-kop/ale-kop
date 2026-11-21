@@ -163,7 +163,42 @@ it('does not let anyone join an arbitrary list without the code', function () {
     expect(NewsletterSubscriber::firstOrFail()->lists)->toHaveCount(0);
 
     $this->postJson(route('newsletter.verify'), ['email' => 'leitor@gmail.com', 'code' => $code, 'list' => 'outra'])->assertOk();
-    expect(NewsletterSubscriber::firstOrFail()->lists->pluck('slug')->all())->toBe(['outra']);
+    expect(NewsletterSubscriber::firstOrFail()->lists->pluck('slug')->sort()->values()->all())->toBe(['newsletter', 'outra']);
+});
+
+// ── Listas de interesse ─────────────────────────────────────
+
+it('puts whoever confirms an interest list in the general newsletter too', function () {
+    NewsletterList::create(['name' => 'Skill de Design', 'slug' => 'skill-design']);
+    NewsletterList::create(['name' => 'Propostas Comerciais', 'slug' => 'propostas-comerciais']);
+
+    $code = requestCode(['list' => 'skill-design']);
+    $this->postJson(route('newsletter.verify'), ['email' => 'leitor@gmail.com', 'code' => $code, 'list' => 'skill-design'])->assertOk();
+
+    // Depois, a mesma pessoa pede outro assunto: soma, não troca
+    Mail::fake();
+    $this->travel(2)->minutes();
+    $code = requestCode(['list' => 'propostas-comerciais']);
+    $this->postJson(route('newsletter.verify'), ['email' => 'leitor@gmail.com', 'code' => $code, 'list' => 'propostas-comerciais'])->assertOk();
+
+    expect(NewsletterSubscriber::firstOrFail()->lists->pluck('slug')->sort()->values()->all())
+        ->toBe(['newsletter', 'propostas-comerciais', 'skill-design']);
+});
+
+it('refuses a list that does not exist instead of confirming nobody into it', function () {
+    $this->postJson(route('newsletter.subscribe'), ['email' => 'leitor@gmail.com', 'list' => 'nao-existe'])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors('list');
+
+    expect(NewsletterSubscriber::count())->toBe(0);
+});
+
+it('renders the chosen list in the signup form, defaulting to the general one', function () {
+    $html = (string) $this->blade('<x-newsletter.form id="a" form="post-end" list="skill-design" />');
+    expect($html)->toContain('name="list" value="skill-design"');
+
+    $html = (string) $this->blade('<x-newsletter.form id="b" form="post-end" />');
+    expect($html)->toContain('name="list" value="newsletter"');
 });
 
 // ── Origem do cadastro ──────────────────────────────────────
