@@ -492,7 +492,9 @@ Sistema próprio de captura, gerenciamento e envio de newsletters, sem dependên
 
 Cada assunto é uma lista (ex.: `skill-design`, `propostas-comerciais`), criada em `/admin/newsletter/lists`. A lista geral é a de slug `newsletter` (`NewsletterList::DEFAULT_SLUG`): **toda inscrição confirmada entra nela**, venha de qual formulário vier, então quem pede um assunto também recebe a newsletter geral. Uma pessoa pode estar em várias listas; inscrever-se em outro assunto soma, não troca.
 
-- **Captura:** `<x-newsletter.form id="…" form="…" list="skill-design" />`. Sem `list`, vai só para a geral. A lista precisa existir antes de o formulário ir ao ar: uma lista inexistente é recusada (422) em vez de confirmar a pessoa sem lista.
+- **Captura:** `<x-newsletter.form id="…" form="…" list="skill-design" />`.
+
+> **Obrigatório em formulário de interesse:** preencha `list=""` com o **slug** da lista, exatamente como aparece em `/admin/newsletter/lists` (coluna Slug). Sem `list`, o formulário não dá erro: a pessoa entra só na lista geral e some do segmento, sem nenhum aviso. Crie a lista antes de publicar o formulário: um slug que não existe é recusado (422) e ninguém consegue se inscrever.
 - **Envio:** na campanha, marque as listas. Só a geral = todo mundo; só um assunto = quem pediu aquele assunto. Ao lado aparece "Vai para N pessoas", que conta cada pessoa ativa uma vez, mesmo estando em várias listas marcadas (`GET /admin/newsletter/campaigns/audience`, mesma regra do envio: `NewsletterSubscriber::inAnyList()`). A página da campanha repete o alcance e o confirma antes de enviar.
 
 ### Queue dedicada
@@ -564,7 +566,7 @@ Cada e-mail enviado contém um link de descadastro único no rodapé (`/newslett
 
 ### Formulários de captura e confirmação por código
 
-Todo formulário usa o componente `<x-newsletter.form id="…" form="…">` (módulo JS `newsletter`, estilos em `resources/css/components/newsletter.css`). Está no fim do post, no pop-up do post e na página de download. **A inscrição só vale depois de confirmar o e-mail com um código de 6 dígitos:**
+Todo formulário usa o componente `<x-newsletter.form id="…" form="…" list="…">` (`list` = slug da lista de interesse, obrigatório fora da newsletter geral; veja [Segmentação por interesse](#segmentação-por-interesse-listas)) (módulo JS `newsletter`, estilos em `resources/css/components/newsletter.css`). Está no fim do post, no pop-up do post e na página de download. **A inscrição só vale depois de confirmar o e-mail com um código de 6 dígitos:**
 
 1. `POST /newsletter/subscribe` (`newsletter.subscribe`, 5 req/min por IP): registra o e-mail como `pending` e envia o código por e-mail (`NewsletterVerificationMail`, pela fila `default`, não pela fila `newsletter` das campanhas).
 2. `POST /newsletter/verificar` (`newsletter.verify`, 10 req/min por IP): confere o código. Se estiver certo, o inscrito vira `active`, recebe `email_verified_at` e entra na lista. Só nesse momento ele passa a receber campanhas.
