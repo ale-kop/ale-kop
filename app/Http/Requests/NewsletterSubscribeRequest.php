@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Rules\ReceivableEmailDomain;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class NewsletterSubscribeRequest extends FormRequest
 {
@@ -25,7 +26,8 @@ class NewsletterSubscribeRequest extends FormRequest
         return [
             'name' => ['nullable', 'string', 'max:100'],
             'email' => ['bail', 'required', 'email:rfc', 'max:254', new ReceivableEmailDomain],
-            'list' => ['nullable', 'string', 'max:100'],
+            // Lista inexistente é recusada: senão a pessoa confirmaria sem entrar na lista pedida
+            'list' => ['nullable', 'string', 'max:100', Rule::exists('newsletter_lists', 'slug')],
             'source_url' => ['nullable', 'string', 'max:500'],
             // Qual formulário enviou (ex.: post-end, post-popup): ajuda a medir o que converte
             'source_form' => ['nullable', 'string', 'max:40', 'regex:/^[a-z0-9-]+$/'],
@@ -42,6 +44,7 @@ class NewsletterSubscribeRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'list.exists' => 'Lista de inscrição inválida.',
             'email.required' => 'O e-mail é obrigatório.',
             'email.email' => 'Informe um e-mail válido.',
             'website.max' => 'Submission inválida.',

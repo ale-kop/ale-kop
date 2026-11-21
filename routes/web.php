@@ -108,6 +108,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::resource('lists', NewsletterListController::class)->except(['show']);
         Route::get('campaigns', [NewsletterCampaignController::class, 'index'])->name('campaigns.index');
         Route::get('campaigns/create', [NewsletterCampaignController::class, 'create'])->name('campaigns.create');
+        Route::get('campaigns/audience', [NewsletterCampaignController::class, 'audience'])->name('campaigns.audience');
         Route::post('campaigns', [NewsletterCampaignController::class, 'store'])->name('campaigns.store');
         Route::get('campaigns/{campaign}', [NewsletterCampaignController::class, 'show'])->name('campaigns.show');
         Route::get('campaigns/{campaign}/edit', [NewsletterCampaignController::class, 'edit'])->name('campaigns.edit');

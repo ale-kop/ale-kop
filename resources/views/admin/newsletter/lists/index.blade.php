@@ -26,7 +26,7 @@
                         <tr>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nome</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Slug</th>
-                            <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Inscritos</th>
+                            <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Ativos / total</th>
                             <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Ações</th>
                         </tr>
                     </thead>
@@ -41,7 +41,8 @@
                                 </td>
                                 <td class="px-4 py-3 text-gray-500 font-mono text-xs">{{ $list->slug }}</td>
                                 <td class="px-4 py-3 text-right text-gray-700 dark:text-gray-300 font-semibold">
-                                    {{ number_format($list->subscribers_count) }}
+                                    <a href="{{ route('admin.newsletter.subscribers.index', ['list' => $list->id, 'status' => 'active']) }}" class="hover:text-brand">{{ number_format($list->active_subscribers_count) }}</a>
+                                    <span class="text-gray-400 font-normal">/ {{ number_format($list->subscribers_count) }}</span>
                                 </td>
                                 <td class="px-4 py-3 text-right">
                                     <div class="flex items-center justify-end gap-2">

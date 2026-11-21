@@ -15,22 +15,7 @@
                 <x-forms.input id="subject" name="subject" type="text" :value="old('subject', $campaign->subject)" required />
             </div>
 
-            <div>
-                <x-forms.label>Listas</x-forms.label>
-                @php $selectedLists = old('list_ids', $campaign->lists->pluck('id')->toArray()); @endphp
-                <div class="mt-2 space-y-2">
-                    @foreach($lists as $list)
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            <x-forms.checkbox name="list_ids[]" :value="$list->id"
-                                              :checked="in_array($list->id, $selectedLists)" />
-                            <span class="text-sm text-gray-700 dark:text-gray-300">
-                                {{ $list->name }}
-                                <span class="text-gray-400 text-xs">({{ number_format($list->subscribers_count) }} ativos)</span>
-                            </span>
-                        </label>
-                    @endforeach
-                </div>
-            </div>
+            <x-newsletter.list-picker :lists="$lists" :selected="old('list_ids', $campaign->lists->pluck('id')->all())" />
 
             <div>
                 <x-forms.label for="scheduled_at">Agendar envio (opcional)</x-forms.label>

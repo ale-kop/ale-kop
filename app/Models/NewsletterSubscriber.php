@@ -63,4 +63,10 @@ class NewsletterSubscriber extends Model
     {
         return $query->where('status', 'active');
     }
+
+    /** Destinatários de uma campanha: ativos em pelo menos uma das listas (cada pessoa uma vez). */
+    public function scopeInAnyList($query, iterable $listIds)
+    {
+        return $query->active()->whereHas('lists', fn ($q) => $q->whereIn('newsletter_lists.id', collect($listIds)));
+    }
 }

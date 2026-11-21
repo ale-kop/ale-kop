@@ -7,8 +7,10 @@
     $form:     de qual formulário veio o cadastro (ex.: post-end, post-popup). Vai para
                newsletter_subscribers.source_form, junto com a página (source_path).
     $withName: mostra o campo "Nome" acima do e-mail.
+    $list:     slug da lista de interesse (ex.: skill-design). A lista precisa existir no admin.
+               Toda inscrição confirmada também entra na lista geral "newsletter".
 --}}
-@props(['id', 'form', 'withName' => false])
+@props(['id', 'form', 'withName' => false, 'list' => \App\Models\NewsletterList::DEFAULT_SLUG])
 
 <div @class(['nl', 'nl--stacked' => $withName])
      data-newsletter
@@ -16,7 +18,7 @@
      data-verify-url="{{ route('newsletter.verify') }}">
 
     <form id="form-{{ $id }}" class="nl-form">
-        <input type="hidden" name="list" value="newsletter">
+        <input type="hidden" name="list" value="{{ $list }}">
         <input type="hidden" name="source_url" value="{{ url()->current() }}">
         <input type="hidden" name="source_form" value="{{ $form }}">
         {{-- Honeypot: bots preenchem, pessoas deixam vazio --}}

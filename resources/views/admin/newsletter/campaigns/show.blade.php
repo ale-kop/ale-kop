@@ -38,7 +38,7 @@
                         Editar
                     </a>
                     <form action="{{ route('admin.newsletter.campaigns.send', $campaign) }}" method="POST"
-                          onsubmit="return confirm('Confirmar envio desta campanha para todos os inscritos nas listas selecionadas?')">
+                          onsubmit="return confirm(@js('Enviar esta campanha para '.number_format($audience ?? 0, 0, ',', '.').' '.(($audience ?? 0) === 1 ? 'pessoa' : 'pessoas').' ('.$campaign->lists->pluck('name')->join(', ', ' e ').')?'))">
                         @csrf
                         <button type="submit"
                                 class="px-4 py-2 rounded-lg bg-brand text-white text-sm font-semibold hover:bg-brand/90 transition-colors">
@@ -111,10 +111,17 @@
                     @forelse($campaign->lists as $list)
                         <div class="flex items-center justify-between py-1.5">
                             <span class="text-sm text-gray-700 dark:text-gray-300">{{ $list->name }}</span>
+                            <span class="text-xs text-gray-400">{{ number_format($list->active_subscribers_count) }} ativos</span>
                         </div>
                     @empty
                         <p class="text-sm text-gray-400">Nenhuma lista vinculada</p>
                     @endforelse
+                    @if($audience !== null)
+                        <p class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 text-sm font-semibold text-gray-900 dark:text-gray-100">
+                            Vai para {{ number_format($audience) }} {{ $audience === 1 ? 'pessoa' : 'pessoas' }}
+                        </p>
+                        <p class="text-xs text-gray-400">Cada pessoa recebe uma vez, mesmo estando em várias listas.</p>
+                    @endif
                 </div>
 
                 <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">

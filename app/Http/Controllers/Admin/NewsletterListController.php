@@ -11,7 +11,7 @@ class NewsletterListController extends Controller
 {
     public function index()
     {
-        $lists = NewsletterList::withCount('subscribers')->latest()->paginate(20);
+        $lists = NewsletterList::withCount('subscribers')->withActiveCount()->latest()->paginate(20);
 
         return view('admin.newsletter.lists.index', compact('lists'));
     }

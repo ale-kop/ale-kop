@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class NewsletterList extends Model
 {
+    /** Lista geral: toda inscrição confirmada entra nela, venha de qual formulário vier. */
+    public const DEFAULT_SLUG = 'newsletter';
+
     protected $guarded = [];
 
     public function subscribers(): BelongsToMany
@@ -17,6 +20,12 @@ class NewsletterList extends Model
     public function activeSubscribers(): BelongsToMany
     {
         return $this->subscribers()->where('status', 'active');
+    }
+
+    /** Acrescenta active_subscribers_count (só quem recebe campanhas). */
+    public function scopeWithActiveCount($query)
+    {
+        return $query->withCount(['subscribers as active_subscribers_count' => fn ($q) => $q->where('status', 'active')]);
     }
 
     public function campaigns(): BelongsToMany

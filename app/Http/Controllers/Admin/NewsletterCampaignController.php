@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\NewsletterAudienceRequest;
 use App\Http\Requests\NewsletterCampaignRequest;
 use App\Jobs\ProcessNewsletterCampaign;
 use App\Models\NewsletterCampaign;
 use App\Models\NewsletterList;
+use App\Models\NewsletterSubscriber;
 use Illuminate\Support\Facades\Auth;
 
 class NewsletterCampaignController extends Controller
@@ -22,7 +24,7 @@ class NewsletterCampaignController extends Controller
 
     public function create()
     {
-        $lists = NewsletterList::withCount('subscribers')->get();
+        $lists = NewsletterList::withActiveCount()->orderBy('name')->get();
 
         return view('admin.newsletter.campaigns.create', compact('lists'));
     }
@@ -51,7 +53,7 @@ class NewsletterCampaignController extends Controller
     {
         abort_unless($campaign->isDraft() || $campaign->isScheduled(), 403, 'Campanha não pode ser editada.');
 
-        $lists = NewsletterList::withCount('subscribers')->get();
+        $lists = NewsletterList::withActiveCount()->orderBy('name')->get();
         $campaign->load('lists');
 
         return view('admin.newsletter.campaigns.edit', compact('campaign', 'lists'));
@@ -80,9 +82,22 @@ class NewsletterCampaignController extends Controller
 
     public function show(NewsletterCampaign $campaign)
     {
-        $campaign->load('lists');
+        $campaign->load(['lists' => fn ($q) => $q->withActiveCount()]);
 
-        return view('admin.newsletter.campaigns.show', compact('campaign'));
+        // Antes do envio, quantas pessoas a campanha alcança hoje (depois, vale total_recipients)
+        $audience = $campaign->isDraft() || $campaign->isScheduled()
+            ? NewsletterSubscriber::inAnyList($campaign->lists->pluck('id'))->count()
+            : null;
+
+        return view('admin.newsletter.campaigns.show', compact('campaign', 'audience'));
+    }
+
+    /** Alcance das listas marcadas no formulário da campanha (JSON para o módulo newsletterAudience). */
+    public function audience(NewsletterAudienceRequest $request)
+    {
+        return response()->json([
+            'count' => NewsletterSubscriber::inAnyList($request->validated('list_ids', []))->count(),
+        ]);
     }
 
     public function send(NewsletterCampaign $campaign)
