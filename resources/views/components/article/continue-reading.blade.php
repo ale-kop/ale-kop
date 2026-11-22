@@ -3,7 +3,7 @@
 
 @if($posts->isNotEmpty())
     <section class="article-next" aria-labelledby="article-next-title">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 xl:px-0">
             <h2 id="article-next-title">Continue lendo</h2>
             <div class="article-next-grid">
                 @foreach($posts as $item)
