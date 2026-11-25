@@ -237,14 +237,14 @@ Georgia e a fonte do sistema só aparecem se as fontes não carregarem.
 - Títulos da home: a frase principal, os títulos de seção, o título do Sobre, os títulos dos posts na lista e os nomes dos cursos.
 - Títulos de página (cursos, contato, área do aluno) e o **título principal do post**.
 - Textos pequenos: etiquetas de tema, datas, filtros, preços, número de aulas, quadros laterais e campos de e-mail.
-- No post: trilha "Artigos › Assunto", linha do autor, etiquetas finais, quadros (callouts, diálogo, curso) e o título "Continue lendo".
+- No post: trilha "Artigos › Assunto", linha do autor, etiquetas finais, quadros (callouts, diálogo, curso), o título "Continue lendo" e os títulos dos cards dessa seção.
 
 Títulos grandes usam peso forte e letras próximas: `font-bold tracking-[-0.035em]` (700; não usar `font-extrabold`).
 
 ### Source Serif 4: leitura
 
 - Na home: texto de apresentação, resumos dos posts, descrições dos cursos, texto do Sobre e citações.
-- No post: linha fina, todo o corpo do artigo (incluindo subtítulos e citações), título da newsletter e títulos em "Continue lendo".
+- No post: linha fina, todo o corpo do artigo (incluindo subtítulos e citações), e título da newsletter.
 
 Texto em serifa precisa de entrelinha maior que o sem serifa (ex.: `text-lg/8`, `text-3xl/10`).
 

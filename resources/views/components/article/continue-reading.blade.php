@@ -16,7 +16,7 @@
                                 @if($item->tag)
                                     <span class="font-sans text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">{{ $item->tag->name }}</span>
                                 @endif
-                                <h3 class="mt-3 font-serif text-xl/[1.35] font-semibold text-gray-950 transition-colors group-hover:text-brand-deep">{{ $item->name }}</h3>
+                                <h3 class="mt-3 font-sans text-xl/7 font-bold tracking-[-0.02em] text-gray-950 transition-colors group-hover:text-brand-deep">{{ $item->name }}</h3>
                                 <time datetime="{{ $item->created_at->toDateString() }}"
                                       class="mt-auto pt-6 font-sans text-sm/6 text-gray-950/60">{{ $item->created_at->locale('pt_BR')->translatedFormat('j M Y') }}</time>
                             </a>
