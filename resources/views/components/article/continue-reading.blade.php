@@ -1,14 +1,10 @@
 {{-- "Continue lendo": últimos posts avulsos em cards no padrão "vidro" do Radiant
-     (moldura translúcida + anel interno + card branco), sobre o gradiente da marca,
-     no mesmo container do footer. --}}
+     (moldura translúcida + anel interno + card branco), no mesmo container do footer.
+     Sem gradiente atrás: conflitava com a moldura em gradiente do footer. --}}
 @props(['posts'])
 
 @if($posts->isNotEmpty())
-    <section class="article-next relative" aria-labelledby="article-next-title">
-        {{-- Gradiente atrás da metade de baixo dos cards: é o que dá o efeito de vidro na moldura --}}
-        <div aria-hidden="true"
-             class="absolute inset-x-2 top-36 bottom-0 rounded-4xl bg-linear-115 from-accent-light from-28% via-brand-light via-70% to-brand/60 ring-1 ring-black/5 ring-inset sm:bg-linear-145"></div>
-
+    <section class="article-next" aria-labelledby="article-next-title">
         <div class="relative max-w-7xl mx-auto px-4 xl:px-0">
             <h2 id="article-next-title">Continue lendo</h2>
             <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
