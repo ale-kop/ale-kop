@@ -6,9 +6,9 @@
 @php
     // Tons do "vidro" alternados entre os cards (classes literais para o Tailwind encontrar)
     $glassTints = [
-        'bg-linear-135 from-sky-200/70 to-sky-100/40',
-        'bg-linear-135 from-violet-200/70 to-violet-100/40',
-        'bg-linear-135 from-emerald-200/70 to-emerald-100/40',
+        'bg-linear-135 from-sky-200/50 to-sky-100/30',
+        'bg-linear-135 from-violet-200/50 to-violet-100/30',
+        'bg-linear-135 from-emerald-200/50 to-emerald-100/30',
     ];
 @endphp
 
